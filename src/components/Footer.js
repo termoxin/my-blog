@@ -4,6 +4,7 @@ import {
   FooterWrapper,
   FooterSocialWrapper,
   FooterSocialIcons,
+  P,
 } from "../elements"
 
 export const Footer = () => {
@@ -26,9 +27,9 @@ export const Footer = () => {
             <img src={data.youtube.publicURL} alt="YouTube logo" />
           </a>
         </FooterSocialIcons>
-        <p size="xSmall" color="dark3">
+        <P size="xSmall" color="dark3">
           &copy; {new Date().getFullYear()} Acorn. All right reserved.
-        </p>
+        </P>
       </FooterSocialWrapper>
     </FooterWrapper>
   )
