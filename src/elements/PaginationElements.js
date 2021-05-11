@@ -28,25 +28,15 @@ export const PaginationWrapper = styled.div`
   }
 `
 
-export const PaginationElement = styled(props => <Link {...props} />).attrs({
-  style: {
-    color: "#000",
-    textDecoration: "none",
-    "&:hover": {
-      color: "red",
-    },
-  },
-})``
+export const PaginationElement = styled(props => <Link {...props} />)`
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+  font-weight: 400;
+  text-decoration: none;
+  margin: 0 2rem;
 
-// export const PaginationElement = styled(props => <Link {...props} />)`
-//   font-size: 0.875rem;
-//   line-height: 1.125rem;
-//   font-weight: 400;
-//   text-decoration: none;
-//   margin: 0 2rem;
-
-//   &:hover,
-//   &:focus {
-//     text-decoration: underline;
-//   }
-// `
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+`
