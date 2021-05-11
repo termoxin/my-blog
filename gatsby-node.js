@@ -1,56 +1,57 @@
-// /**
-//  * Implement Gatsby's Node APIs in this file.
-//  *
-//  * See: https://www.gatsbyjs.com/docs/node-apis/
-//  */
+const path = require("path")
+const { createFilePath } = require("gatsby-source-filesystem")
 
-exports.createPages = async ({ graphql, actions }) => {
-  const { data } = await graphql(`
-    query {
-      allMdx(sort: { fields: frontmatter___date, order: DESC }) {
+exports.createPages = ({ actions, graphql }) => {
+  const { createPage } = actions
+
+  const postTemplate = path.resolve(`src/layouts/post.js`)
+
+  return graphql(`
+    {
+      allMarkdownRemark(
+        sort: { order: DESC, fields: [frontmatter___date] }
+        limit: 1000
+      ) {
         edges {
           node {
-            frontmatter {
+            fields {
               slug
-              title
-              date
             }
-            id
+            frontmatter {
+              title
+            }
           }
         }
       }
     }
-  `)
-
-  // Create paginated pages for posts
-
-  const POSTS_PER_PAGE = 3
-
-  const numPages = Math.ceil(data.allMdx.edges.length / POSTS_PER_PAGE)
-
-  Array.from({ length: numPages }).forEach((_, i) => {
-    actions.createPage({
-      path: i === 0 ? "/" : `/${i + 1}`,
-      component: require.resolve("./src/templates/allPosts.js"),
-      context: {
-        limit: POSTS_PER_PAGE,
-        skip: i * POSTS_PER_PAGE,
-        numPages,
-        currentPage: i + 1,
-      },
+  `).then(result => {
+    if (result.errors) {
+      return Promise.reject(result.errors)
+    }
+    const posts = result.data.allMarkdownRemark.edges
+    posts.forEach(({ node }, index) => {
+      createPage({
+        path: node.fields.slug,
+        component: postTemplate,
+        context: {
+          slug: node.fields.slug,
+          prev: index === 0 ? null : posts[index - 1].node,
+          next: index === posts.length - 1 ? null : posts[index + 1].node,
+        },
+      })
     })
   })
+}
 
-  // Create single blog posts
-
-  // data.allMdx.edges.forEach(edge => {
-  //   const slug = edge.node.frontmatter.slug
-  //   const id = edge.node.id
-
-  //   actions.createPages({
-  //     path: slug,
-  //     component: require.resolve("./src/templates/singlePost.js"),
-  //     context: { id },
-  //   })
-  // })
+// create the slugs programatically instead of specifying a path in the frontmatter
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` })
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    })
+  }
 }
