@@ -2,6 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `Rostyslav Futornyi`,
     description: `A simple minimalistic personal blog.`,
+    siteUrl: "https://futornyi.com",
     author: `@rostyslav`,
   },
   plugins: [
