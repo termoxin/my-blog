@@ -11,7 +11,7 @@ const SocialMediaItem = ({ href, icon, alt }) => (
 const SocialMediaLinks = ({ socialMediaLinks }) => (
   <>
     {socialMediaLinks.map(media => (
-      <SocialMediaItem {...media} />
+      <SocialMediaItem {...media} key={media.alt} />
     ))}
   </>
 )

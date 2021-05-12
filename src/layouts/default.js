@@ -49,14 +49,17 @@ const DefaultLayout = ({ children }) => (
         {
           href: site.siteMetadata.githubUrl,
           icon: github.publicURL,
+          alt: "Github link",
         },
         {
           href: site.siteMetadata.youtubeUrl,
           icon: youtube.publicURL,
+          alt: "Youtube link",
         },
         {
           href: site.siteMetadata.telegramUrl,
           icon: telegram.publicURL,
+          alt: "Telegram link",
         },
       ]
 
