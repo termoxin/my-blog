@@ -1,23 +1,24 @@
 const path = require("path")
+const { paginate } = require("gatsby-awesome-pagination")
 const { createFilePath } = require("gatsby-source-filesystem")
 
 exports.createPages = ({ actions, graphql }) => {
   const { createPage } = actions
 
+  const blogTemplate = path.resolve(`src/layouts/blog.js`)
   const postTemplate = path.resolve(`src/layouts/post.js`)
 
   return graphql(`
-    {
-      allMarkdownRemark(
-        sort: { order: DESC, fields: [frontmatter___date] }
-        limit: 1000
-      ) {
+    query {
+      allMarkdownRemark(sort: { order: DESC, fields: [frontmatter___date] }) {
         edges {
           node {
+            id
             fields {
               slug
             }
             frontmatter {
+              date(formatString: "MMMM DD, YY")
               title
             }
           }
@@ -28,7 +29,18 @@ exports.createPages = ({ actions, graphql }) => {
     if (result.errors) {
       return Promise.reject(result.errors)
     }
+
     const posts = result.data.allMarkdownRemark.edges
+
+    paginate({
+      createPage,
+      items: posts,
+      itemsPerPage: 2,
+      itemsPerFirstPage: 2,
+      pathPrefix: "/",
+      component: blogTemplate,
+    })
+
     posts.forEach(({ node }, index) => {
       createPage({
         path: node.fields.slug,

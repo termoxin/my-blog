@@ -30,7 +30,6 @@ const DefaultLayout = ({ children }) => (
     `}
     render={data => (
       <>
-        {console.log(data)}
         <Header avatar={data.avatar.publicURL} />
         <div id="content">{children}</div>
         <Footer siteTitle={data.site.siteMetadata.title} />
