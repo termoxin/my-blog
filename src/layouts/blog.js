@@ -2,8 +2,8 @@ import React from "react"
 import { Link, graphql } from "gatsby"
 
 import DefaultLayout from "./default"
-import Image from "../components/image"
-import SEO from "../components/seo"
+import SEO from "../components/Seo"
+import Pagination from "../components/Pagination"
 
 import { groupBy, getDateYear } from "../utils"
 
@@ -13,8 +13,6 @@ const IndexPage = ({ data, pageContext }) => {
   const posts = data.allMarkdownRemark.edges.filter(
     p => p.node.frontmatter.date !== null
   )
-
-  console.log(pageContext)
 
   const postsList = posts =>
     posts.map(post => (
@@ -45,10 +43,10 @@ const IndexPage = ({ data, pageContext }) => {
       <section>
         <ul>{postsListContainer}</ul>
       </section>
-      <div>
-        {previousPagePath && <Link to={previousPagePath}>Previous</Link>}
-        {nextPagePath && <Link to={nextPagePath}>Next</Link>}
-      </div>
+      <Pagination
+        previousPagePath={previousPagePath}
+        nextPagePath={nextPagePath}
+      />
     </DefaultLayout>
   )
 }

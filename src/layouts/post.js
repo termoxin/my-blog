@@ -2,7 +2,7 @@ import React from "react"
 import { Link, graphql } from "gatsby"
 
 import DefaultLayout from "./default"
-import SEO from "../components/seo"
+import SEO from "../components/Seo"
 
 const PostTemplate = ({ data, pageContext }) => {
   const { markdownRemark } = data
