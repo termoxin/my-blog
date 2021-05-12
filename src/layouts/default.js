@@ -21,21 +21,53 @@ const DefaultLayout = ({ children }) => (
         site {
           siteMetadata {
             title
+            githubUrl
+            youtubeUrl
+            telegramUrl
           }
         }
 
         avatar: file(relativePath: { eq: "avatar.jpg" }) {
           publicURL
         }
+
+        telegram: file(relativePath: { eq: "telegram.svg" }) {
+          publicURL
+        }
+
+        github: file(relativePath: { eq: "github.svg" }) {
+          publicURL
+        }
+
+        youtube: file(relativePath: { eq: "youtube.svg" }) {
+          publicURL
+        }
       }
     `}
-    render={data => (
-      <>
-        <Header avatar={data.avatar.publicURL} />
-        <div id="content">{children}</div>
-        <Footer siteTitle={data.site.siteMetadata.title} />
-      </>
-    )}
+    render={({ avatar, site, telegram, github, youtube }) => {
+      const socialMediaData = [
+        {
+          href: site.siteMetadata.githubUrl,
+          icon: github.publicURL,
+        },
+        {
+          href: site.siteMetadata.youtubeUrl,
+          icon: youtube.publicURL,
+        },
+        {
+          href: site.siteMetadata.telegramUrl,
+          icon: telegram.publicURL,
+        },
+      ]
+
+      return (
+        <>
+          <Header avatar={avatar.publicURL} socialMediaData={socialMediaData} />
+          <div id="content">{children}</div>
+          <Footer siteTitle={site.siteMetadata.title} />
+        </>
+      )
+    }}
   />
 )
 

@@ -2,8 +2,9 @@ import { Link } from "gatsby"
 import PropTypes from "prop-types"
 import React from "react"
 import { Location } from "@reach/router"
+import SocialMediaLinks from "./SocialMedia"
 
-const Header = ({ avatar }) => (
+const Header = ({ avatar, socialMediaData }) => (
   <header className="logo">
     <Location>
       {({ location }) => {
@@ -24,6 +25,7 @@ const Header = ({ avatar }) => (
         )
       }}
     </Location>
+    <SocialMediaLinks socialMediaLinks={socialMediaData} />
   </header>
 )
 
