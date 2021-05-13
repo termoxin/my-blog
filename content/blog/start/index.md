@@ -1,6 +1,7 @@
 ---
 title: This is start of a new journey!
 description: This is an entry blog post to the world where everyone is doing something important
+tags: [start, journey]
 date: 2021-05-12
 ---
 
