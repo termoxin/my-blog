@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
     title: `Rostyslav Futornyi`,
-    description: `Personal blog of Rostyslav Futornyi`,
+    description: `Hi! I'm Rostyslav Futornyi. You may know me as a creator of TermoEnglish Telegram channel.`,
     siteUrl: "https://futornyi.com",
     githubUrl: "https://github.com/termoxin",
     telegramUrl: "https://t.me/termoxin",
