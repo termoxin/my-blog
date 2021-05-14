@@ -1,7 +1,6 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
 
-import DefaultLayout from "./default"
 import SEO from "../components/Seo"
 
 const PostTemplate = ({ data, pageContext }) => {
@@ -9,7 +8,7 @@ const PostTemplate = ({ data, pageContext }) => {
   const { frontmatter, html } = markdownRemark
   const { next, prev } = pageContext
   return (
-    <DefaultLayout>
+    <>
       <SEO title={frontmatter.title} />
       <article>
         <div className="center">
@@ -45,7 +44,7 @@ const PostTemplate = ({ data, pageContext }) => {
           </Link>
         )}
       </div>
-    </DefaultLayout>
+    </>
   )
 }
 

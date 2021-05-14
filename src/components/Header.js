@@ -8,17 +8,25 @@ const Header = ({ avatar, socialMediaData }) => (
   <header className="logo">
     <Location>
       {({ location }) => {
-        return location.pathname == "/" ? (
+        return location.pathname === "/" ? (
           <div>
             <Link to="/about/">
-              <img src={avatar} className="logo-avatar" />
+              <img
+                src={avatar}
+                className="logo-avatar"
+                alt="Rostyslav Futornyi smiling"
+              />
             </Link>
             <span className="logo-prompt code">About the Author</span>
           </div>
         ) : (
           <div>
             <Link to="/">
-              <img src={avatar} className="logo-avatar" />
+              <img
+                src={avatar}
+                className="logo-avatar"
+                alt="Rostyslav Futornyi smiling"
+              />
             </Link>
             <span className="logo-prompt code">Back Home</span>
           </div>
