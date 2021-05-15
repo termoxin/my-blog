@@ -10,7 +10,7 @@ const PostTemplate = ({ data, pageContext }) => {
 
   return (
     <>
-      <SEO title={frontmatter.title} />
+      <SEO title={frontmatter.title} description={frontmatter.description} />
       <article>
         <div className="center">
           <h1 className="title">{frontmatter.title}</h1>
@@ -56,8 +56,8 @@ export const pageQuery = graphql`
     markdownRemark(fields: { slug: { eq: $slug } }) {
       html
       frontmatter {
-        date(formatString: "MMMM DD, YYYY")
         title
+        description
       }
     }
   }
