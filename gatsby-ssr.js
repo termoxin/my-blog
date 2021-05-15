@@ -5,3 +5,12 @@
  */
 
 // You can delete this file if you're not using it
+
+import React from "react"
+import DefaultLayout from "./src/layouts/default"
+
+export const wrapRootElement = ({ element }) => (
+  <DefaultLayout>
+    <article>{element}</article>
+  </DefaultLayout>
+)
