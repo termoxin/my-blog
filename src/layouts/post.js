@@ -7,6 +7,7 @@ const PostTemplate = ({ data, pageContext }) => {
   const { markdownRemark } = data
   const { frontmatter, html } = markdownRemark
   const { next, prev } = pageContext
+
   return (
     <>
       <SEO title={frontmatter.title} />
