@@ -1,20 +1,13 @@
 ---
 title: About
+date: 2021-05-12
 ---
 
-import Divider from "../components/Divider"
-import Seo from "../components/Seo"
 import { graphql } from "gatsby"
 
-<Seo
-  title="About me"
-  lang="en"
-  description={`I\’m Rostyslav Futornyi. I’m a Software Engineer who currently building UI
-    interfaces for an international money transfer company with over 10 million users.
-    I’m the author of Termo English project the helps people all over the world
-    to learn English using interactive posts and short movie clips.
-    `}
-/>
+import Divider from "../../src/components/Divider"
+import Seo from "../../src/components/Seo"
+import telegramIcon from "../../src/images/telegram.svg"
 
 # Hello 👋
 
@@ -36,7 +29,7 @@ I started [futornyi.com](futornyi.com) as a place to keep my journey documented.
 
 Having a personal blog is a good opportunity to meet new people that have the same passion that I have and create something **big** together. Yeah, I'm talking about you. Yeah, I sad — "You"
 
-Feel free to [contact me](https://t.me/termoxin) [<img src={props.data.telegram.publicURL} height="16" width="16"/>](https://t.me/termoxin)
+Feel free to [contact me](https://t.me/termoxin) [<img src={telegramIcon} height="16" width="16"/>](https://t.me/termoxin)
 
 You can always take a look at what decision I've made, what results I've got and apply them to your own life 💡
 
@@ -45,11 +38,3 @@ Welcome!
 **Be yourself wonderful self and follow your ❤️**
 
 <Divider />
-
-export const pageQuery = graphql`
-  query {
-    telegram: file(relativePath: { eq: "telegram.svg" }) {
-      publicURL
-    }
-  }
-`

@@ -2,10 +2,11 @@ import React from "react"
 import { Link, graphql } from "gatsby"
 
 import SEO from "../components/Seo"
+import { MDXRenderer } from "gatsby-plugin-mdx"
 
 const PostTemplate = ({ data, pageContext }) => {
-  const { markdownRemark } = data
-  const { frontmatter, html } = markdownRemark
+  const { mdx } = data
+  const { frontmatter, body } = mdx
   const { next, prev } = pageContext
 
   return (
@@ -19,15 +20,11 @@ const PostTemplate = ({ data, pageContext }) => {
           </span>
         </div>
         <div className="divider" />
-        <div dangerouslySetInnerHTML={{ __html: html }} />
+        <MDXRenderer>{body}</MDXRenderer>
       </article>
       <div className="page-navigation code">
         {prev && (
-          <Link
-            className="prev"
-            to={prev.fields.slug}
-            title={prev.frontmatter.title}
-          >
+          <Link className="prev" to={prev.slug} title={prev.frontmatter.title}>
             &lt;&lt;
           </Link>
         )}{" "}
@@ -36,11 +33,7 @@ const PostTemplate = ({ data, pageContext }) => {
           Home
         </Link>{" "}
         {next && (
-          <Link
-            className="next"
-            to={next.fields.slug}
-            title={next.frontmatter.title}
-          >
+          <Link className="next" to={next.slug} title={next.frontmatter.title}>
             &gt;&gt;
           </Link>
         )}
@@ -53,12 +46,13 @@ export default PostTemplate
 
 export const pageQuery = graphql`
   query ($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
+    mdx(slug: { eq: $slug }) {
+      id
       frontmatter {
-        title
         description
+        title
       }
+      body
     }
   }
 `

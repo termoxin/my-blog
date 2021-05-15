@@ -2,56 +2,70 @@ const path = require("path")
 const { paginate } = require("gatsby-awesome-pagination")
 const { createFilePath } = require("gatsby-source-filesystem")
 
-exports.createPages = ({ actions, graphql }) => {
+const { pagesExcludeFromPagination } = require("./src/constants")
+
+exports.createPages = async ({ actions, graphql }) => {
   const { createPage } = actions
 
   const blogTemplate = path.resolve(`src/layouts/blog.js`)
   const postTemplate = path.resolve(`src/layouts/post.js`)
 
-  return graphql(`
-    query {
-      allMarkdownRemark(sort: { order: DESC, fields: [frontmatter___date] }) {
-        edges {
-          node {
-            id
-            fields {
+  const result = await graphql(
+    `
+      query AllMdxFiles($pagesExcludeFromPagination: [String!]) {
+        allMdx(
+          sort: { order: DESC, fields: [frontmatter___date] }
+          filter: { slug: { nin: $pagesExcludeFromPagination } }
+        ) {
+          edges {
+            node {
+              id
               slug
-            }
-            frontmatter {
-              date(formatString: "MMMM DD, YY")
-              title
+              frontmatter {
+                title
+                tags
+                date(formatString: "MMMM DD, YY")
+              }
             }
           }
         }
       }
-    }
-  `).then(result => {
-    if (result.errors) {
-      return Promise.reject(result.errors)
-    }
+    `,
+    { pagesExcludeFromPagination }
+  )
 
-    const posts = result.data.allMarkdownRemark.edges
+  const posts = result.data.allMdx.edges
 
-    paginate({
-      createPage,
-      items: posts,
-      itemsPerPage: 2,
-      itemsPerFirstPage: 2,
-      pathPrefix: "/",
-      component: blogTemplate,
+  paginate({
+    createPage,
+    items: posts,
+    itemsPerPage: 2,
+    itemsPerFirstPage: 3,
+    pathPrefix: "/",
+    component: blogTemplate,
+    context: {
+      pagesExcludeFromPagination,
+    },
+  })
+
+  posts.forEach(({ node }, index) => {
+    createPage({
+      path: node.slug,
+      component: postTemplate,
+      context: {
+        slug: node.slug,
+        prev: index === 0 ? null : posts[index - 1].node,
+        next: index === posts.length - 1 ? null : posts[index + 1].node,
+      },
     })
+  })
 
-    posts.forEach(({ node }, index) => {
-      createPage({
-        path: node.fields.slug,
-        component: postTemplate,
-        context: {
-          slug: node.fields.slug,
-          prev: index === 0 ? null : posts[index - 1].node,
-          next: index === posts.length - 1 ? null : posts[index + 1].node,
-        },
-      })
-    })
+  createPage({
+    path: "about",
+    component: postTemplate,
+    context: {
+      slug: "about",
+    },
   })
 }
 

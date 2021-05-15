@@ -55,7 +55,6 @@ module.exports = {
       },
     },
     `gatsby-transformer-sharp`,
-    `gatsby-plugin-feed`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-sass`,
     {
@@ -70,7 +69,20 @@ module.exports = {
         icon: `src/images/lava.png`, // This path is relative to the root of the site.
       },
     },
-    `gatsby-plugin-mdx`,
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        extensions: [`.md`, `.mdx`],
+        gatsbyRemarkPlugins: [
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 1200,
+            },
+          },
+        ],
+      },
+    },
     "gatsby-plugin-styled-components",
     {
       resolve: `gatsby-plugin-google-gtag`,
@@ -94,6 +106,66 @@ module.exports = {
       },
     },
     "gatsby-plugin-sitemap",
+    // {
+    //   resolve: `gatsby-plugin-feed`,
+    //   options: {
+    //     query: `
+    //       {
+    //         site {
+    //           siteMetadata {
+    //             title
+    //             description
+    //             siteUrl
+    //             site_url: siteUrl
+    //           }
+    //         }
+    //       }
+    //     `,
+    //     feeds: [
+    //       {
+    //         serialize: ({ query: { site, allMarkdownRemark } }) => {
+    //           return allMarkdownRemark.edges.map(edge => {
+    //             return Object.assign({}, edge.node.frontmatter, {
+    //               description: edge.node.excerpt,
+    //               date: edge.node.frontmatter.date,
+    //               url: site.siteMetadata.siteUrl + edge.node.fields.slug,
+    //               guid: site.siteMetadata.siteUrl + edge.node.fields.slug,
+    //               custom_elements: [{ "content:encoded": edge.node.html }],
+    //             })
+    //           })
+    //         },
+    //         query: `
+    //           {
+    //             allMarkdownRemark(
+    //               sort: { order: DESC, fields: [frontmatter___date] },
+    //             ) {
+    //               edges {
+    //                 node {
+    //                   excerpt
+    //                   html
+    //                   fields { slug }
+    //                   frontmatter {
+    //                     title
+    //                     date
+    //                   }
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         `,
+    //         output: "/rss.xml",
+    //         title: "Your Site's RSS Feed",
+    //         // optional configuration to insert feed reference in pages:
+    //         // if `string` is used, it will be used to create RegExp and then test if pathname of
+    //         // current page satisfied this regular expression;
+    //         // if not provided or `undefined`, all pages will have feed reference inserted
+    //         match: "^/blog/",
+    //         // optional configuration to specify external rss feed, such as feedburner
+    //         link: "https://feeds.feedburner.com/gatsby/blog",
+    //       },
+    //     ],
+    //   },
+    // },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,

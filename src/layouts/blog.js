@@ -10,9 +10,7 @@ const IndexPage = ({ data, pageContext }) => {
   // all posts without dates are assumed to be drafts or pages
   // not to be added to postsList
 
-  const posts = data.allMarkdownRemark.edges.filter(
-    p => p.node.frontmatter.date !== null
-  )
+  const posts = data.allMdx.edges
 
   const postsList = posts =>
     posts.map(post => (
@@ -21,7 +19,7 @@ const IndexPage = ({ data, pageContext }) => {
           <small>{post.node.frontmatter.date}</small>
         </div>
         <div className="title">
-          <Link to={post.node.fields.slug}>{post.node.frontmatter.title}</Link>
+          <Link to={post.node.slug}>{post.node.frontmatter.title}</Link>
         </div>
       </li>
     ))
@@ -54,22 +52,21 @@ const IndexPage = ({ data, pageContext }) => {
 export default IndexPage
 
 export const pageQuery = graphql`
-  query ($skip: Int!, $limit: Int!) {
-    allMarkdownRemark(
+  query ($pagesExcludeFromPagination: [String!], $skip: Int!, $limit: Int!) {
+    allMdx(
       sort: { order: DESC, fields: [frontmatter___date] }
+      filter: { slug: { nin: $pagesExcludeFromPagination } }
       skip: $skip
       limit: $limit
     ) {
       edges {
         node {
           id
-          fields {
-            slug
-          }
+          slug
           frontmatter {
-            date(formatString: "MMMM DD, YY")
             title
             tags
+            date(formatString: "MMMM DD, YY")
           }
         }
       }
