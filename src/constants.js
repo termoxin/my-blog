@@ -1,4 +1,4 @@
-const pagesExcludeFromPagination = ["about", "typography"]
+const pagesExcludeFromPagination = ["about"]
 
 module.exports = {
   pagesExcludeFromPagination,

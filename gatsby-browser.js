@@ -9,6 +9,8 @@ import React from "react"
 import { createGlobalStyle } from "styled-components"
 
 import DefaultLayout from "./src/layouts/default"
+import CodeBlock from "./src/components/CodeBlock"
+import Divider from "./src/components/Divider"
 
 const GlobalStyles = createGlobalStyle`
   *, *:after, *:before {
@@ -18,8 +20,13 @@ const GlobalStyles = createGlobalStyle`
   }
 `
 
+const components = {
+  code: CodeBlock,
+  Divider,
+}
+
 export const wrapRootElement = ({ element }) => (
-  <MDXProvider>
+  <MDXProvider components={components}>
     <DefaultLayout>
       <article>{element}</article>
       <GlobalStyles />
