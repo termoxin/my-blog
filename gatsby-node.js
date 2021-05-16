@@ -60,12 +60,14 @@ exports.createPages = async ({ actions, graphql }) => {
     })
   })
 
-  createPage({
-    path: "about",
-    component: postTemplate,
-    context: {
-      slug: "about",
-    },
+  pagesExcludeFromPagination.forEach(page => {
+    createPage({
+      path: page,
+      component: postTemplate,
+      context: {
+        slug: page,
+      },
+    })
   })
 }
 

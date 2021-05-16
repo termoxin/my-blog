@@ -6,7 +6,7 @@ module.exports = {
     githubUrl: "https://github.com/termoxin",
     telegramUrl: "https://t.me/termoxin",
     youtubeUrl: "https://www.youtube.com/channel/UCVhISeB9p9XQ-mKM5AWt_ww",
-    author: `@rostyslav`,
+    author: `Rostyslav Futornyi`,
   },
   plugins: [
     {
