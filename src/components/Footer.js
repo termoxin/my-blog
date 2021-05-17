@@ -4,7 +4,7 @@ import PropTypes from "prop-types"
 const Footer = ({ siteTitle }) => (
   <div className="footer">
     <span className="block">
-      &copy; {new Date().getFullYear()} {siteTitle}
+      &copy; {new Date().getFullYear()} {siteTitle}. All Rights Reserved.
     </span>
   </div>
 )
