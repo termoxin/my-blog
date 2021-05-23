@@ -7,8 +7,8 @@ import { MDXRenderer } from "gatsby-plugin-mdx"
 
 const PostTemplate = ({ data, pageContext }) => {
   const { mdx } = data
-  const { frontmatter, body } = mdx
-  const { next, prev } = pageContext
+  const { id, frontmatter, body, slug } = mdx
+  const { next, prev, siteUrl } = pageContext
 
   return (
     <>
@@ -41,11 +41,8 @@ const PostTemplate = ({ data, pageContext }) => {
       </div>
       <Disqus
         config={{
-          /* Replace PAGE_URL with your post's canonical URL variable */
-          url: `/${frontmatter.slug}`,
-          /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
-          identifier: frontmatter.slug,
-          /* Replace PAGE_TITLE with the title of the page */
+          url: `${siteUrl}/${slug}`,
+          identifier: id,
           title: frontmatter.title,
         }}
       />
@@ -64,6 +61,7 @@ export const pageQuery = graphql`
         title
       }
       body
+      slug
     }
   }
 `

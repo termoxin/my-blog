@@ -162,7 +162,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-disqus`,
       options: {
-        shortname: `http-futornyi-com`,
+        shortname: `futornyiblog`,
       },
     },
   ],

@@ -4,6 +4,12 @@ const { createFilePath } = require("gatsby-source-filesystem")
 
 const { pagesExcludeFromPagination } = require("./src/constants")
 
+if (process.env.NODE_ENV === "development") {
+  require("dotenv").config({
+    path: `.env.${process.env.NODE_ENV}`,
+  })
+}
+
 exports.createPages = async ({ actions, graphql }) => {
   const { createPage } = actions
 
@@ -56,6 +62,7 @@ exports.createPages = async ({ actions, graphql }) => {
         slug: node.slug,
         prev: index === 0 ? null : posts[index - 1].node,
         next: index === posts.length - 1 ? null : posts[index + 1].node,
+        siteUrl: process.env.GATSBY_URL,
       },
     })
   })
