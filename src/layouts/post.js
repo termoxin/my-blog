@@ -1,9 +1,10 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
 import { Disqus } from "gatsby-plugin-disqus"
+import { MDXRenderer } from "gatsby-plugin-mdx"
 
 import SEO from "../components/Seo"
-import { MDXRenderer } from "gatsby-plugin-mdx"
+import { pagesExcludeFromPagination } from "../constants"
 
 const PostTemplate = ({ data, pageContext }) => {
   const { mdx } = data
@@ -47,13 +48,15 @@ const PostTemplate = ({ data, pageContext }) => {
           </Link>
         )}
       </div>
-      <Disqus
-        config={{
-          url: `${siteUrl}/${slug}`,
-          identifier: id,
-          title: frontmatter.title,
-        }}
-      />
+      {!pagesExcludeFromPagination.includes(slug) && (
+        <Disqus
+          config={{
+            url: `${siteUrl}/${slug}`,
+            identifier: id,
+            title: frontmatter.title,
+          }}
+        />
+      )}
     </>
   )
 }
