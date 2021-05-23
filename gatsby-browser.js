@@ -11,6 +11,7 @@ import { createGlobalStyle } from "styled-components"
 import DefaultLayout from "./src/layouts/default"
 import CodeBlock from "./src/components/CodeBlock"
 import Divider from "./src/components/Divider"
+import Spacer from "./src/components/Spacer"
 
 const GlobalStyles = createGlobalStyle`
   *, *:after, *:before {
@@ -23,6 +24,7 @@ const GlobalStyles = createGlobalStyle`
 const components = {
   code: CodeBlock,
   Divider,
+  Spacer,
 }
 
 export const wrapRootElement = ({ element }) => (
