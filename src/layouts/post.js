@@ -25,7 +25,11 @@ const PostTemplate = ({ data, pageContext }) => {
       </article>
       <div className="page-navigation code">
         {prev && (
-          <Link className="prev" to={prev.slug} title={prev.frontmatter.title}>
+          <Link
+            className="prev"
+            to={`/${prev.slug}`}
+            title={prev.frontmatter.title}
+          >
             &lt;&lt;
           </Link>
         )}{" "}
@@ -34,7 +38,11 @@ const PostTemplate = ({ data, pageContext }) => {
           Home
         </Link>{" "}
         {next && (
-          <Link className="next" to={next.slug} title={next.frontmatter.title}>
+          <Link
+            className="next"
+            to={`/${next.slug}`}
+            title={next.frontmatter.title}
+          >
             &gt;&gt;
           </Link>
         )}
