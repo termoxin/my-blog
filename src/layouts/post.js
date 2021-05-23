@@ -1,5 +1,6 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
+import { Disqus } from "gatsby-plugin-disqus"
 
 import SEO from "../components/Seo"
 import { MDXRenderer } from "gatsby-plugin-mdx"
@@ -38,6 +39,16 @@ const PostTemplate = ({ data, pageContext }) => {
           </Link>
         )}
       </div>
+      <Disqus
+        config={{
+          /* Replace PAGE_URL with your post's canonical URL variable */
+          url: `/${frontmatter.slug}`,
+          /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+          identifier: frontmatter.slug,
+          /* Replace PAGE_TITLE with the title of the page */
+          title: frontmatter.title,
+        }}
+      />
     </>
   )
 }
