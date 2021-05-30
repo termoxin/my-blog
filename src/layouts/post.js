@@ -1,10 +1,10 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
-import { Disqus } from "gatsby-plugin-disqus"
 import { MDXRenderer } from "gatsby-plugin-mdx"
 
 import SEO from "../components/Seo"
 import { pagesExcludeFromPagination } from "../constants"
+import Comment from "../components/Comment"
 
 const PostTemplate = ({ data, pageContext }) => {
   const { mdx } = data
@@ -47,16 +47,15 @@ const PostTemplate = ({ data, pageContext }) => {
             &gt;&gt;
           </Link>
         )}
+        {!pagesExcludeFromPagination.includes(slug) && (
+          <Comment
+            repo="termoxin/my-blog-comments"
+            issueTerm="og:title"
+            theme="github-light"
+            crossOrigin="anonymous"
+          />
+        )}
       </div>
-      {!pagesExcludeFromPagination.includes(slug) && (
-        <Disqus
-          config={{
-            url: `${siteUrl}/${slug}`,
-            identifier: id,
-            title: frontmatter.title,
-          }}
-        />
-      )}
     </>
   )
 }
