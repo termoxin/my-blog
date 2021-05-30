@@ -8,8 +8,8 @@ import Comment from "../components/Comment"
 
 const PostTemplate = ({ data, pageContext }) => {
   const { mdx } = data
-  const { id, frontmatter, body, slug } = mdx
-  const { next, prev, siteUrl } = pageContext
+  const { frontmatter, body, slug } = mdx
+  const { next, prev } = pageContext
 
   return (
     <>
@@ -47,15 +47,15 @@ const PostTemplate = ({ data, pageContext }) => {
             &gt;&gt;
           </Link>
         )}
-        {!pagesExcludeFromPagination.includes(slug) && (
-          <Comment
-            repo="termoxin/my-blog-comments"
-            issueTerm="og:title"
-            theme="github-light"
-            crossOrigin="anonymous"
-          />
-        )}
       </div>
+      {!pagesExcludeFromPagination.includes(slug) && (
+        <Comment
+          repo="termoxin/my-blog-comments"
+          issueTerm="pathname"
+          theme="github-light"
+          crossOrigin="anonymous"
+        />
+      )}
     </>
   )
 }

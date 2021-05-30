@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
-import { css } from "styled-components"
+
+import { CommentsContainer } from "./styles"
 
 const Comment = ({
   repo,
@@ -8,7 +9,6 @@ const Comment = ({
   theme = "github-light",
   crossorigin = "anonymous",
   async = true,
-  style = "",
 }) => {
   const rootElm = React.createRef()
 
@@ -37,13 +37,9 @@ const Comment = ({
   }, [])
 
   return (
-    <div
-      id="utterances_container"
-      ref={rootElm}
-      className={css`
-        ${style}
-      `}
-    />
+    <div>
+      <CommentsContainer id="utterances_container" ref={rootElm} />
+    </div>
   )
 }
 
