@@ -51,7 +51,7 @@ const PostTemplate = ({ data, pageContext }) => {
       {!pagesExcludeFromPagination.includes(slug) && (
         <Comment
           repo="termoxin/my-blog-comments"
-          issueTerm="pathname"
+          issueTerm="og:title"
           theme="github-light"
           crossOrigin="anonymous"
         />
