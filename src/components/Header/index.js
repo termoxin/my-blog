@@ -2,7 +2,9 @@ import { Link } from "gatsby"
 import PropTypes from "prop-types"
 import React from "react"
 import { Location } from "@reach/router"
-import SocialMediaLinks from "./SocialMedia"
+
+import SocialMediaLinks from "../SocialMedia"
+import { Avatar } from "./styles"
 
 const Header = ({ avatar, socialMediaData }) => (
   <header className="logo">
@@ -11,22 +13,14 @@ const Header = ({ avatar, socialMediaData }) => (
         return location.pathname === "/" ? (
           <div>
             <Link to="/about/">
-              <img
-                src={avatar}
-                className="logo-avatar"
-                alt="Rostyslav Futornyi smiling"
-              />
+              <Avatar src={avatar} alt="Rostyslav Futornyi smiling" />
             </Link>
             <span className="logo-prompt code">About the Author</span>
           </div>
         ) : (
           <div>
             <Link to="/">
-              <img
-                src={avatar}
-                className="logo-avatar"
-                alt="Rostyslav Futornyi smiling"
-              />
+              <Avatar src={avatar} alt="Rostyslav Futornyi smiling" />
             </Link>
             <span className="logo-prompt code">Back Home</span>
           </div>
