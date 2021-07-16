@@ -50,22 +50,22 @@ const DefaultLayout = ({ children }) => (
           href: site.siteMetadata.githubUrl,
           icon: github.publicURL,
           alt: "Github link",
-          width: 32,
-          height: 32,
+          width: 24,
+          height: 24,
         },
         {
           href: site.siteMetadata.youtubeUrl,
           icon: youtube.publicURL,
           alt: "Youtube link",
-          width: 32,
-          height: 32,
+          width: 24,
+          height: 24,
         },
         {
           href: site.siteMetadata.telegramUrl,
           icon: telegram.publicURL,
           alt: "Telegram link",
-          width: 32,
-          height: 32,
+          width: 24,
+          height: 24,
         },
       ]
 

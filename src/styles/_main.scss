@@ -92,34 +92,7 @@ blockquote {
   -webkit-animation-duration: 0.7s;
   -webkit-animation-fill-mode: both;
   -webkit-animation-name: bounce;
-  a {
-    color: #000;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.5em;
-    border-radius: 100%;
-    display: inline-block;
-    text-align: center;
-    border: 5px solid #fff;
-    box-sizing: border-box;
 
-    &:hover + .logo-prompt,
-    &:focus + .logo-prompt {
-      display: inline-block !important;
-    }
-    .logo-avatar {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-      -webkit-border-radius: 50%;
-      -moz-border-radius: 50%;
-      border-radius: 50%;
-    }
-    @media (max-width: 480px) {
-      &:hover + .logo-prompt,
-      &:focus + .logo-prompt {
-        display: none !important;
-      }
-    }
-  }
   .logo-prompt {
     position: absolute;
     display: none;
