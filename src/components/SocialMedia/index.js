@@ -9,11 +9,11 @@ const SocialMediaItem = ({ width, height, href, icon, alt }) => (
 )
 
 const SocialMediaLinks = ({ socialMediaLinks }) => (
-  <>
+  <div>
     {socialMediaLinks.map(media => (
       <SocialMediaItem {...media} key={media.alt} />
     ))}
-  </>
+  </div>
 )
 
 export default SocialMediaLinks
