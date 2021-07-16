@@ -31,7 +31,7 @@ const components = {
   Spacer,
 }
 
-export const wrapRootElement = ({ element }) => (
+export const wrapPageElement = ({ element }) => (
   <MDXProvider components={components}>
     <DefaultLayout>
       <article>{element}</article>

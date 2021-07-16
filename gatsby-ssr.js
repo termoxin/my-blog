@@ -6,4 +6,4 @@
 
 // You can delete this file if you're not using it
 
-export { wrapRootElement } from "./gatsby-browser"
+export { wrapPageElement } from "./gatsby-browser"
