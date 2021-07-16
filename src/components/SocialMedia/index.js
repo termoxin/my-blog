@@ -1,10 +1,10 @@
 import React from "react"
 
-import { SocialMediaIcon, Anchor } from "./styles"
+import { Anchor } from "./styles"
 
-const SocialMediaItem = ({ href, icon, alt }) => (
+const SocialMediaItem = ({ width, height, href, icon, alt }) => (
   <Anchor href={href} target="_blank">
-    <SocialMediaIcon src={icon} alt={alt} />
+    <img src={icon} alt={alt} width={width} height={height} />
   </Anchor>
 )
 
