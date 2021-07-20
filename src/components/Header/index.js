@@ -13,7 +13,12 @@ const Header = ({ avatar, socialMediaData }) => (
         return location.pathname === "/" ? (
           <div>
             <Link to="/about/">
-              <Avatar src={avatar} alt="Rostyslav Futornyi smiling" />
+              <Avatar
+                src={avatar}
+                alt="Rostyslav Futornyi smiling"
+                height={120}
+                width={120}
+              />
             </Link>
             <span className="logo-prompt code">About the Author</span>
           </div>

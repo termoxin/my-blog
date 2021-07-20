@@ -1,10 +1,15 @@
 import styled from "styled-components"
 
 export const Avatar = styled.img`
+  border: 5px solid #fff;
+  border-radius: 100%;
+  box-sizing: border-box;
+  color: #000;
+  display: inline-block;
+  font-size: 1.5em;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   width: 120px;
   height: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
 `

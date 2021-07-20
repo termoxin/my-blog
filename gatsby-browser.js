@@ -19,6 +19,10 @@ const GlobalStyles = createGlobalStyle`
     margin:0;
     box-sizing: border-box;
   }
+
+  a {
+    border: none;
+  }
 `
 
 const components = {
@@ -27,7 +31,7 @@ const components = {
   Spacer,
 }
 
-export const wrapRootElement = ({ element }) => (
+export const wrapPageElement = ({ element }) => (
   <MDXProvider components={components}>
     <DefaultLayout>
       <article>{element}</article>
