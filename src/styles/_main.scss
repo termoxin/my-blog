@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap");
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -217,6 +219,9 @@ article {
     line-height: 1.9em;
     word-wrap: break-word;
     margin-top: 15px;
+  }
+  blockquote p {
+    margin-top: 0;
   }
   .footnote {
     border: 0;

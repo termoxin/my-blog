@@ -1,10 +1,16 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
+import styled from "styled-components"
 
 import SEO from "../components/Seo"
 import Pagination from "../components/Pagination"
 
 import { groupBy, getDateYear } from "../utils"
+
+const ArticleItem = styled.li`
+  font-family: "Nunito", sans-serif;
+  font-size: 1.2rem;
+`
 
 const IndexPage = ({ data, pageContext }) => {
   // all posts without dates are assumed to be drafts or pages
@@ -14,14 +20,14 @@ const IndexPage = ({ data, pageContext }) => {
 
   const postsList = posts =>
     posts.map(post => (
-      <li key={post.node.id}>
+      <ArticleItem key={post.node.id}>
         <div className="post-date code">
           <small>{post.node.frontmatter.date}</small>
         </div>
         <div className="title">
           <Link to={post.node.slug}>{post.node.frontmatter.title}</Link>
         </div>
-      </li>
+      </ArticleItem>
     ))
 
   const postsListContainer = groupBy(posts, getDateYear)
