@@ -32,7 +32,7 @@ const kebabCase = string =>
     .toLowerCase()
 
 const Heading2 = ({ children }) => {
-  const id = kebabCase(children).replaceAll(",", "")
+  const id = kebabCase(children).replace(/,/g, "")
 
   return (
     <h2 id={id}>
