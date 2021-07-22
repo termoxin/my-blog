@@ -25,10 +25,30 @@ const GlobalStyles = createGlobalStyle`
   }
 `
 
+const kebabCase = string =>
+  string
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/\s+/g, "-")
+    .toLowerCase()
+
+const Heading2 = ({ children }) => {
+  const id = kebabCase(children).replace(/,/g, "")
+
+  return (
+    <h2 id={id}>
+      <a href={`#${id}`} style={{ color: "#d9d9d9", border: "none" }}>
+        {`# `}
+      </a>
+      {children}
+    </h2>
+  )
+}
+
 const components = {
   code: CodeBlock,
   Divider,
   Spacer,
+  h2: Heading2,
 }
 
 export const wrapPageElement = ({ element }) => (
