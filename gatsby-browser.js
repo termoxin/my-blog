@@ -36,7 +36,7 @@ const Heading2 = ({ children }) => {
 
   return (
     <h2 id={id}>
-      <a href={`#${id}`} style={{ color: "#737373", border: "none" }}>
+      <a href={`#${id}`} style={{ color: "#d9d9d9", border: "none" }}>
         {`# `}
       </a>
       {children}
