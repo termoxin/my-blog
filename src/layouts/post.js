@@ -7,13 +7,17 @@ import { pagesExcludeFromPagination } from "../constants"
 import Comment from "../components/Comment"
 
 const PostTemplate = ({ data, pageContext }) => {
-  const { mdx } = data
+  const { mdx, avatar } = data
   const { frontmatter, body, slug } = mdx
   const { next, prev } = pageContext
 
   return (
     <>
-      <SEO title={frontmatter.title} description={frontmatter.description} />
+      <SEO
+        title={frontmatter.title}
+        description={frontmatter.description}
+        preview={avatar.publicURL}
+      />
       <article>
         <div className="center">
           <h1 className="title">{frontmatter.title}</h1>
@@ -64,6 +68,10 @@ export default PostTemplate
 
 export const pageQuery = graphql`
   query ($slug: String!) {
+    avatar: file(relativePath: { eq: "avatar.jpg" }) {
+      publicURL
+    }
+
     mdx(slug: { eq: $slug }) {
       id
       frontmatter {
