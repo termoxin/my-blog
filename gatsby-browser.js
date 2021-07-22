@@ -31,22 +31,24 @@ const kebabCase = string =>
     .replace(/\s+/g, "-")
     .toLowerCase()
 
+const Heading2 = ({ children }) => {
+  const id = kebabCase(children).replaceAll(",", "")
+
+  return (
+    <h2 id={id}>
+      <a href={`#${id}`} style={{ color: "#737373", border: "none" }}>
+        {`# `}
+      </a>
+      {children}
+    </h2>
+  )
+}
+
 const components = {
   code: CodeBlock,
   Divider,
   Spacer,
-  h2: ({ children }) => {
-    const id = kebabCase(children).replaceAll(",", "")
-
-    return (
-      <h2 id={id}>
-        <a href={`#${id}`} style={{ color: "#737373", border: "none" }}>
-          {`# `}
-        </a>
-        {children}
-      </h2>
-    )
-  },
+  h2: Heading2,
 }
 
 export const wrapPageElement = ({ element }) => (
