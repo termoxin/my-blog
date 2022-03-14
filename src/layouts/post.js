@@ -18,7 +18,7 @@ const PostTemplate = ({ data, pageContext }) => {
         description={frontmatter.description}
         preview={avatar.publicURL}
       />
-      <article>
+      <article className="article-content">
         <div className="center">
           <h1 className="title">{frontmatter.title}</h1>
           <span className="code">
