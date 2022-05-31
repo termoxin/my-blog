@@ -12,6 +12,7 @@ import DefaultLayout from "./src/layouts/default"
 import CodeBlock from "./src/components/CodeBlock"
 import Divider from "./src/components/Divider"
 import Spacer from "./src/components/Spacer"
+import { Carousel } from "./src/components/Carousel"
 
 const GlobalStyles = createGlobalStyle`
   *, *:after, *:before {
@@ -46,6 +47,7 @@ const Heading2 = ({ children }) => {
 
 const components = {
   code: CodeBlock,
+  Carousel: Carousel,
   Divider,
   Spacer,
   h2: Heading2,
