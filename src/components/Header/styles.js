@@ -13,3 +13,12 @@ export const Avatar = styled.img`
   width: 120px;
   height: auto;
 `
+
+export const HeaderContent = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+export const TakeCarLink = styled.a`
+  margin-top: 10px;
+`

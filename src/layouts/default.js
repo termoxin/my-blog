@@ -24,6 +24,7 @@ const DefaultLayout = ({ children }) => (
             githubUrl
             youtubeUrl
             telegramUrl
+            takeCarUrl
           }
         }
 
@@ -42,30 +43,40 @@ const DefaultLayout = ({ children }) => (
         youtube: file(relativePath: { eq: "youtube.svg" }) {
           publicURL
         }
+
+        takecar: file(relativePath: { eq: "takecar.svg" }) {
+          publicURL
+        }
       }
     `}
-    render={({ avatar, site, telegram, github, youtube }) => {
+    render={({ avatar, site, telegram, github, youtube, takecar }) => {
       const socialMediaData = [
         {
           href: site.siteMetadata.githubUrl,
           icon: github.publicURL,
           alt: "Github link",
-          width: 24,
-          height: 24,
+          width: 16,
+          height: 16,
         },
         {
           href: site.siteMetadata.youtubeUrl,
           icon: youtube.publicURL,
           alt: "Youtube link",
-          width: 24,
-          height: 24,
+          width: 16,
+          height: 16,
         },
         {
           href: site.siteMetadata.telegramUrl,
           icon: telegram.publicURL,
           alt: "Telegram link",
-          width: 24,
-          height: 24,
+          width: 16,
+          height: 16,
+        },
+        {
+          href: site.siteMetadata.takeCarUrl,
+          icon: takecar.publicURL,
+          alt: "Takecar link",
+          isTakeCarLogo: true,
         },
       ]
 

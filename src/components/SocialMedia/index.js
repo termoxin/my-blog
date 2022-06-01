@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Anchor } from "./styles"
+import { Anchor, Wrapper } from "./styles"
 
 const SocialMediaItem = ({ width, height, href, icon, alt }) => (
   <Anchor href={href} target="_blank">
@@ -9,11 +9,11 @@ const SocialMediaItem = ({ width, height, href, icon, alt }) => (
 )
 
 const SocialMediaLinks = ({ socialMediaLinks }) => (
-  <div>
+  <Wrapper>
     {socialMediaLinks.map(media => (
       <SocialMediaItem {...media} key={media.alt} />
     ))}
-  </div>
+  </Wrapper>
 )
 
 export default SocialMediaLinks

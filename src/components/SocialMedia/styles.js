@@ -7,3 +7,14 @@ export const Anchor = styled.a`
     margin: 10px 0 10px 10px;
   }
 `
+
+export const Wrapper = styled.div`
+  position: relative;
+  left: 76px;
+  bottom: 161px;
+  transform: rotate(90deg);
+
+  ${Anchor} {
+    transform: rotate(-90deg);
+  }
+`
