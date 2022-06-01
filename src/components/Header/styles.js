@@ -20,5 +20,6 @@ export const HeaderContent = styled.div`
 `
 
 export const TakeCarLink = styled.a`
-  margin-top: 10px;
+  position: relative;
+  bottom: 5px;
 `
