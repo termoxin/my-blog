@@ -68,7 +68,7 @@ export default PostTemplate
 
 export const pageQuery = graphql`
   query ($slug: String!) {
-    avatar: file(relativePath: { eq: "avatar.jpg" }) {
+    avatar: file(relativePath: { eq: "avatar.jpeg" }) {
       publicURL
     }
 

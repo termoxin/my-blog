@@ -28,7 +28,7 @@ const DefaultLayout = ({ children }) => (
           }
         }
 
-        avatar: file(relativePath: { eq: "avatar.jpg" }) {
+        avatar: file(relativePath: { eq: "avatar.jpeg" }) {
           publicURL
         }
 

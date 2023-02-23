@@ -4,7 +4,7 @@ import React from "react"
 import { Location } from "@reach/router"
 
 import SocialMediaLinks from "../SocialMedia"
-import { Avatar, HeaderContent, TakeCarLink } from "./styles"
+import { Avatar, HeaderContent, TakeCarLink, PausedMark } from "./styles"
 
 const Header = ({ avatar, socialMediaData }) => {
   const visibleLinks = socialMediaData.filter(
@@ -22,7 +22,9 @@ const Header = ({ avatar, socialMediaData }) => {
         alt={takeCarLogo.alt}
         width={100}
         height={50}
+        style={{ filter: "grayscale(1)" }}
       />
+      <PausedMark>PAUSED</PausedMark>
     </TakeCarLink>
   )
 

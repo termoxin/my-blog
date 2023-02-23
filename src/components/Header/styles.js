@@ -22,4 +22,20 @@ export const HeaderContent = styled.div`
 export const TakeCarLink = styled.a`
   position: relative;
   bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+
+export const PausedMark = styled.div`
+  background: #ff8773;
+  position: relative;
+  bottom: 44px;
+  left: 69px;
+  color: #ffffff;
+  border-radius: 7px;
+  padding: 0px 3px;
+  font-size: 6px;
+  font-weight: 900;
 `
