@@ -25,7 +25,7 @@ const IndexPage = ({ data, pageContext }) => {
           <small>{post.node.frontmatter.date}</small>
         </div>
         <div className="title">
-          <Link to={post.node.slug}>{post.node.frontmatter.title}</Link>
+          <Link to={`/${post.node.slug}`}>{post.node.frontmatter.title}</Link>
         </div>
       </ArticleItem>
     ))

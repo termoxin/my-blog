@@ -42,7 +42,7 @@ const Header = ({ avatar, socialMediaData }) => {
                   width={120}
                 />
               </Link>
-              {takeCarLink}
+              {/* {takeCarLink} */}
               <span className="logo-prompt code">About the Author</span>
             </HeaderContent>
           ) : (
@@ -50,7 +50,7 @@ const Header = ({ avatar, socialMediaData }) => {
               <Link to="/">
                 <Avatar src={avatar} alt="Rostyslav Futornyi smiling" />
               </Link>
-              {takeCarLink}
+              {/* {takeCarLink} */}
               <span className="logo-prompt code">Back Home</span>
             </HeaderContent>
           )

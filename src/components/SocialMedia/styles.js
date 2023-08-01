@@ -11,7 +11,7 @@ export const Anchor = styled.a`
 export const Wrapper = styled.div`
   position: relative;
   left: 76px;
-  bottom: 153px;
+  bottom: 98px;
   transform: rotate(90deg);
 
   ${Anchor} {
