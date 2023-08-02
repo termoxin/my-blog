@@ -17,6 +17,7 @@ export const Avatar = styled.img`
 export const HeaderContent = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `
 
 export const TakeCarLink = styled.a`
@@ -38,4 +39,23 @@ export const PausedMark = styled.div`
   padding: 0px 3px;
   font-size: 6px;
   font-weight: 900;
+`
+
+export const IdeasButton = styled.button`
+  background: linear-gradient(to right, #805ad5, #ff4d8a);
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  width: 200px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(to right, #ff4d8a, #805ad5);
+    transform: scale(1.05);
+  }
 `
