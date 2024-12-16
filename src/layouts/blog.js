@@ -87,6 +87,9 @@ const Status = ({ status }) => {
     case "Failed":
       circleColor = "#ff8080" // Lighter shade of red
       break
+    case "Worked, keep going":
+      circleColor = "#b3ffb3" // Light greenish-blue
+      break
     case "In Progress":
       circleColor = "#ffe680" // Lighter shade of yellow
       break
