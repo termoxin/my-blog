@@ -28,6 +28,10 @@ const DefaultLayout = ({ children }) => (
           }
         }
 
+        christmasHat: file(relativePath: { eq: "christmas-hat.png" }) {
+          publicURL
+        }
+
         avatar: file(relativePath: { eq: "avatar.jpeg" }) {
           publicURL
         }
@@ -49,7 +53,7 @@ const DefaultLayout = ({ children }) => (
         }
       }
     `}
-    render={({ avatar, site, telegram, github, youtube, takecar }) => {
+    render={({ avatar, christmasHat, site, telegram, github, youtube, takecar }) => {
       const socialMediaData = [
         {
           href: site.siteMetadata.githubUrl,
@@ -82,7 +86,11 @@ const DefaultLayout = ({ children }) => (
 
       return (
         <>
-          <Header avatar={avatar.publicURL} socialMediaData={socialMediaData} />
+          <Header 
+            avatar={avatar.publicURL} 
+            christmasHat={christmasHat.publicURL} 
+            socialMediaData={socialMediaData} 
+          />
           <div id="content">{children}</div>
           <Footer siteTitle={site.siteMetadata.title} />
         </>

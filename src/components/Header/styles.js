@@ -14,6 +14,14 @@ export const Avatar = styled.img`
   height: auto;
 `
 
+export const ChristmasHat = styled.img`
+  position: absolute;
+  left: 40px;
+  bottom: 70px;
+  scale: 1.1;
+  transform: rotate(-40deg);
+`
+
 export const HeaderContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -42,20 +50,26 @@ export const PausedMark = styled.div`
 `
 
 export const IdeasButton = styled.button`
-  background: linear-gradient(to right, #805ad5, #ff4d8a);
+  background: linear-gradient(to right, #ff7e5f, #feb47b);
   color: #fff;
   font-weight: bold;
-  padding: 10px 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 12px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
-  width: 200px;
-  font-size: 14px;
+  width: 220px;
+  font-size: 16px;
   border: none;
   cursor: pointer;
+  position: relative;
 
   &:hover {
-    background: linear-gradient(to right, #ff4d8a, #805ad5);
-    transform: scale(1.05);
+    background: linear-gradient(to right, #feb47b, #ff7e5f);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    top: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 `

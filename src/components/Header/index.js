@@ -7,38 +7,27 @@ import SocialMediaLinks from "../SocialMedia"
 import {
   Avatar,
   HeaderContent,
-  TakeCarLink,
-  PausedMark,
   IdeasButton,
+  ChristmasHat,
 } from "./styles"
 
-const Header = ({ avatar, socialMediaData }) => {
+const Header = ({ avatar, christmasHat, socialMediaData }) => {
   const visibleLinks = socialMediaData.filter(
     socialMedia => !socialMedia.isTakeCarLogo
   )
-
-  const takeCarLogo = socialMediaData.find(
-    socialMedia => socialMedia.isTakeCarLogo
-  )
-
-  // const takeCarLink = (
-  //   <TakeCarLink href={takeCarLogo.href} target="__blank">
-  //     <img
-  //       src={takeCarLogo.icon}
-  //       alt={takeCarLogo.alt}
-  //       width={100}
-  //       height={50}
-  //       style={{ filter: "grayscale(1)" }}
-  //     />
-  //     <PausedMark>PAUSED</PausedMark>
-  //   </TakeCarLink>
-  // )
 
   const onClickIdeasButton = () => {
     window.open(
       "https://excellent-life.notion.site/Ideas-d9db6986f22f4107b427589835bbf729?pvs=4",
       "_blank"
     )
+  }
+
+  const showChristmasHat = () => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 11, 1);
+    const end = new Date(now.getFullYear() + 1, 0, 7); 
+    return now >= start && now <= end;
   }
 
   return (
@@ -48,12 +37,20 @@ const Header = ({ avatar, socialMediaData }) => {
           return location.pathname === "/" ? (
             <HeaderContent>
               <Link to="/about/">
-                <Avatar
-                  src={avatar}
-                  alt="Rostyslav Futornyi smiling"
-                  height={120}
-                  width={120}
-                />
+                <div style={{ position: "relative" }}>
+                  <Avatar
+                    src={avatar}
+                    alt="Rostyslav Futornyi smiling"
+                    height={120}
+                    width={120}
+                  />
+                  {showChristmasHat() && <ChristmasHat 
+                    alt="Christmas hat"
+                    height={48}
+                    width={48}
+                    src={christmasHat}
+                  />}
+                </div>
               </Link>
               {/* {takeCarLink} */}
               <IdeasButton onClick={onClickIdeasButton}>
@@ -65,7 +62,15 @@ const Header = ({ avatar, socialMediaData }) => {
           ) : (
             <HeaderContent>
               <Link to="/">
-                <Avatar src={avatar} alt="Rostyslav Futornyi smiling" />
+               <div style={{ position: "relative" }}>
+               <Avatar src={avatar} alt="Rostyslav Futornyi smiling" />
+                {showChristmasHat() && <ChristmasHat 
+                  alt="Christmas hat"
+                  height={48}
+                  width={48}
+                  src={christmasHat}
+                />}
+              </div>
               </Link>
               {/* {takeCarLink} */}
               <IdeasButton onClick={onClickIdeasButton}>
