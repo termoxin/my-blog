@@ -1,89 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-
-const Container = styled.div`
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-const Card = styled.div`
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 60rem;
-    width: 100%;
-`;
-
-const Label = styled.label`
-    display: block;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #4a5568;
-    margin-bottom: 0.5rem;
-`;
-
-const Input = styled.input`
-    width: 100%;
-    border: 1px solid #cbd5e0;
-    border-radius: 0.375rem;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    color: #4a5568;
-    background-color: #f7fafc;
-    transition: border-color 0.2s;
-
-    &:focus {
-        border-color: #3182ce;
-        outline: none;
-    }
-
-    &::file-selector-button {
-        border: 1px solid #cbd5e0;
-        border-radius: 0.375rem;
-        padding: 0.5rem;
-        margin-right: 1rem;
-        background-color: #edf2f7;
-        color: #4a5568;
-        cursor: pointer;
-        transition: background-color 0.2s;
-
-        &:hover {
-            background-color: #e2e8f0;
-        }
-    }
-`;
-
-const Slider = styled.input`
-    width: 100%;
-    margin-bottom: 1rem;
-`;
-
-const Results = styled.div`
-    color: #4a5568;
-`;
-
-const Warning = styled.div`
-    background-color: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #991b1b;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    margin-top: 1rem;
-`;
-
-const Notice = styled.div`
-    background-color: #e2e8f0;
-    border: 1px solid #cbd5e0;
-    color: #2d3748;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    text-align: center;
-`;
+import { Card, Container, Input, Label, Notice, Results, Slider, Warning } from './styles';
+import { parseGPX } from './utils';
 
 const EBikeRangeCalculator = () => {
     const [speed, setSpeed] = useState(20);
@@ -94,7 +11,7 @@ const EBikeRangeCalculator = () => {
     const [gpxData, setGpxData] = useState(null);
     const [distances, setDistances] = useState([]);
     const [elevations, setElevations] = useState([]);
-    const [batteryCapacity, setBatteryCapacity] = useState(25); // Battery capacity in Ah
+    const [batteryCapacity, setBatteryCapacity] = useState(25); 
     const [results, setResults] = useState({
         totalDistance: '-',
         elevationGain: '-',
@@ -106,69 +23,29 @@ const EBikeRangeCalculator = () => {
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
+
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => parseGPX(e.target.result);
+            reader.onload = (e) => {
+ 
+                const {  
+                    newDistances,
+                    newElevations,
+                    totalDistance,
+                    elevationGain 
+                } = parseGPX(e.target.result)
+
+                setDistances(newDistances);
+                setElevations(newElevations);
+                setResults((prev) => ({
+                    ...prev,
+                    totalDistance: (totalDistance / 1000).toFixed(2),
+                    elevationGain: elevationGain.toFixed(2),
+                }));
+            };
+            
             reader.readAsText(file);
         }
-    };
-
-    const parseGPX = (gpxString) => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(gpxString, 'application/xml');
-        const points = xml.getElementsByTagName('trkpt');
-
-        const newDistances = [];
-        const newElevations = [];
-        let totalDistance = 0;
-
-        const haversine = (lat1, lon1, lat2, lon2) => {
-            const R = 6371e3; // Earth radius in meters
-            const toRad = (deg) => (deg * Math.PI) / 180;
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a =
-                Math.sin(dLat / 2) ** 2 +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-            return 2 * R * Math.asin(Math.sqrt(a));
-        };
-
-        let prevLat = null;
-        let prevLon = null;
-
-        for (let point of points) {
-            const lat = parseFloat(point.getAttribute('lat'));
-            const lon = parseFloat(point.getAttribute('lon'));
-            const ele = parseFloat(point.getElementsByTagName('ele')[0].textContent);
-
-            newElevations.push(ele);
-
-            if (prevLat !== null && prevLon !== null) {
-                const dist = haversine(prevLat, prevLon, lat, lon);
-                totalDistance += dist;
-                newDistances.push(totalDistance / 1000); // Convert to km
-            } else {
-                newDistances.push(0);
-            }
-
-            prevLat = lat;
-            prevLon = lon;
-        }
-
-        const elevationGain = newElevations.reduce((acc, curr, idx, arr) => {
-            if (idx > 0 && curr > arr[idx - 1]) {
-                return acc + (curr - arr[idx - 1]);
-            }
-            return acc;
-        }, 0);
-
-        setDistances(newDistances);
-        setElevations(newElevations);
-        setResults((prev) => ({
-            ...prev,
-            totalDistance: (totalDistance / 1000).toFixed(2),
-            elevationGain: elevationGain.toFixed(2),
-        }));
     };
 
     const calculateRange = () => {
@@ -233,9 +110,7 @@ const EBikeRangeCalculator = () => {
     
         const finishTime = calculateFinishTime();
     
-        setResults((prev) => ({
-            totalDistance: prev.totalDistance,
-            elevationGain: prev.elevationGain,
+        return {
             averageConsumption: averageConsumption.toFixed(2),
             estimatedRange: estimatedRange.toFixed(2),
             finishTime,
@@ -245,7 +120,7 @@ const EBikeRangeCalculator = () => {
                       chargeTime: chargeTimeRequired.toFixed(2),
                   }
                 : null,
-        }));
+        }
     };
     
     const calculateFinishTime = () => {
@@ -270,7 +145,8 @@ const EBikeRangeCalculator = () => {
     };
 
     useEffect(() => {
-        calculateRange();
+        setResults(prev => ({ totalDistance: prev.totalDistance,
+                elevationGain: prev.elevationGain,...calculateRange()}));
     }, [speed, windSpeed, bikeWeight, riderWeight, distances, elevations, startTime, batteryCapacity]);
 
     return (
