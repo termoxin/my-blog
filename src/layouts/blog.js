@@ -148,7 +148,7 @@ const IndexPage = ({ data, pageContext }) => {
 
   const postsListContainer = groupBy(posts, getDateYear)
     .map(({ year, posts }, i) => (
-      <div key={i}>
+      <div style={{ gap: 30, display: 'flex', flexDirection: 'column' }} key={i}>
         <h2 className="code" style={{ margin: "40px 0" }}>
           {year}
         </h2>
