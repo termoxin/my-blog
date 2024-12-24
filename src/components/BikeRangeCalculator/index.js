@@ -181,40 +181,59 @@ const EBikeRangeCalculator = () => {
         const frontalArea = 0.6; // m^2
         const chargerAmps = 5; // Charger amperage
         const chargerRate = chargerAmps * batteryVoltage; // Charging rate in Watts
-
+    
         if (!distances.length || !elevations.length) return;
-
+    
         let totalConsumption = 0; // Wh
-
+    
         for (let i = 1; i < distances.length; i++) {
             const distanceSegment = (distances[i] - distances[i - 1]) * 1000; // Segment length in meters
             const elevationChange = elevations[i] - elevations[i - 1]; // Elevation change in meters
             const speedMetersPerSec = speed / 3.6;
             const adjustedSpeed = (speed + windSpeed * 3.6) / 3.6;
-
+    
             const rollingPower = rollingResistance * (bikeWeight + riderWeight) * g * speedMetersPerSec;
             const dragPower = 0.5 * airDensity * dragCoefficient * frontalArea * adjustedSpeed ** 3;
             const elevationPower =
                 elevationChange > 0
                     ? (elevationChange * (bikeWeight + riderWeight) * g) / (distanceSegment / speedMetersPerSec)
                     : 0; // No power for descents (or add recovery here if needed)
-
+    
             const segmentPower = rollingPower + dragPower + elevationPower;
             const segmentConsumption = (segmentPower * (distanceSegment / speedMetersPerSec)) / 3600; // Convert to Wh
-
+    
             totalConsumption += segmentConsumption;
         }
-
+    
         const averageConsumption = totalConsumption / distances[distances.length - 1]; // Wh/km
         const estimatedRange = batteryCapacityWh / averageConsumption; // km
-
-        const chargeWarning = estimatedRange < distances[distances.length - 1];
-        const remainingEnergy = (distances[distances.length - 1] - estimatedRange) * averageConsumption;
-        const chargeTimeRequired = remainingEnergy / chargerRate; // in hours
-
+    
+        // Calculate when charging is needed
+        let chargePoint = null;
+    
+        for (let i = 0; i < distances.length; i++) {
+            if (distances[i] > estimatedRange) {
+                chargePoint = distances[i]; // Distance at which charging is required
+                break;
+            }
+        }
+    
+        const chargeWarning = chargePoint !== null;
+    
+        let remainingEnergy = 0;
+        let chargeTimeRequired = 0;
+    
+        if (chargeWarning) {
+            // Remaining energy needed beyond the estimated range
+            remainingEnergy = (totalConsumption - batteryCapacityWh) > 0 ? (totalConsumption - batteryCapacityWh) : 0;
+    
+            // Charging time (hours)
+            chargeTimeRequired = remainingEnergy / chargerRate;
+        }
+    
         const finishTime = calculateFinishTime();
-
-        setResults(prev => ({
+    
+        setResults((prev) => ({
             totalDistance: prev.totalDistance,
             elevationGain: prev.elevationGain,
             averageConsumption: averageConsumption.toFixed(2),
@@ -222,13 +241,13 @@ const EBikeRangeCalculator = () => {
             finishTime,
             chargeWarning: chargeWarning
                 ? {
-                        chargeKm: distances[distances.length - 1].toFixed(2),
-                        chargeTime: chargeTimeRequired.toFixed(2),
-                    }
+                      chargeKm: chargePoint ? chargePoint.toFixed(2) : null,
+                      chargeTime: chargeTimeRequired.toFixed(2),
+                  }
                 : null,
         }));
     };
-
+    
     const calculateFinishTime = () => {
         if (!startTime) return '-';
         const [hours, minutes] = startTime.split(':').map(Number);
