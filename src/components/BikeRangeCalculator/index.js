@@ -94,6 +94,7 @@ const EBikeRangeCalculator = () => {
     const [gpxData, setGpxData] = useState(null);
     const [distances, setDistances] = useState([]);
     const [elevations, setElevations] = useState([]);
+    const [batteryCapacity, setBatteryCapacity] = useState(25); // Battery capacity in Ah
     const [results, setResults] = useState({
         totalDistance: '-',
         elevationGain: '-',
@@ -171,15 +172,15 @@ const EBikeRangeCalculator = () => {
     };
 
     const calculateRange = () => {
-        const batteryCapacity = 1200; // Wh
+        const batteryVoltage = 48; // Typical e-bike voltage in volts
+        const batteryCapacityWh = batteryCapacity * batteryVoltage; // Convert Ah to Wh
         const rollingResistance = 0.006;
         const g = 9.81; // Gravity in m/s^2
         const airDensity = 1.225; // kg/m^3
         const dragCoefficient = 0.9;
         const frontalArea = 0.6; // m^2
         const chargerAmps = 5; // Charger amperage
-        const chargerVoltage = 48; // Typical e-bike voltage in volts
-        const chargerRate = chargerAmps * chargerVoltage; // Charging rate in Watts
+        const chargerRate = chargerAmps * batteryVoltage; // Charging rate in Watts
 
         if (!distances.length || !elevations.length) return;
 
@@ -205,7 +206,7 @@ const EBikeRangeCalculator = () => {
         }
 
         const averageConsumption = totalConsumption / distances[distances.length - 1]; // Wh/km
-        const estimatedRange = batteryCapacity / averageConsumption; // km
+        const estimatedRange = batteryCapacityWh / averageConsumption; // km
 
         const chargeWarning = estimatedRange < distances[distances.length - 1];
         const remainingEnergy = (distances[distances.length - 1] - estimatedRange) * averageConsumption;
@@ -251,7 +252,7 @@ const EBikeRangeCalculator = () => {
 
     useEffect(() => {
         calculateRange();
-    }, [speed, windSpeed, bikeWeight, riderWeight, distances, elevations, startTime]);
+    }, [speed, windSpeed, bikeWeight, riderWeight, distances, elevations, startTime, batteryCapacity]);
 
     return (
         <Container>
@@ -313,6 +314,14 @@ const EBikeRangeCalculator = () => {
                             id="start-time"
                             value={startTime}
                             onChange={(e) => setStartTime(e.target.value)}
+                        />
+
+                        <Label htmlFor="battery-capacity">🔋 Battery Capacity (Ah):</Label>
+                        <Input
+                            type="number"
+                            id="battery-capacity"
+                            value={batteryCapacity}
+                            onChange={(e) => setBatteryCapacity(Number(e.target.value))}
                         />
                     </div>
 
