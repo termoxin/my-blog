@@ -1,24 +1,11 @@
 const BATTERY_VOLTAGE = 48; // Typical e-bike voltage in volts
-const BASE_ROLLING_RESISTANCE = 0.006; // Default rolling resistance
-const GRAVITY = 9.81; // Gravity in m/s^2
+const ROLLING_RESISTANCE = 0.006;
+const G = 9.81; // Gravity in m/s^2
 const AIR_DENSITY = 1.225; // kg/m^3
 const DRAG_COEFFICIENT = 0.9;
 const FRONTAL_AREA = 0.6; // m^2
 const CHARGER_AMPS = 5; // Charger amperage
 const CHARGER_RATE = CHARGER_AMPS * BATTERY_VOLTAGE; // Charging rate in Watts
-
-// Rolling resistance adjustments based on tire types and pressures
-const TIRE_TYPE_ROLLING_RESISTANCE = {
-    road: 0.004,
-    hybrid: 0.005,
-    mountain: 0.008,
-};
-
-const PRESSURE_ADJUSTMENT = (pressure) => {
-    if (pressure >= 5) return -0.001; // Higher pressure reduces rolling resistance
-    if (pressure <= 2) return 0.002; // Lower pressure increases rolling resistance
-    return 0; // Neutral adjustment for moderate pressure
-};
 
 export const calculateBikeRange = (
     batteryCapacity,
@@ -28,20 +15,14 @@ export const calculateBikeRange = (
     windSpeed,
     bikeWeight,
     riderWeight,
-    startTime,
-    tireType = "hybrid", // Default to hybrid tires
-    tirePressure = 3 // Default to 3 bars
-) => () => {
+    startTime
+) => {
     const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
 
     if (!distances.length || !elevations.length) return;
 
-    let totalConsumption = 0; // Wh
-
-    // Calculate adjusted rolling resistance based on tire type and pressure
-    const rollingResistance =
-        TIRE_TYPE_ROLLING_RESISTANCE[tireType] +
-        PRESSURE_ADJUSTMENT(tirePressure);
+    let totalConsumption = 0; 
+    let segmentsConsumption = [];
 
     distances.forEach((distance, i) => {
         if (i === 0) return;
@@ -51,14 +32,20 @@ export const calculateBikeRange = (
         const speedMetersPerSec = speed / 3.6;
         const adjustedSpeed = (speed + windSpeed * 3.6) / 3.6;
 
-        const rollingPower = rollingResistance * (bikeWeight + riderWeight) * GRAVITY * speedMetersPerSec;
+        const rollingPower = ROLLING_RESISTANCE * (bikeWeight + riderWeight) * G * speedMetersPerSec;
         const dragPower = 0.5 * AIR_DENSITY * DRAG_COEFFICIENT * FRONTAL_AREA * adjustedSpeed ** 3;
         const elevationPower = elevationChange > 0
-            ? (elevationChange * (bikeWeight + riderWeight) * GRAVITY) / (distanceSegment / speedMetersPerSec)
-            : 0; // No power for descents (or add recovery here if needed)
+            ? (elevationChange * (bikeWeight + riderWeight) * G) / (distanceSegment / speedMetersPerSec)
+            : 0;
 
         const segmentPower = rollingPower + dragPower + elevationPower;
         const segmentConsumption = (segmentPower * (distanceSegment / speedMetersPerSec)) / 3600; // Convert to Wh
+
+        segmentsConsumption.push({
+            km: distance.toFixed(2),
+            power: segmentPower.toFixed(2),
+            slope: ((elevationChange / distanceSegment) * 100).toFixed(2)
+        });
 
         totalConsumption += segmentConsumption;
     });
@@ -84,6 +71,7 @@ export const calculateBikeRange = (
     const finishTime = calculateFinishTime(startTime, distances, speed);
 
     return {
+        segmentsConsumption,
         averageConsumption: averageConsumption.toFixed(2),
         estimatedRange: estimatedRange.toFixed(2),
         finishTime,

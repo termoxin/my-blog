@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Container, Input, Label, Notice, Results, Slider, Warning } from './styles';
 import { parseGPX } from './utils/parseGpx';
 import { calculateBikeRange } from './utils/calculateRange';
+import { KmAndWhChart } from './components/KmAndWhChart';
 
 export const EBikeRangeCalculator = () => {
     const [speed, setSpeed] = useState(20);
@@ -9,7 +10,6 @@ export const EBikeRangeCalculator = () => {
     const [bikeWeight, setBikeWeight] = useState(28);
     const [riderWeight, setRiderWeight] = useState(65);
     const [startTime, setStartTime] = useState('');
-    const [gpxData, setGpxData] = useState(null);
     const [distances, setDistances] = useState([]);
     const [elevations, setElevations] = useState([]);
     
@@ -50,12 +50,18 @@ export const EBikeRangeCalculator = () => {
         }
     };
 
-    const calculateRange = calculateBikeRange(batteryCapacity, distances, elevations, speed, windSpeed, bikeWeight, riderWeight, startTime);
+    const rangeData = calculateBikeRange(batteryCapacity, distances, elevations, speed, windSpeed, bikeWeight, riderWeight, startTime);
 
     useEffect(() => {
         setResults(prev => ({ totalDistance: prev.totalDistance,
-                elevationGain: prev.elevationGain,...calculateRange()}));
+                elevationGain: prev.elevationGain,...rangeData}));
     }, [speed, windSpeed, bikeWeight, riderWeight, distances, elevations, startTime, batteryCapacity]);
+
+    const kmAndWhChartData = rangeData?.segmentsConsumption.map((segment) => ({
+        x: Number(segment.km),
+        y: Number(segment.power),
+        z: Number(segment.slope),
+    }));
 
     return (
         <Container>
@@ -145,8 +151,10 @@ export const EBikeRangeCalculator = () => {
                                 </p>
                             </Warning>
                         )}
+                        {rangeData?.segmentsConsumption.length && <KmAndWhChart data={kmAndWhChartData}  />}
                     </Results>
                 </div>
+        
             </Card>
         </Container>
     );
