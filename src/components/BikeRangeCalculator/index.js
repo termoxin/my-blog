@@ -11,6 +11,7 @@ export const EBikeRangeCalculator = () => {
     const [riderWeight, setRiderWeight] = useState(65);
     const [startTime, setStartTime] = useState('');
     const [distances, setDistances] = useState([]);
+    const [directions, setDirections] = useState([]);
     const [elevations, setElevations] = useState([]);
     
     const [batteryCapacity, setBatteryCapacity] = useState(25); 
@@ -29,14 +30,15 @@ export const EBikeRangeCalculator = () => {
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
- 
                 const {  
                     newDistances,
                     newElevations,
                     totalDistance,
-                    elevationGain 
+                    elevationGain,
+                    directions
                 } = parseGPX(e.target.result)
 
+                setDirections(directions)
                 setDistances(newDistances);
                 setElevations(newElevations);
                 setResults((prev) => ({
@@ -50,7 +52,20 @@ export const EBikeRangeCalculator = () => {
         }
     };
 
-    const rangeData = calculateBikeRange(batteryCapacity, distances, elevations, speed, windSpeed, bikeWeight, riderWeight, startTime);
+    const rangeData = calculateBikeRange(
+        batteryCapacity, distances, elevations, speed, windSpeed, bikeWeight, riderWeight, startTime,
+        [
+            { "time": "12:00", "speed": 4, "direction": "↓" },
+            { "time": "15:00", "speed": 5, "direction": "↓" },
+            { "time": "18:00", "speed": 4, "direction": "↓" },
+            { "time": "21:00", "speed": 2, "direction": "↓" },
+            { "time": "00:00", "speed": 2, "direction": "↓" },
+            { "time": "03:00", "speed": 3, "direction": "↓" },
+            { "time": "06:00", "speed": 3, "direction": "↓" },
+            { "time": "09:00", "speed": 3, "direction": "↓" }
+        ],
+        directions
+    );
 
     useEffect(() => {
         setResults(prev => ({ totalDistance: prev.totalDistance,

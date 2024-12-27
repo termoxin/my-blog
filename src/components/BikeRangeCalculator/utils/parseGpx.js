@@ -1,3 +1,15 @@
+const calculateBearing = (lat1, lon1, lat2, lon2) => {
+    const toRad = (deg) => (deg * Math.PI) / 180;
+    const toDeg = (rad) => (rad * 180) / Math.PI;
+
+    const dLon = toRad(lon2 - lon1);
+    const y = Math.sin(dLon) * Math.cos(toRad(lat2));
+    const x = Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+              Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(dLon);
+    const bearing = toDeg(Math.atan2(y, x));
+    return (bearing + 360) % 360; // Normalize to 0-360
+};
+
 export const parseGPX = (gpxString) => {
     const parser = new DOMParser();
     const xml = parser.parseFromString(gpxString, 'application/xml');
@@ -5,6 +17,7 @@ export const parseGPX = (gpxString) => {
 
     const newDistances = [];
     const newElevations = [];
+    const directions = [];
     let totalDistance = 0;
 
     const haversine = (lat1, lon1, lat2, lon2) => {
@@ -32,8 +45,10 @@ export const parseGPX = (gpxString) => {
             const dist = haversine(prevLat, prevLon, lat, lon);
             totalDistance += dist;
             newDistances.push(totalDistance / 1000); 
+            directions.push(calculateBearing(prevLat, prevLon, lat, lon));
         } else {
             newDistances.push(0);
+            directions.push(null);
         }
 
         prevLat = lat;
@@ -52,5 +67,6 @@ export const parseGPX = (gpxString) => {
         newElevations,
         totalDistance,
         elevationGain,
+        directions
     };
 };
