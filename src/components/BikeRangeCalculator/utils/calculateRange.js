@@ -7,7 +7,6 @@ const FRONTAL_AREA = 0.6; // m^2
 const CHARGER_AMPS = 5; // Charger amperage
 const CHARGER_RATE = CHARGER_AMPS * BATTERY_VOLTAGE; // Charging rate in Watts
 
-// Main calculation function
 export const calculateBikeRange = (
     batteryCapacity,
     distances,
@@ -18,11 +17,10 @@ export const calculateBikeRange = (
     riderWeight,
     startTime,
     windData,
-    directions
+    movementAngles 
 ) => {
     const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
     if (!distances.length || !elevations.length) return;
-
 
     let totalConsumption = 0;
     let segmentsConsumption = [];
@@ -39,14 +37,20 @@ export const calculateBikeRange = (
 
         const windSpeedKmh = wind.speed; // Wind speed in km/h
         const windDirection = wind.direction; // Wind direction
-        const relativeWindSpeedKmh = calculateEffectiveWindSpeed(speed, windSpeedKmh, windDirection);
+        const movementAngle = movementAngles[i] || 0; // Angle of movement for the segment
+        const relativeWindSpeedKmh = calculateEffectiveWindSpeed(
+            windSpeedKmh,
+            windDirection,
+            movementAngle
+        );
         const adjustedSpeed = (speed + relativeWindSpeedKmh) / 3.6; // Convert to m/s
 
         const rollingPower = ROLLING_RESISTANCE * (bikeWeight + riderWeight) * G * speedMetersPerSec;
         const dragPower = 0.5 * AIR_DENSITY * DRAG_COEFFICIENT * FRONTAL_AREA * adjustedSpeed ** 3;
-        const elevationPower = elevationChange > 0
-            ? (elevationChange * (bikeWeight + riderWeight) * G) / (distanceSegment / speedMetersPerSec)
-            : 0;
+        const elevationPower =
+            elevationChange > 0
+                ? (elevationChange * (bikeWeight + riderWeight) * G) / (distanceSegment / speedMetersPerSec)
+                : 0;
 
         const segmentPower = rollingPower + dragPower + elevationPower;
         const segmentConsumption = (segmentPower * (distanceSegment / speedMetersPerSec)) / 3600; // Convert to Wh
@@ -57,6 +61,7 @@ export const calculateBikeRange = (
             slope: ((elevationChange / distanceSegment) * 100).toFixed(2),
             wind: wind.direction,
             windSpeed: wind.speed,
+            movementAngle, // Add movement angle to the output
         });
 
         totalConsumption += segmentConsumption;
@@ -65,7 +70,7 @@ export const calculateBikeRange = (
     const averageConsumption = totalConsumption / distances[distances.length - 1]; // Wh/km
     const estimatedRange = batteryCapacityWh / averageConsumption; // km
 
-    const chargePoint = distances.find(distance => distance > estimatedRange) || null;
+    const chargePoint = distances.find((distance) => distance > estimatedRange) || null;
     const chargeWarning = chargePoint !== null;
 
     let remainingEnergy = 0;
@@ -85,23 +90,29 @@ export const calculateBikeRange = (
         finishTime,
         chargeWarning: chargeWarning
             ? {
-                    chargeKm: chargePoint ? chargePoint.toFixed(2) : null,
-                    chargeTime: chargeTimeRequired.toFixed(2),
-                }
+                  chargeKm: chargePoint ? chargePoint.toFixed(2) : null,
+                  chargeTime: chargeTimeRequired.toFixed(2),
+              }
             : null,
     };
 };
 
-// Utility: Calculate wind effect
-const calculateEffectiveWindSpeed = (bikeSpeed, windSpeed, windDirection) => {
+const calculateEffectiveWindSpeed = (windSpeed, windDirection, movementAngle) => {
     const windAngle = mapWindDirectionToAngle(windDirection);
-    const relativeAngle = Math.abs(windAngle - 0); // Assuming bike direction is "0 degrees"
-    const effectiveWindSpeed = windSpeed * Math.cos((relativeAngle * Math.PI) / 180); // Adjust wind speed
+    const relativeAngle = Math.abs(windAngle - movementAngle); // Adjust wind based on movement direction
+    let effectiveWindSpeed = windSpeed * Math.cos((relativeAngle * Math.PI) / 180); // Adjust wind speed
+
+    if (effectiveWindSpeed > 0) {
+        effectiveWindSpeed = -effectiveWindSpeed;
+    } else if (effectiveWindSpeed < 0) {
+        effectiveWindSpeed = Math.abs(effectiveWindSpeed);
+    }
+
+    console.log(`Effective Wind Speed: ${effectiveWindSpeed} m/s at angle ${relativeAngle}`);
     return effectiveWindSpeed;
 };
 
-// Utility: Map wind direction to angle
-const mapWindDirectionToAngle = direction => {
+const mapWindDirectionToAngle = (direction) => {
     const directions = {
         '↑': 0,
         '↗': 45,
@@ -110,9 +121,9 @@ const mapWindDirectionToAngle = direction => {
         '↓': 180,
         '↙': 225,
         '←': 270,
-        '↖': 315
+        '↖': 315,
     };
-    
+
     return directions[direction] || 0;
 };
 
@@ -128,7 +139,7 @@ const getWindDataForTime = (segmentTime, windData) => {
 // Utility: Calculate segment time
 const calculateSegmentTime = (startTime, distances, segmentIndex, speed) => {
     const elapsedTime = distances.slice(1, segmentIndex + 1).reduce((time, distance) => {
-        return time + (distance / speed);
+        return time + distance / speed;
     }, 0); // Total elapsed time in hours
     const [hours, minutes] = startTime.split(':').map(Number);
     const segmentTime = new Date();
