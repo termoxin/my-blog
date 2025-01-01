@@ -104,7 +104,7 @@ export const calculateBikeRange = (
         chargeTimeRequired = remainingEnergy / CHARGER_RATE;
     }
 
-    const finishTime = calculateFinishTime(startTime, distances, speed);
+    const finishTime = calculateFinishTime(startTime, distances, speed, chargeTimeRequired);
 
     const MAX_CHARGE_TIME = batteryCapacity / CHARGER_AMPS; 
 
@@ -158,14 +158,14 @@ const calculateSegmentTime = (startTime, distances, segmentIndex, speed) => {
 };
 
 // Utility: Calculate finish time
-const calculateFinishTime = (startTime, distances, speed) => {
+const calculateFinishTime = (startTime, distances, speed, chargeTimeRequired) => {
     if (!startTime) return '-';
     const [hours, minutes] = startTime.split(':').map(Number);
     const totalRideTime = distances[distances.length - 1] / speed; // Hours
 
     const finishDate = new Date();
     finishDate.setHours(hours);
-    finishDate.setMinutes(minutes + totalRideTime * 60);
+    finishDate.setMinutes(minutes + (totalRideTime + chargeTimeRequired) * 60); // Add charge time to total ride time
 
     let finishHours = finishDate.getHours();
     const finishMinutes = finishDate.getMinutes();
