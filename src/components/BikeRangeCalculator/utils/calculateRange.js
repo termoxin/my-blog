@@ -1,7 +1,8 @@
 import { mapWindDirectionToAngle } from "./mapWindDirectionToAngle";
 
 const BATTERY_VOLTAGE = 48; // Typical e-bike voltage in volts
-const ROLLING_RESISTANCE = 0.006;
+const BIKE_ROLLING_RESISTANCE = 0.006; // Coefficient for bike tires
+const TRAILER_ROLLING_RESISTANCE = 0.008; // Slightly higher for smaller trailer wheels
 const G = 9.81; // Gravity in m/s^2
 const AIR_DENSITY = 1.225; // kg/m^3
 const DRAG_COEFFICIENT = 0.9;
@@ -18,10 +19,23 @@ export const calculateBikeRange = (
     riderWeight,
     startTime,
     windData,
-    movementAngles 
+    movementAngles,
+    trailerData = {}
 ) => {
     const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
     if (!distances.length || !elevations.length) return;
+
+    const {
+        weight: trailerWeight = 0,
+        dogWeight = 0,
+        length = 0,
+        width = 0,
+        height = 0,
+    } = trailerData;
+
+    const totalWeight = bikeWeight + riderWeight + trailerWeight + dogWeight;
+    const trailerFrontalArea = length * height; // Simplified calculation for trailer frontal area
+    const trailerWheelLoad = (trailerWeight + dogWeight) / 2; // Per wheel load for trailer
 
     let totalConsumption = 0;
     let segmentsConsumption = [];
@@ -46,14 +60,22 @@ export const calculateBikeRange = (
         );
         const adjustedSpeed = (speed + relativeWindSpeedKmh) / 3.6; // Convert to m/s
 
-        const rollingPower = ROLLING_RESISTANCE * (bikeWeight + riderWeight) * G * speedMetersPerSec;
-        const dragPower = 0.5 * AIR_DENSITY * DRAG_COEFFICIENT * FRONTAL_AREA * adjustedSpeed ** 3;
+        // Adjust rolling resistance for bike and trailer
+        const bikeRollingPower = BIKE_ROLLING_RESISTANCE * (bikeWeight + riderWeight) * G * speedMetersPerSec;
+        const trailerRollingPower = TRAILER_ROLLING_RESISTANCE * trailerWheelLoad * 2 * G * speedMetersPerSec; // Two wheels
+
+        // Adjust drag power to include trailer frontal area
+        const adjustedFrontalArea = FRONTAL_AREA + trailerFrontalArea;
+        const dragPower =
+            0.5 * AIR_DENSITY * DRAG_COEFFICIENT * adjustedFrontalArea * adjustedSpeed ** 3;
+
+        // Elevation power remains the same, based on total weight
         const elevationPower =
             elevationChange > 0
-                ? (elevationChange * (bikeWeight + riderWeight) * G) / (distanceSegment / speedMetersPerSec)
+                ? (elevationChange * totalWeight * G) / (distanceSegment / speedMetersPerSec)
                 : 0;
 
-        const segmentPower = rollingPower + dragPower + elevationPower;
+        const segmentPower = bikeRollingPower + trailerRollingPower + dragPower + elevationPower;
         const segmentConsumption = (segmentPower * (distanceSegment / speedMetersPerSec)) / 3600; // Convert to Wh
 
         segmentsConsumption.push({
