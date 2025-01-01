@@ -22,6 +22,10 @@ export const Label = styled.label`
     font-weight: 500;
     color: #4a5568;
     margin-bottom: 0.5rem;
+
+    a {
+        border-bottom: none !important;
+    }
 `;
 
 export const Input = styled.input`

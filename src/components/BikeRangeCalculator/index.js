@@ -15,6 +15,7 @@ import { parseGPX } from "./utils/parseGpx";
 import { calculateBikeRange } from "./utils/calculateRange";
 import { KmAndWhChart } from "./components/KmAndWhChart";
 import { mapAngleToWindDirection } from "./utils/mapWindDirectionToAngle";
+import { Tooltip } from "react-tooltip";
 
 export const EBikeRangeCalculator = () => {
   const [speed, setSpeed] = useState(20);
@@ -289,7 +290,12 @@ export const EBikeRangeCalculator = () => {
               />
 
               <Label htmlFor="trailer-dimensions">
-                📐 Trailer Dimensions (m):
+              <a data-tooltip-id="my-tooltip" data-tooltip-content="Enter the trailer's length, width, and height in meters.">
+              📐 Trailer Dimensions (m):
+                </a>
+                <Tooltip id="my-tooltip">
+                    📐 Trailer Dimensions (m):
+                </Tooltip>
               </Label>
               <div style={{ display: "flex", gap: "10px" }}>
                 <Input
