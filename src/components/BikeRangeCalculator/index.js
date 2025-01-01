@@ -373,7 +373,7 @@ export const EBikeRangeCalculator = () => {
             </Warning>
             )}
           {rangeData?.segmentsConsumption.length && (
-            <KmAndWhChart data={kmAndWhChartData} />
+            <KmAndWhChart chargeKm={results?.chargeWarning?.chargeKm} data={kmAndWhChartData} />
           )}
           </div>
         </Results>

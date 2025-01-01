@@ -3,7 +3,7 @@ import { Chart } from "react-charts";
 
 import ResizableBox from "./ResizableBox";
 
-export const KmAndWhChart = ({ data }) => {
+export const KmAndWhChart = ({ data, chargeKm }) => {
     const primaryAxis = React.useMemo(
         () => ({
             getValue: (datum) => datum.x,
@@ -45,6 +45,14 @@ export const KmAndWhChart = ({ data }) => {
                     data: chartData,
                     primaryAxis,
                     secondaryAxes,
+                    getDatumStyle: (data) => {
+                        return {
+                            circle: {
+                                r: 5,
+                                fill: data.originalDatum.x > +chargeKm ? 'red' : 'lightgreen'
+                            }
+                        }
+                    },
                     getSeriesStyle: () => ({ color: 'orange' })
                 }}
             />
