@@ -106,6 +106,8 @@ export const calculateBikeRange = (
 
     const finishTime = calculateFinishTime(startTime, distances, speed);
 
+    const MAX_CHARGE_TIME = batteryCapacity / CHARGER_AMPS; 
+
     return {
         segmentsConsumption,
         averageConsumption: averageConsumption.toFixed(2),
@@ -114,7 +116,7 @@ export const calculateBikeRange = (
         chargeWarning: chargeWarning
             ? {
                   chargeKm: chargePoint ? chargePoint.toFixed(2) : null,
-                  chargeTime: chargeTimeRequired.toFixed(2),
+                  chargeTime: Math.min(chargeTimeRequired, MAX_CHARGE_TIME).toFixed(2),
               }
             : null,
     };

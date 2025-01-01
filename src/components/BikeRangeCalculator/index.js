@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Card,
   Container,
@@ -85,13 +85,13 @@ export const EBikeRangeCalculator = () => {
     return windData;
   };
 
-  const memoizedGenerateWindData = React.useCallback(
+  const memoizedGenerateWindData = useCallback(
     () => generateWindData(windSpeed, windDirection),
-    [windSpeed, windDirection],
+    [windSpeed, windDirection]
   );
   const windData = memoizedGenerateWindData();
 
-  const memoizedRangeData = React.useMemo(
+  const memoizedRangeData = useMemo(
     () =>
       calculateBikeRange(
         batteryCapacity,
@@ -109,7 +109,7 @@ export const EBikeRangeCalculator = () => {
           length: trailerDimensions.length,
           width: trailerDimensions.width,
           height: trailerDimensions.height,
-        },
+        }
       ),
     [
       batteryCapacity,
@@ -127,7 +127,7 @@ export const EBikeRangeCalculator = () => {
       trailerWeight,
       dogWeight,
       trailerDimensions,
-    ],
+    ]
   );
 
   const rangeData = memoizedRangeData;
@@ -174,7 +174,9 @@ export const EBikeRangeCalculator = () => {
           📄.
         </Notice>
 
-        <div style={{ display: "flex", gap: "40px" }}>
+        {/* General Settings Section */}
+        <section>
+          <h2>General Settings</h2>
           <div>
             <Label htmlFor="gpx-upload">📂 Upload GPX File:</Label>
             <Input
@@ -187,7 +189,6 @@ export const EBikeRangeCalculator = () => {
             <Label htmlFor="speed-slider">
               🚴‍♂️ Speed: <span>{speed}</span> km/h
             </Label>
-
             <Slider
               id="speed-slider"
               type="range"
@@ -235,122 +236,130 @@ export const EBikeRangeCalculator = () => {
             >
               🚧 Advanced settings
             </ToggleButton>
-
-            {showAdvancedSettings && (
-              <AdvancedSettingsContainer>
-                <Label htmlFor="wind-slider">
-                  🌬️ Wind Speed: <span>{windSpeed}</span> m/s
-                </Label>
-                <Slider
-                  id="wind-slider"
-                  type="range"
-                  min="0"
-                  max="20"
-                  step="1"
-                  value={windSpeed}
-                  onChange={(e) => setWindSpeed(Number(e.target.value))}
-                />
-
-                <Label htmlFor="wind-direction-slider">
-                  🌍 Wind Direction:{" "}
-                  <span>{mapAngleToWindDirection(windDirection)}</span>°
-                </Label>
-                <Slider
-                  id="wind-direction-slider"
-                  type="range"
-                  min="0"
-                  max="315"
-                  step="45"
-                  value={windDirection}
-                  onChange={(e) => setWindDirection(Number(e.target.value))}
-                />
-
-                <Label htmlFor="trailer-weight">
-                  🚛 Trailer Weight (consider luggage) (kg):
-                </Label>
-                <Input
-                  type="number"
-                  id="trailer-weight"
-                  value={trailerWeight}
-                  onChange={(e) => setTrailerWeight(Number(e.target.value))}
-                />
-
-                <Label htmlFor="dog-weight">🐕 Dog Weight (kg):</Label>
-                <Input
-                  type="number"
-                  id="dog-weight"
-                  value={dogWeight}
-                  onChange={(e) => setDogWeight(Number(e.target.value))}
-                />
-
-                <Label htmlFor="trailer-dimensions">
-                  📐 Trailer Dimensions (m):
-                </Label>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <Input
-                    type="number"
-                    placeholder="Length"
-                    value={trailerDimensions.length}
-                    onChange={(e) =>
-                      setTrailerDimensions({
-                        ...trailerDimensions,
-                        length: e.target.value,
-                      })
-                    }
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Width"
-                    value={trailerDimensions.width}
-                    onChange={(e) =>
-                      setTrailerDimensions({
-                        ...trailerDimensions,
-                        width: e.target.value,
-                      })
-                    }
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Height"
-                    value={trailerDimensions.height}
-                    onChange={(e) =>
-                      setTrailerDimensions({
-                        ...trailerDimensions,
-                        height: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </AdvancedSettingsContainer>
-            )}
           </div>
 
-          <Results>
-            <p>📏 Total Distance: {results.totalDistance} km</p>
-            <p>🏔️ Total Elevation Gain: {results.elevationGain} m</p>
-            <p>🔋 Average Consumption: {results.averageConsumption} Wh/km</p>
-            <p>🛣️ Estimated Range: {results.estimatedRange} km</p>
-            <p>⌛ Expected Finish Time: {results.finishTime}</p>
-            {results.chargeWarning && (
-              <Warning>
+          {/* Advanced Settings Section */}
+          {showAdvancedSettings && (
+            <AdvancedSettingsContainer>
+              <h3>Advanced Settings</h3>
+
+              <Label htmlFor="wind-slider">
+                🌬️ Wind Speed: <span>{windSpeed}</span> m/s
+              </Label>
+              <Slider
+                id="wind-slider"
+                type="range"
+                min="0"
+                max="20"
+                step="1"
+                value={windSpeed}
+                onChange={(e) => setWindSpeed(Number(e.target.value))}
+              />
+
+              <Label htmlFor="wind-direction-slider">
+                🌍 Wind Direction:{" "}
+                <span>{mapAngleToWindDirection(windDirection)}</span>°
+              </Label>
+              <Slider
+                id="wind-direction-slider"
+                type="range"
+                min="0"
+                max="315"
+                step="45"
+                value={windDirection}
+                onChange={(e) => setWindDirection(Number(e.target.value))}
+              />
+
+              <Label htmlFor="trailer-weight">
+                🚛 Trailer Weight (consider luggage) (kg):
+              </Label>
+              <Input
+                type="number"
+                id="trailer-weight"
+                value={trailerWeight}
+                onChange={(e) => setTrailerWeight(Number(e.target.value))}
+              />
+
+              <Label htmlFor="dog-weight">🐕 Dog Weight (kg):</Label>
+              <Input
+                type="number"
+                id="dog-weight"
+                value={dogWeight}
+                onChange={(e) => setDogWeight(Number(e.target.value))}
+              />
+
+              <Label htmlFor="trailer-dimensions">
+                📐 Trailer Dimensions (m):
+              </Label>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Input
+                  type="number"
+                  placeholder="Length"
+                  value={trailerDimensions.length}
+                  onChange={(e) =>
+                    setTrailerDimensions({
+                      ...trailerDimensions,
+                      length: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  type="number"
+                  placeholder="Width"
+                  value={trailerDimensions.width}
+                  onChange={(e) =>
+                    setTrailerDimensions({
+                      ...trailerDimensions,
+                      width: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  type="number"
+                  placeholder="Height"
+                  value={trailerDimensions.height}
+                  onChange={(e) =>
+                    setTrailerDimensions({
+                      ...trailerDimensions,
+                      height: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </AdvancedSettingsContainer>
+          )}
+        </section>
+
+        {/* Results Section */}
+        <Results>
+          <p>📏 Total Distance: {results.totalDistance} km</p>
+          <p>🏔️ Total Elevation Gain: {results.elevationGain} m</p>
+          <p>🔋 Average Consumption: {results.averageConsumption} Wh/km</p>
+          <p>🛣️ Estimated Range: {results.estimatedRange} km</p>
+          <p>⌛ Expected Finish Time: {results.finishTime}</p>
+          <div style={{ display: 'flex', gap: 30 }}>
+          {results.chargeWarning && (
+            <Warning>
+                <p className="warning-header">⚠️ Oops! You might need a recharge!</p>
                 <p>
-                  <strong>⚠️ Warning:</strong>
+                It looks like you'll need to recharge your battery at{" "}
+                {results.chargeWarning.chargeKm} km to continue your ride.
                 </p>
                 <p>
-                  You will need to charge at {results.chargeWarning.chargeKm} km
-                  to complete the route.
+                <strong>Suggested Action:</strong> Consider planning a stop for a quick
+                charge or take a break to recharge your energy too! 🚴🔋
                 </p>
-                <p>
-                  Estimated charging time: {results.chargeWarning.chargeTime}{" "}
-                  hours with a 5A charger.
-                </p>
-              </Warning>
+                <div className="suggestion">
+                Estimated charging time: {results.chargeWarning.chargeTime} hours with a
+                5A charger.
+                </div>
+            </Warning>
             )}
-            {rangeData?.segmentsConsumption.length && (
-              <KmAndWhChart data={kmAndWhChartData} />
-            )}
-          </Results>
-        </div>
+          {rangeData?.segmentsConsumption.length && (
+            <KmAndWhChart data={kmAndWhChartData} />
+          )}
+          </div>
+        </Results>
       </Card>
     </Container>
   );

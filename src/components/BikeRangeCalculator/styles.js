@@ -66,13 +66,39 @@ export const Results = styled.div`
 `;
 
 export const Warning = styled.div`
-    background-color: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #991b1b;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  & p {
+    margin: 0.5rem 0;
+  }
+
+  .warning-header {
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+
+  .suggestion {
+    background-color: #c3e6cb;
+    color: #155724;
+    border: 1px solid #b1dfbb;
+    padding: 0.5rem;
     border-radius: 0.375rem;
-    padding: 1rem;
     margin-top: 1rem;
+    font-size: 0.9rem;
+    display: inline-block;
+  }
 `;
+
 
 export const Notice = styled.div`
     background-color: #e2e8f0;
@@ -105,26 +131,6 @@ export const ToggleButton = styled.button`
     }
 `;
 
-export const DangerButton = styled.button`
-    background-color: #e53e3e;
-    color: #fff;
-    border: none;
-    border-radius: 0.375rem;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-        background-color: #c53030;
-    }
-
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.6);
-    }
-`;
-
 export const AdvancedSettingsContainer = styled.div`
     background-color: #edf2f7;
     border: 1px solid rgb(187, 216, 255);
@@ -133,5 +139,9 @@ export const AdvancedSettingsContainer = styled.div`
     padding: 1rem;
     margin-top: 1rem;
     text-align: center;
-    font-weight: bold;
+    box-sizing: border-box;
+`;
+
+export const KmAndWhChart = styled.div`
+    margin-top: 2rem;
 `;
