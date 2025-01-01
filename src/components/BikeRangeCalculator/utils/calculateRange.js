@@ -1,3 +1,5 @@
+import { mapWindDirectionToAngle } from "./mapWindDirectionToAngle";
+
 const BATTERY_VOLTAGE = 48; // Typical e-bike voltage in volts
 const ROLLING_RESISTANCE = 0.006;
 const G = 9.81; // Gravity in m/s^2
@@ -12,7 +14,6 @@ export const calculateBikeRange = (
     distances,
     elevations,
     speed,
-    windSpeed,
     bikeWeight,
     riderWeight,
     startTime,
@@ -108,23 +109,7 @@ const calculateEffectiveWindSpeed = (windSpeed, windDirection, movementAngle) =>
         effectiveWindSpeed = Math.abs(effectiveWindSpeed);
     }
 
-    console.log(`Effective Wind Speed: ${effectiveWindSpeed} m/s at angle ${relativeAngle}`);
     return effectiveWindSpeed;
-};
-
-const mapWindDirectionToAngle = (direction) => {
-    const directions = {
-        '↑': 0,
-        '↗': 45,
-        '→': 90,
-        '↘': 135,
-        '↓': 180,
-        '↙': 225,
-        '←': 270,
-        '↖': 315,
-    };
-
-    return directions[direction] || 0;
 };
 
 // Utility: Get wind data for a specific time

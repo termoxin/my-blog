@@ -3,6 +3,7 @@ import { Card, Container, Input, Label, Notice, Results, Slider, Warning } from 
 import { parseGPX } from './utils/parseGpx';
 import { calculateBikeRange } from './utils/calculateRange';
 import { KmAndWhChart } from './components/KmAndWhChart';
+import { mapAngleToWindDirection } from './utils/mapWindDirectionToAngle';
 
 export const EBikeRangeCalculator = () => {
     const [speed, setSpeed] = useState(20);
@@ -13,6 +14,7 @@ export const EBikeRangeCalculator = () => {
     const [distances, setDistances] = useState([]);
     const [directions, setDirections] = useState([]);
     const [elevations, setElevations] = useState([]);
+    const [windDirection, setWindDirection] = useState(0);
     
     const [batteryCapacity, setBatteryCapacity] = useState(25); 
     const [results, setResults] = useState({
@@ -52,25 +54,38 @@ export const EBikeRangeCalculator = () => {
         }
     };
 
-    const rangeData = calculateBikeRange(
-        batteryCapacity, distances, elevations, speed, windSpeed, bikeWeight, riderWeight, startTime,
-        [
-            { "time": "12:00", "speed": 4, "direction": "↓" },
-            { "time": "15:00", "speed": 5, "direction": "↓" },
-            { "time": "18:00", "speed": 4, "direction": "↓" },
-            { "time": "21:00", "speed": 2, "direction": "↓" },
-            { "time": "00:00", "speed": 2, "direction": "↓" },
-            { "time": "03:00", "speed": 3, "direction": "↓" },
-            { "time": "06:00", "speed": 3, "direction": "↓" },
-            { "time": "09:00", "speed": 3, "direction": "↓" }
-        ],
+    console.log(windSpeed)
+
+ 
+    const generateWindData = (windSpeed, windDirection) => {
+        const windData = [];
+        for (let i = 0; i < 24; i++) {
+            const hour = i.toString().padStart(2, '0') + ":00";
+            windData.push({
+                time: hour,
+                speed: windSpeed,
+                direction: mapAngleToWindDirection(windDirection)
+            });
+        }
+        return windData;
+    };
+
+    const memoizedGenerateWindData = React.useCallback(() => generateWindData(windSpeed, windDirection), [windSpeed, windDirection]);
+    const windData = memoizedGenerateWindData();
+
+    const memoizedRangeData = React.useMemo(() => calculateBikeRange(
+        batteryCapacity, distances, elevations, speed, bikeWeight, riderWeight, startTime,
+        windData,
         directions
-    );
+    ), [batteryCapacity, distances, elevations, speed, bikeWeight, riderWeight, startTime, windData, directions]);
+
+    const rangeData = memoizedRangeData;
 
     useEffect(() => {
+
         setResults(prev => ({ totalDistance: prev.totalDistance,
                 elevationGain: prev.elevationGain,...rangeData}));
-    }, [speed, windSpeed, bikeWeight, riderWeight, distances, elevations, startTime, batteryCapacity]);
+    }, [speed, memoizedGenerateWindData, windSpeed, bikeWeight, riderWeight, distances, elevations, startTime, batteryCapacity]);
 
     const kmAndWhChartData = rangeData?.segmentsConsumption.map((segment) => ({
         x: Number(segment.km),
@@ -106,14 +121,27 @@ export const EBikeRangeCalculator = () => {
                         <Label htmlFor="wind-slider">
                             🌬️ Wind Speed: <span>{windSpeed}</span> m/s
                         </Label>
+
                         <Slider
                             id="wind-slider"
                             type="range"
-                            min="-10"
-                            max="10"
+                            min="0"
+                            max="20"
                             step="1"
                             value={windSpeed}
                             onChange={(e) => setWindSpeed(Number(e.target.value))}
+                        />
+                        <Label htmlFor="wind-direction-slider">
+                            🌍 Wind Direction: <span>{mapAngleToWindDirection(windDirection)}</span>°
+                        </Label>
+                        <Slider
+                            id="wind-direction-slider"
+                            type="range"
+                            min="0"
+                            max="315"
+                            step="45"
+                            value={windDirection}
+                            onChange={(e) => setWindDirection(Number(e.target.value))}
                         />
 
                         <Label htmlFor="bike-weight">🚲 Bike Weight (kg):</Label>
