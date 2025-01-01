@@ -28,12 +28,12 @@ export const EBikeRangeCalculator = () => {
   const [elevations, setElevations] = useState([]);
   const [windDirection, setWindDirection] = useState(0);
   const [batteryCapacity, setBatteryCapacity] = useState(25);
-  const [trailerWeight, setTrailerWeight] = useState(0);
-  const [dogWeight, setDogWeight] = useState(0);
+  const [trailerWeight, setTrailerWeight] = useState(10);
+  const [dogWeight, setDogWeight] = useState(15);
   const [trailerDimensions, setTrailerDimensions] = useState({
-    length: 0,
-    width: 0,
-    height: 0,
+    length: 0.8,
+    width: 0.5,
+    height: 0.5,
   });
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [results, setResults] = useState({
@@ -154,11 +154,22 @@ export const EBikeRangeCalculator = () => {
     batteryCapacity,
   ]);
 
-  const kmAndWhChartData = rangeData?.segmentsConsumption.map((segment) => ({
-    x: Number(segment.km),
-    y: Number(segment.power),
-    z: Number(segment.slope),
-  }));
+    const kmAndWhChartData = rangeData?.segmentsConsumption.reduce((acc, segment, index) => {
+        const chunkIndex = Math.floor(index / 10);
+        if (!acc[chunkIndex]) {
+            acc[chunkIndex] = { x: 0, y: 0, z: 0, count: 0 };
+        }
+        acc[chunkIndex].x += Number(segment.km);
+        acc[chunkIndex].y += Number(segment.power);
+        acc[chunkIndex].z += Number(segment.slope);
+        acc[chunkIndex].count += 1;
+        return acc;
+    }, []).map(chunk => ({
+        x: +(chunk.x / chunk.count).toFixed(2),
+        y: +(chunk.y / chunk.count).toFixed(2),
+        z: +(chunk.z / chunk.count).toFixed(2),
+    }));
+
 
   return (
     <Container>
@@ -343,7 +354,7 @@ export const EBikeRangeCalculator = () => {
           <p>🔋 Average Consumption: {results.averageConsumption} Wh/km</p>
           <p>🛣️ Estimated Range: {results.estimatedRange} km</p>
           <p>⌛ Expected Finish Time: {results.finishTime}</p>
-          <div style={{ display: 'flex', gap: 30 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
           {results.chargeWarning && (
             <Warning>
                 <p className="warning-header">⚠️ Oops! You might need a recharge!</p>

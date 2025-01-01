@@ -38,7 +38,7 @@ export const KmAndWhChart = ({ data }) => {
     ];
 
     return (
-        <ResizableBox width={300}>
+        <ResizableBox width={800}>
             <Chart
                 options={{
                     tooltip: false,
