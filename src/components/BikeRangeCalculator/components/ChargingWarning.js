@@ -1,5 +1,6 @@
 import React from "react";
-import { KmAndWhChart, Results, Warning } from "../styles";
+import { KmAndWhChart as ChartContainer, Results, Warning } from "../styles";
+import { KmAndWhChart } from "./KmAndWhChart";
 
 const TEXT = {
     totalDistance: "📏 Total Distance: ",
@@ -38,7 +39,9 @@ export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
                     </Warning>
                 )}
                 {rangeData?.segmentsConsumption.length > 0 && (
-                    <KmAndWhChart chargeKm={results?.chargeWarning?.chargeKm} data={kmAndWhChartData} />
+                    <ChartContainer>
+                        <KmAndWhChart chargeKm={results?.chargeWarning?.chargeKm} data={kmAndWhChartData} />
+                    </ChartContainer>
                 )}
             </div>
         </Results>
