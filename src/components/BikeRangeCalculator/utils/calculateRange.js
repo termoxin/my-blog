@@ -1,14 +1,6 @@
+import { AIR_DENSITY, BATTERY_VOLTAGE, BIKE_ROLLING_RESISTANCE, CHARGER_AMPS, CHARGER_RATE, DRAG_COEFFICIENT, FRONTAL_AREA, G, TRAILER_ROLLING_RESISTANCE } from "../constants";
+import { calculateRecuperationDynamicMaxSpeed } from "./calculateRecuperationCharge";
 import { mapWindDirectionToAngle } from "./mapWindDirectionToAngle";
-
-const BATTERY_VOLTAGE = 48; // Typical e-bike voltage in volts
-const BIKE_ROLLING_RESISTANCE = 0.006; // Coefficient for bike tires
-const TRAILER_ROLLING_RESISTANCE = 0.008; // Slightly higher for smaller trailer wheels
-const G = 9.81; // Gravity in m/s^2
-const AIR_DENSITY = 1.225; // kg/m^3
-const DRAG_COEFFICIENT = 0.9;
-const FRONTAL_AREA = 0.6; // m^2
-const CHARGER_AMPS = 5; // Charger amperage
-const CHARGER_RATE = CHARGER_AMPS * BATTERY_VOLTAGE; // Charging rate in Watts
 
 export const calculateBikeRange = (
     batteryCapacity,
@@ -20,10 +12,15 @@ export const calculateBikeRange = (
     startTime,
     windData,
     movementAngles,
-    trailerData = {}
+    trailerData = {},
+    includeRecuperation = false
 ) => {
     const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
     if (!distances.length || !elevations.length) return;
+
+
+    console.log({ distances, elevations, speed })
+
 
     const {
         weight: trailerWeight = 0,
@@ -90,8 +87,14 @@ export const calculateBikeRange = (
         totalConsumption += segmentConsumption;
     });
 
+    const recuperationEffect = calculateRecuperationDynamicMaxSpeed(distances, elevations, totalWeight, speed);
     const averageConsumption = totalConsumption / distances[distances.length - 1]; // Wh/km
-    const estimatedRange = batteryCapacityWh / averageConsumption; // km
+
+    const estimatedRange = includeRecuperation
+        ? (batteryCapacityWh + recuperationEffect) / averageConsumption
+        : batteryCapacityWh / averageConsumption; 
+
+    const totalRecuperationGeneratedRange = recuperationEffect / averageConsumption;
 
     const chargePoint = distances.find((distance) => distance > estimatedRange) || null;
     const chargeWarning = chargePoint !== null;
@@ -111,6 +114,8 @@ export const calculateBikeRange = (
     return {
         segmentsConsumption,
         averageConsumption: averageConsumption.toFixed(2),
+        totalRecuperationGeneratedRange: totalRecuperationGeneratedRange.toFixed(2),
+        totalRangeWithRecuperation: (Number(estimatedRange) + Number(totalRecuperationGeneratedRange)).toFixed(2),
         estimatedRange: estimatedRange.toFixed(2),
         finishTime,
         chargeWarning: chargeWarning

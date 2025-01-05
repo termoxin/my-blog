@@ -149,3 +149,21 @@ export const AdvancedSettingsContainer = styled.div`
 export const KmAndWhChart = styled.div`
     margin-top: 2rem;
 `;
+
+export const EstimatedRange = styled.p`
+    font-size: 1rem;
+    color: #4a5568;
+    margin-top: 1rem;
+`;
+
+export const RecuperationRange = styled.span`
+    background-color: #c6f6d5;
+    color: #22543d;
+    border: 1px solid #9ae6b4;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.375rem;
+    display: inline-block;
+    margin-left: 0.5rem;
+`;
+
+

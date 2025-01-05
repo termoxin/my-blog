@@ -1,5 +1,5 @@
 import React from "react";
-import { KmAndWhChart as ChartContainer, Results, Warning } from "../styles";
+import { KmAndWhChart as ChartContainer, EstimatedRange, RecuperationRange, Results, Warning } from "../styles";
 import { KmAndWhChart } from "./KmAndWhChart";
 
 const TEXT = {
@@ -16,12 +16,20 @@ const TEXT = {
 };
 
 export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
+
+    const estimatedRangeElement = (
+        <EstimatedRange>
+            {TEXT.estimatedRange}
+            {results.estimatedRange}km +<RecuperationRange>{results.totalRecuperationGeneratedRange}km (recuperation ⚡️)</RecuperationRange> = {results.totalRangeWithRecuperation}km
+        </EstimatedRange>
+    );
+
     return (
         <Results>
             <p>{TEXT.totalDistance}{results.totalDistance} km</p>
             <p>{TEXT.totalElevationGain}{results.elevationGain} m</p>
             <p>{TEXT.averageConsumption}{results.averageConsumption} Wh/km</p>
-            <p>{TEXT.estimatedRange}{results.estimatedRange} km</p>
+            {estimatedRangeElement}
             <p>{TEXT.finishTime}{results.finishTime}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
                 {results.chargeWarning && (

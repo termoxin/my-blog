@@ -1,0 +1,13 @@
+export const BATTERY_VOLTAGE = 48; // Typical e-bike voltage in volts
+export const BIKE_ROLLING_RESISTANCE = 0.006; // Coefficient for bike tires
+export const TRAILER_ROLLING_RESISTANCE = 0.008; // Slightly higher for smaller trailer wheels
+export const G = 9.81; // Gravity in m/s^2
+export const AIR_DENSITY = 1.225; // kg/m^3
+export const DRAG_COEFFICIENT = 0.9;
+export const FRONTAL_AREA = 0.6; // m^2
+export const CHARGER_AMPS = 5; // Charger amperage
+export const CHARGER_RATE = CHARGER_AMPS * BATTERY_VOLTAGE; // Charging rate in Watts
+export const RECUPERATION_EFFICIENCY = 0.8;
+export const SPEED_CONVERSION_FACTOR = 1 / 3.6;
+export const SLOPE_FACTOR = 50;
+export const MAX_SPEED_LIMIT_DURING_RECUPERATION = 60;
