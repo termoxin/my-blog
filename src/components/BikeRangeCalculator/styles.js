@@ -92,9 +92,9 @@ export const Warning = styled.div`
   }
 
   .suggestion {
-    background-color: #c3e6cb;
-    color: #155724;
+    background-color: #c6f6d5;
     border: 1px solid #b1dfbb;
+    color: #155724;
     padding: 0.5rem;
     border-radius: 0.375rem;
     margin-top: 1rem;
@@ -158,8 +158,8 @@ export const EstimatedRange = styled.p`
 
 export const RecuperationRange = styled.span`
     background-color: #c6f6d5;
+    border: 1px solid #b1dfbb;
     color: #22543d;
-    border: 1px solid #9ae6b4;
     padding: 0.1rem 0.2rem;
     border-radius: 0.375rem;
     display: inline-block;

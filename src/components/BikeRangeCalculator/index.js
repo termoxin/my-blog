@@ -229,11 +229,11 @@ export const EBikeRangeCalculator = () => {
           )}
         </section>
 
-        <ChargingWarning
+        {results.totalDistance !== '-' && <ChargingWarning
           results={results}
           rangeData={rangeData}
           kmAndWhChartData={kmAndWhChartData}
-        />
+        />}
       </Card>
     </Container>
   );

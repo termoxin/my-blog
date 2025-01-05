@@ -16,7 +16,6 @@ const TEXT = {
 };
 
 export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
-
     const estimatedRangeElement = (
         <EstimatedRange>
             {TEXT.estimatedRange}
@@ -36,7 +35,7 @@ export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
                     <Warning>
                         <p className="warning-header">{TEXT.chargeWarningHeader}</p>
                         <p>
-                            {TEXT.chargeWarningText}<b>{results.chargeWarning.chargeKm}</b> km to continue your ride.
+                            {TEXT.chargeWarningText}<b>{results.totalRangeWithRecuperation}</b>km to continue your ride.
                         </p>
                         <p>
                             <strong>Suggestion: </strong>{TEXT.suggestedAction}

@@ -1,4 +1,11 @@
-import { BIKE_ROLLING_RESISTANCE, G, MAX_SPEED_LIMIT_DURING_RECUPERATION, RECUPERATION_EFFICIENCY, SLOPE_FACTOR, SPEED_CONVERSION_FACTOR } from "../constants";
+import { 
+    BIKE_ROLLING_RESISTANCE, 
+    G, 
+    MAX_SPEED_LIMIT_DURING_RECUPERATION, 
+    RECUPERATION_EFFICIENCY, 
+    SLOPE_FACTOR, 
+    SPEED_CONVERSION_FACTOR,
+} from "../constants";
 
 export const calculateRecuperationDynamicMaxSpeed = (distances, elevations, mass, initialSpeed) => {
     let totalRecuperationWh = 0;
@@ -29,8 +36,9 @@ export const calculateRecuperationDynamicMaxSpeed = (distances, elevations, mass
             const kineticEnergyFinal = 0.5 * mass * Math.pow(maxSpeed, 2); // KE at end
             const kineticEnergyChange = kineticEnergyFinal - kineticEnergyInitial;
 
-            // Recuperated energy in Joules
-            const totalEnergyJ = ((potentialEnergyJ - rollingResistanceEnergyJ) + kineticEnergyChange) * RECUPERATION_EFFICIENCY;
+            // Recuperated energy in Joules, factoring motor efficiency
+            const totalEnergyJ = ((potentialEnergyJ - rollingResistanceEnergyJ) + kineticEnergyChange) 
+                                  * RECUPERATION_EFFICIENCY;
 
             if (totalEnergyJ > 0) {
                 totalRecuperationWh += totalEnergyJ / 3600; // Convert J to Wh
@@ -42,4 +50,4 @@ export const calculateRecuperationDynamicMaxSpeed = (distances, elevations, mass
     }
 
     return totalRecuperationWh;
-}
+};

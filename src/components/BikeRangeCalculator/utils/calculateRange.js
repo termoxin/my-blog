@@ -13,7 +13,6 @@ export const calculateBikeRange = (
     windData,
     movementAngles,
     trailerData = {},
-    includeRecuperation = false
 ) => {
     const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
     if (!distances.length || !elevations.length) return;
@@ -90,9 +89,7 @@ export const calculateBikeRange = (
     const recuperationEffect = calculateRecuperationDynamicMaxSpeed(distances, elevations, totalWeight, speed);
     const averageConsumption = totalConsumption / distances[distances.length - 1]; // Wh/km
 
-    const estimatedRange = includeRecuperation
-        ? (batteryCapacityWh + recuperationEffect) / averageConsumption
-        : batteryCapacityWh / averageConsumption; 
+    const estimatedRange = (batteryCapacityWh + recuperationEffect) / averageConsumption
 
     const totalRecuperationGeneratedRange = recuperationEffect / averageConsumption;
 
@@ -103,7 +100,7 @@ export const calculateBikeRange = (
     let chargeTimeRequired = 0;
 
     if (chargeWarning) {
-        remainingEnergy = Math.max(totalConsumption - batteryCapacityWh, 0);
+        remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + recuperationEffect), 0);
         chargeTimeRequired = remainingEnergy / CHARGER_RATE;
     }
 
