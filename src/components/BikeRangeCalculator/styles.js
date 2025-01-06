@@ -119,18 +119,19 @@ export const Notice = styled.div`
 `;
 
 export const ToggleButton = styled.button`
-    background-color: #e2e8f0;
-    color: #2d3748;
+    background-color: #fff;
+    color: #3182ce;
     border: 1px solid #cbd5e0;
     border-radius: 0.375rem;
     padding: 0.5rem 1rem;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
     font-weight: bold;
 
     &:hover {
-        background-color: #cbd5e0;
+        color: #fff;
+        background-color: #2b6cb0;
     }
 
     &:focus {
@@ -168,10 +169,31 @@ export const RecuperationRange = styled.span`
     background-color: #c6f6d5;
     border: 1px solid #b1dfbb;
     color: #22543d;
-    padding: 0.1rem 0.2rem;
+    padding: 0.3rem;
     border-radius: 0.375rem;
     display: inline-block;
     margin-left: 0.5rem;
+    font-size: 11px;
+    width: max-content;
+    height: 40px;
 `;
 
+export const TotalPedalingGeneratedRange = styled.span`
+    background-color: #fefcbf;
+    border: 1px solid #faf089;
+    color: #744210;
+    padding: 0.3rem;
+    border-radius: 0.375rem;
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 11px;
+    width: max-content;
+    height: 40px;
+    align-items: center;
+    display: flex;
+`;
 
+export const EstimatedRangeBreakdown = styled.div`
+    display: flex;
+    align-items: flex-end;
+`

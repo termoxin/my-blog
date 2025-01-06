@@ -1,5 +1,5 @@
 import React from "react";
-import { KmAndWhChart as ChartContainer, EstimatedRange, RecuperationRange, Results, Warning } from "../styles";
+import { KmAndWhChart as ChartContainer, EstimatedRange, EstimatedRangeBreakdown, RecuperationRange, Results, TotalPedalingGeneratedRange, Warning } from "../styles";
 import { KmAndWhChart } from "./KmAndWhChart";
 
 const TEXT = {
@@ -16,16 +16,42 @@ const TEXT = {
 };
 
 export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
+
     const estimatedRangeElement = (
-        <EstimatedRange>
-            {TEXT.estimatedRange}
-            <b>{results.estimatedRange}km</b><RecuperationRange>including <b>{results.totalRecuperationGeneratedRange}km </b>(<b>{results.totalRecuperationGeneratedPower}W ⚡️</b>) of recuperation  from downhills 🏔</RecuperationRange>
-        </EstimatedRange>
+        <EstimatedRangeBreakdown>
+            <EstimatedRange>
+                {TEXT.estimatedRange}
+                <b>{results.estimatedRange} km</b><RecuperationRange>including <b>{results.totalRecuperationGeneratedRange} km </b> of recovery from downhills 🏔</RecuperationRange>
+            </EstimatedRange>
+            {!!Number(rangeData.totalPedalingGeneratedRange) && <TotalPedalingGeneratedRange>
+                Including saved by pedaling: {rangeData.totalPedalingGeneratedRange} km 💪
+            </TotalPedalingGeneratedRange>}
+        </EstimatedRangeBreakdown>
     );
+
+    // It has power generated from recuperative braking metrics
+
+    // const estimatedRangeElement = (
+    //     <EstimatedRangeBreakdown>
+    //         <EstimatedRange>
+    //             {TEXT.estimatedRange}
+    //             <b>{results.estimatedRange} km</b><RecuperationRange>including <b>{results.totalRecuperationGeneratedRange} km </b>(<b>{results.totalRecuperationGeneratedPower}W ⚡️</b>) of recovery from downhills 🏔</RecuperationRange>
+    //         </EstimatedRange>
+    //         {!!Number(rangeData.totalPedalingGeneratedRange) && <TotalPedalingGeneratedRange>
+    //             Including saved by pedaling: {rangeData.totalPedalingGeneratedRange} km 💪
+    //         </TotalPedalingGeneratedRange>}
+    //     </EstimatedRangeBreakdown>
+    // );
+
+
+    const totalTripTime = rangeData?.totalTripTimeInSeconds
+    const totalTripTimeInHours = Math.floor(totalTripTime / 3600);
+    const totalTripTimeInMinutes = Math.floor((totalTripTime % 3600) / 60);
+    const formattedTotalTripTime = `${totalTripTimeInHours}h ${totalTripTimeInMinutes}m`;
 
     return (
         <Results>
-            <p>{TEXT.totalDistance}<span>{results.totalDistance} km</span></p>
+            <p>{TEXT.totalDistance}<span>{results.totalDistance} km ({formattedTotalTripTime})</span></p>
             <p>{TEXT.totalElevationGain}<span>{results.elevationGain} m</span></p>
             <p>{TEXT.averageConsumption}<span>{results.averageConsumption} Wh/km</span></p>
             {estimatedRangeElement}
@@ -35,7 +61,7 @@ export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
                     <Warning>
                         <p className="warning-header">{TEXT.chargeWarningHeader}</p>
                         <p>
-                            {TEXT.chargeWarningText}<b>{results.estimatedRange}</b>km to continue your ride.
+                            {TEXT.chargeWarningText}<b>{results.estimatedRange}</b> km to continue your ride.
                         </p>
                         <p>
                             <strong>Suggestion: </strong>{TEXT.suggestedAction}

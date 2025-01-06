@@ -22,6 +22,7 @@ import { TrailerWeightInput } from "./components/fields/TrailerWeightInput";
 import { DogWeightInput } from "./components/fields/DogWeightInput";
 import { TrailerDimensionsInput } from "./components/fields/TrailerDimensionsInput";
 import { ChargingWarning } from "./components/ChargingWarning";
+import { PedalingTimeSlider } from "./components/fields/PedalingTimeSlider";
 
 export const EBikeRangeCalculator = () => {
   const [speed, setSpeed] = useState(20);
@@ -34,6 +35,7 @@ export const EBikeRangeCalculator = () => {
   const [elevations, setElevations] = useState([]);
   const [windDirection, setWindDirection] = useState(0);
   const [batteryCapacity, setBatteryCapacity] = useState(25);
+  const [pedalingTime, setPedalingTime] = useState(0);
   const [trailerWeight, setTrailerWeight] = useState(10);
   const [dogWeight, setDogWeight] = useState(15);
 
@@ -98,6 +100,7 @@ export const EBikeRangeCalculator = () => {
     () => generateWindData(windSpeed, windDirection),
     [windSpeed, windDirection]
   );
+
   const windData = memoizedGenerateWindData();
 
   const memoizedRangeData = useMemo(
@@ -112,6 +115,7 @@ export const EBikeRangeCalculator = () => {
         startTime,
         windData,
         directions,
+        pedalingTime,
         {
           weight: trailerWeight,
           dogWeight,
@@ -121,6 +125,7 @@ export const EBikeRangeCalculator = () => {
         }
       ),
     [
+      pedalingTime,
       batteryCapacity,
       trailerWeight,
       dogWeight,
@@ -148,6 +153,7 @@ export const EBikeRangeCalculator = () => {
       ...rangeData,
     }));
   }, [
+    pedalingTime,
     speed,
     memoizedGenerateWindData,
     trailerWeight,
@@ -164,18 +170,20 @@ export const EBikeRangeCalculator = () => {
 
   const kmAndWhChartData = rangeData?.segmentsConsumption.reduce((acc, segment, index) => {
     const chunkIndex = Math.floor(index / 10);
+
     if (!acc[chunkIndex]) {
       acc[chunkIndex] = { x: 0, y: 0, z: 0, count: 0 };
     }
+    
     acc[chunkIndex].x += Number(segment.km);
     acc[chunkIndex].y += Number(segment.power);
     acc[chunkIndex].z += Number(segment.slope);
     acc[chunkIndex].count += 1;
-    return acc;
-  }, []).map(chunk => ({
-    x: +(chunk.x / chunk.count).toFixed(2),
-    y: +(chunk.y / chunk.count).toFixed(2),
-    z: +(chunk.z / chunk.count).toFixed(2),
+      return acc;
+    }, []).map(chunk => ({
+      x: +(chunk.x / chunk.count).toFixed(2),
+      y: +(chunk.y / chunk.count).toFixed(2),
+      z: +(chunk.z / chunk.count).toFixed(2),
   }));
 
   return (
@@ -207,6 +215,7 @@ export const EBikeRangeCalculator = () => {
             <SpeedSlider speed={speed} setSpeed={setSpeed} />
             <BikeWeightInput bikeWeight={bikeWeight} setBikeWeight={setBikeWeight} />
             <RiderWeightInput riderWeight={riderWeight} setRiderWeight={setRiderWeight} />
+            <PedalingTimeSlider pedalingTime={pedalingTime} setPedalingTime={setPedalingTime} />
             <StartTimeInput startTime={startTime} setStartTime={setStartTime} />
             <BatteryCapacityInput batteryCapacity={batteryCapacity} setBatteryCapacity={setBatteryCapacity} />
 

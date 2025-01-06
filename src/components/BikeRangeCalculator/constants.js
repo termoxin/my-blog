@@ -11,3 +11,4 @@ export const RECUPERATION_EFFICIENCY = 0.8;
 export const SPEED_CONVERSION_FACTOR = 1 / 3.6;
 export const SLOPE_FACTOR = 50;
 export const MAX_SPEED_LIMIT_DURING_RECUPERATION = 40;
+export const RIDER_POWER = 75 // Watts
