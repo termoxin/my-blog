@@ -17,10 +17,6 @@ export const calculateBikeRange = (
     const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
     if (!distances.length || !elevations.length) return;
 
-
-    console.log({ distances, elevations, speed })
-
-
     const {
         weight: trailerWeight = 0,
         dogWeight = 0,
@@ -112,7 +108,7 @@ export const calculateBikeRange = (
         segmentsConsumption,
         averageConsumption: averageConsumption.toFixed(2),
         totalRecuperationGeneratedRange: totalRecuperationGeneratedRange.toFixed(2),
-        totalRangeWithRecuperation: (Number(estimatedRange) + Number(totalRecuperationGeneratedRange)).toFixed(2),
+        totalRecuperationGeneratedPower: recuperationEffect.toFixed(2),
         estimatedRange: estimatedRange.toFixed(2),
         finishTime,
         chargeWarning: chargeWarning

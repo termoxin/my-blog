@@ -19,23 +19,23 @@ export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
     const estimatedRangeElement = (
         <EstimatedRange>
             {TEXT.estimatedRange}
-            {results.estimatedRange}km +<RecuperationRange>{results.totalRecuperationGeneratedRange}km (recuperation ⚡️)</RecuperationRange> = {results.totalRangeWithRecuperation}km
+            <b>{results.estimatedRange}km</b><RecuperationRange>including <b>{results.totalRecuperationGeneratedRange}km </b>(<b>{results.totalRecuperationGeneratedPower}W ⚡️</b>) of recuperation  from downhills 🏔</RecuperationRange>
         </EstimatedRange>
     );
 
     return (
         <Results>
-            <p>{TEXT.totalDistance}{results.totalDistance} km</p>
-            <p>{TEXT.totalElevationGain}{results.elevationGain} m</p>
-            <p>{TEXT.averageConsumption}{results.averageConsumption} Wh/km</p>
+            <p>{TEXT.totalDistance}<span>{results.totalDistance} km</span></p>
+            <p>{TEXT.totalElevationGain}<span>{results.elevationGain} m</span></p>
+            <p>{TEXT.averageConsumption}<span>{results.averageConsumption} Wh/km</span></p>
             {estimatedRangeElement}
-            <p>{TEXT.finishTime}{results.finishTime}</p>
+            <p>{TEXT.finishTime}<span>{results.finishTime}</span></p>
             <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
                 {results.chargeWarning && (
                     <Warning>
                         <p className="warning-header">{TEXT.chargeWarningHeader}</p>
                         <p>
-                            {TEXT.chargeWarningText}<b>{results.totalRangeWithRecuperation}</b>km to continue your ride.
+                            {TEXT.chargeWarningText}<b>{results.estimatedRange}</b>km to continue your ride.
                         </p>
                         <p>
                             <strong>Suggestion: </strong>{TEXT.suggestedAction}

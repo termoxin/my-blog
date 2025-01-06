@@ -34,7 +34,7 @@ export const KmAndWhChart = ({ data, chargeKm }) => {
         {
             label: "Km and Wh",
             data: data.map(({ x, y }) => ({ x, y })),
-        }
+        },
     ];
 
     return (
@@ -53,7 +53,9 @@ export const KmAndWhChart = ({ data, chargeKm }) => {
                             }
                         }
                     },
-                    getSeriesStyle: () => ({ color: 'orange' })
+                    getSeriesStyle: ({ label }) => {
+                        return { color: 'orange' }
+                    }
                 }}
             />
         </ResizableBox>

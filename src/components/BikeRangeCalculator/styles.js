@@ -67,6 +67,10 @@ export const Slider = styled.input`
 
 export const Results = styled.div`
     color: #4a5568;
+
+    span {
+        font-weight: 700;
+    }
 `;
 
 export const Warning = styled.div`
@@ -117,7 +121,7 @@ export const Notice = styled.div`
 export const ToggleButton = styled.button`
     background-color: #e2e8f0;
     color: #2d3748;
-    border: none;
+    border: 1px solid #cbd5e0;
     border-radius: 0.375rem;
     padding: 0.5rem 1rem;
     font-size: 1rem;
@@ -138,7 +142,7 @@ export const ToggleButton = styled.button`
 export const AdvancedSettingsContainer = styled.div`
     background-color: #edf2f7;
     border: 1px solid rgb(187, 216, 255);
-    color: #1a202c;
+    color:rgb(80, 88, 104);
     border-radius: 0.375rem;
     padding: 1rem;
     margin-top: 1rem;
@@ -154,6 +158,10 @@ export const EstimatedRange = styled.p`
     font-size: 1rem;
     color: #4a5568;
     margin-top: 1rem;
+
+    span {
+        font-weight: 500;
+    }
 `;
 
 export const RecuperationRange = styled.span`
