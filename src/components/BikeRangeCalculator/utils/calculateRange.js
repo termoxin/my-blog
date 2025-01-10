@@ -13,6 +13,7 @@ export const calculateBikeRange = (
     windData,
     movementAngles,
     pedalingTime,
+    maxMotorPower,
     trailerData = {},
 ) => {
     const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
@@ -111,6 +112,9 @@ export const calculateBikeRange = (
     const totalTripTimeInSeconds = (distances[distances.length - 1] / speed) * 3600 + chargeTimeRequired * 3600;
 
 
+    const maxSpeed = Math.sqrt((2 * maxMotorPower) / (AIR_DENSITY * DRAG_COEFFICIENT * (FRONTAL_AREA + trailerFrontalArea))) * (totalWeight / (bikeWeight + riderWeight));
+    const windAdjustedMaxSpeed = maxSpeed - (calculateEffectiveWindSpeed(windData[0].speed, windData[0].direction, 0) / 3.6); // Adjust max speed for wind speed
+
     return {
         segmentsConsumption,
         averageConsumption: averageConsumption.toFixed(2),
@@ -119,6 +123,7 @@ export const calculateBikeRange = (
         totalPedalingGeneratedRange: totalPedalingGeneratedRange.toFixed(2),
         estimatedRange: estimatedRange.toFixed(2),
         finishTime,
+        maxSpeed: windAdjustedMaxSpeed.toFixed(2),
         totalTripTimeInSeconds: totalTripTimeInSeconds.toFixed(2),
         chargeWarning: chargeWarning
             ? {
@@ -143,7 +148,6 @@ const calculateEffectiveWindSpeed = (windSpeed, windDirection, movementAngle) =>
     return effectiveWindSpeed;
 };
 
-// Utility: Get wind data for a specific time
 const getWindDataForTime = (segmentTime, windData) => {
     const [segmentHour] = segmentTime.split(':').map(Number);
     return windData.reduce((closest, wind) => {
@@ -152,7 +156,6 @@ const getWindDataForTime = (segmentTime, windData) => {
     }, windData[0]);
 };
 
-// Utility: Calculate segment time
 const calculateSegmentTime = (startTime, distances, segmentIndex, speed) => {
     const elapsedTime = distances.slice(1, segmentIndex + 1).reduce((time, distance) => {
         return time + distance / speed;
@@ -164,7 +167,6 @@ const calculateSegmentTime = (startTime, distances, segmentIndex, speed) => {
     return `${segmentTime.getHours()}:${segmentTime.getMinutes()}`;
 };
 
-// Utility: Calculate finish time
 const calculateFinishTime = (startTime, distances, speed, chargeTimeRequired) => {
     if (!startTime) return '-';
     const [hours, minutes] = startTime.split(':').map(Number);

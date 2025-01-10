@@ -23,6 +23,7 @@ import { DogWeightInput } from "./components/fields/DogWeightInput";
 import { TrailerDimensionsInput } from "./components/fields/TrailerDimensionsInput";
 import { ChargingWarning } from "./components/ChargingWarning";
 import { PedalingTimeSlider } from "./components/fields/PedalingTimeSlider";
+import { MaxMotorPowerSlider } from "./components/fields/MaxMotorPowerSlider";
 
 export const EBikeRangeCalculator = () => {
   const [speed, setSpeed] = useState(20);
@@ -38,6 +39,9 @@ export const EBikeRangeCalculator = () => {
   const [pedalingTime, setPedalingTime] = useState(0);
   const [trailerWeight, setTrailerWeight] = useState(10);
   const [dogWeight, setDogWeight] = useState(15);
+  const [maxMotorPower, setMaxMotorPower] = useState(1500);
+
+  console.log(maxMotorPower)
 
   const [trailerDimensions, setTrailerDimensions] = useState({
     length: 0.8,
@@ -116,6 +120,7 @@ export const EBikeRangeCalculator = () => {
         windData,
         directions,
         pedalingTime,
+        maxMotorPower,
         {
           weight: trailerWeight,
           dogWeight,
@@ -125,6 +130,7 @@ export const EBikeRangeCalculator = () => {
         }
       ),
     [
+      maxMotorPower,
       pedalingTime,
       batteryCapacity,
       trailerWeight,
@@ -155,6 +161,7 @@ export const EBikeRangeCalculator = () => {
   }, [
     pedalingTime,
     speed,
+    maxMotorPower,  
     memoizedGenerateWindData,
     trailerWeight,
     dogWeight,
@@ -217,6 +224,7 @@ export const EBikeRangeCalculator = () => {
             <RiderWeightInput riderWeight={riderWeight} setRiderWeight={setRiderWeight} />
             <PedalingTimeSlider pedalingTime={pedalingTime} setPedalingTime={setPedalingTime} />
             <StartTimeInput startTime={startTime} setStartTime={setStartTime} />
+            <MaxMotorPowerSlider setMaxMotorPower={setMaxMotorPower} maxMotorPower={maxMotorPower} />
             <BatteryCapacityInput batteryCapacity={batteryCapacity} setBatteryCapacity={setBatteryCapacity} />
 
             <ToggleButton

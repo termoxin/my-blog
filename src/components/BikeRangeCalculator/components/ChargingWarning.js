@@ -12,11 +12,11 @@ const TEXT = {
     chargeWarningText: "It looks like you'll need to recharge your battery at ",
     suggestedAction: "Plan a stop for a quick charge or take a break! 🚴🔋",
     estimatedChargingTime: "Estimated charging time: ",
-    hoursWithCharger: " hours with a 5A charger."
+    hoursWithCharger: " hours with a 5A charger.",
+    maxSpeed: "🚴‍♂️ Max Speed: "
 };
 
 export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
-
     const estimatedRangeElement = (
         <EstimatedRangeBreakdown>
             <EstimatedRange>
@@ -49,6 +49,7 @@ export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
     const totalTripTimeInMinutes = Math.floor((totalTripTime % 3600) / 60);
     const formattedTotalTripTime = `${totalTripTimeInHours}h ${totalTripTimeInMinutes}m`;
 
+
     return (
         <Results>
             <p>{TEXT.totalDistance}<span>{results.totalDistance} km ({formattedTotalTripTime})</span></p>
@@ -56,6 +57,7 @@ export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
             <p>{TEXT.averageConsumption}<span>{results.averageConsumption} Wh/km</span></p>
             {estimatedRangeElement}
             <p>{TEXT.finishTime}<span>{results.finishTime}</span></p>
+            <p>{TEXT.maxSpeed} <span>{rangeData.maxSpeed} km/h</span></p>
             <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
                 {results.chargeWarning && (
                     <Warning>
