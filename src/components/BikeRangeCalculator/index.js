@@ -41,8 +41,6 @@ export const EBikeRangeCalculator = () => {
   const [dogWeight, setDogWeight] = useState(15);
   const [maxMotorPower, setMaxMotorPower] = useState(1500);
 
-  console.log(maxMotorPower)
-
   const [trailerDimensions, setTrailerDimensions] = useState({
     length: 0.8,
     width: 0.5,
@@ -179,18 +177,20 @@ export const EBikeRangeCalculator = () => {
     const chunkIndex = Math.floor(index / 10);
 
     if (!acc[chunkIndex]) {
-      acc[chunkIndex] = { x: 0, y: 0, z: 0, count: 0 };
+      acc[chunkIndex] = { x: 0, y: 0, z: 0, batteryVoltage: 0, count: 0 };
     }
     
     acc[chunkIndex].x += Number(segment.km);
     acc[chunkIndex].y += Number(segment.power);
     acc[chunkIndex].z += Number(segment.slope);
+    acc[chunkIndex].batteryVoltage += Number(segment.batteryVoltage);
     acc[chunkIndex].count += 1;
-      return acc;
-    }, []).map(chunk => ({
-      x: +(chunk.x / chunk.count).toFixed(2),
-      y: +(chunk.y / chunk.count).toFixed(2),
-      z: +(chunk.z / chunk.count).toFixed(2),
+    return acc;
+  }, []).map(chunk => ({
+    x: +(chunk.x / chunk.count).toFixed(2),
+    y: +(chunk.y / chunk.count).toFixed(2),
+    z: +(chunk.z / chunk.count).toFixed(2),
+    batteryVoltage: +(chunk.batteryVoltage / chunk.count).toFixed(2),
   }));
 
   return (

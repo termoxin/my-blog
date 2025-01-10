@@ -1,4 +1,4 @@
-import { AIR_DENSITY, BATTERY_VOLTAGE, BIKE_ROLLING_RESISTANCE, CHARGER_AMPS, CHARGER_RATE, DRAG_COEFFICIENT, FRONTAL_AREA, G, RIDER_POWER, TRAILER_ROLLING_RESISTANCE } from "../constants";
+import { AIR_DENSITY, BATTERY_VOLTAGE, BIKE_ROLLING_RESISTANCE, CHARGER_AMPS, CHARGER_RATE, DRAG_COEFFICIENT, FRONTAL_AREA, G, MAX_BATTERY_VOLTAGE, MIN_BATTERY_VOLTAGE, RIDER_POWER, TRAILER_ROLLING_RESISTANCE } from "../constants";
 import { calculateRecuperationDynamicMaxSpeed } from "./calculateRecuperationCharge";
 import { mapWindDirectionToAngle } from "./mapWindDirectionToAngle";
 
@@ -72,18 +72,21 @@ export const calculateBikeRange = (
         const segmentPower = bikeRollingPower + trailerRollingPower + dragPower + elevationPower;
         const segmentConsumption = (segmentPower * (distanceSegment / speedMetersPerSec)) / 3600; // Convert to Wh
 
+        const batteryPercentage = 1 - totalConsumption / batteryCapacityWh;
+        const currentBatteryVoltage = MIN_BATTERY_VOLTAGE+ (MAX_BATTERY_VOLTAGE - MIN_BATTERY_VOLTAGE) * batteryPercentage;
+
         segmentsConsumption.push({
             km: distance.toFixed(2),
             power: segmentPower.toFixed(2),
             slope: ((elevationChange / distanceSegment) * 100).toFixed(2),
             wind: wind.direction,
             windSpeed: wind.speed,
-            movementAngle, // Add movement angle to the output
+            movementAngle, 
+            batteryVoltage: currentBatteryVoltage.toFixed(2), 
         });
 
         totalConsumption += segmentConsumption;
     });
-
 
     const recuperationEffect = calculateRecuperationDynamicMaxSpeed(distances, elevations, totalWeight, speed);
     const averageConsumption = totalConsumption / distances[distances.length - 1]; // Wh/km
@@ -110,7 +113,6 @@ export const calculateBikeRange = (
     const MAX_CHARGE_TIME = batteryCapacity / CHARGER_AMPS; 
 
     const totalTripTimeInSeconds = (distances[distances.length - 1] / speed) * 3600 + chargeTimeRequired * 3600;
-
 
     const maxSpeed = Math.sqrt((2 * maxMotorPower) / (AIR_DENSITY * DRAG_COEFFICIENT * (FRONTAL_AREA + trailerFrontalArea))) * (totalWeight / (bikeWeight + riderWeight));
     const windAdjustedMaxSpeed = maxSpeed - (calculateEffectiveWindSpeed(windData[0].speed, windData[0].direction, 0) / 3.6); // Adjust max speed for wind speed
