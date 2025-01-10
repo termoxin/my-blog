@@ -77,7 +77,9 @@ function SEO({ lang, description, meta, title, preview }) {
       title={title}
       titleTemplate={`%s | ${site.siteMetadata.title}`}
       meta={metaTags.concat(meta)}
-    />
+    >
+       <link rel="canonical" href="https://www.futornyi.com" />
+    </Helmet>
   )
 }
 

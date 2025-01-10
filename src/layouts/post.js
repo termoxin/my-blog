@@ -38,7 +38,7 @@ const PostTemplate = ({ data, pageContext }) => {
             &lt;&lt;
           </Link>
         )}{" "}
-        <Link to="/" className="home" className="home" title="Back Home">
+        <Link to="/" className="home" title="Back Home">
           {" "}
           Home
         </Link>{" "}
