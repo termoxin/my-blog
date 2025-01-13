@@ -9,7 +9,7 @@ import {
   ToggleButton,
 } from "./styles";
 import { parseGPX } from "./utils/parseGpx";
-import { calculateBikeRange } from "./utils/calculateRange";
+import { calculateBikeRange, planRouteWithStops } from "./utils/calculateRange";
 import { mapAngleToWindDirection } from "./utils/mapWindDirectionToAngle";
 import { SpeedSlider } from "./components/fields/SpeedSlider";
 import { BikeWeightInput } from "./components/fields/BikeWeightInput";
@@ -24,22 +24,43 @@ import { TrailerDimensionsInput } from "./components/fields/TrailerDimensionsInp
 import { ChargingWarning } from "./components/ChargingWarning";
 import { PedalingTimeSlider } from "./components/fields/PedalingTimeSlider";
 import { MaxMotorPowerSlider } from "./components/fields/MaxMotorPowerSlider";
+import { PasteBikeLink } from "./components/fields/PasteBikeLinkInput";
+import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
+import { Timeline } from "./components/TripTimeline";
 
 export const EBikeRangeCalculator = () => {
-  const [speed, setSpeed] = useState(20);
-  const [windSpeed, setWindSpeed] = useState(0);
-  const [bikeWeight, setBikeWeight] = useState(28);
-  const [riderWeight, setRiderWeight] = useState(65);
-  const [startTime, setStartTime] = useState("");
-  const [distances, setDistances] = useState([]);
-  const [directions, setDirections] = useState([]);
-  const [elevations, setElevations] = useState([]);
-  const [windDirection, setWindDirection] = useState(0);
-  const [batteryCapacity, setBatteryCapacity] = useState(25);
-  const [pedalingTime, setPedalingTime] = useState(0);
-  const [trailerWeight, setTrailerWeight] = useState(10);
-  const [dogWeight, setDogWeight] = useState(15);
-  const [maxMotorPower, setMaxMotorPower] = useState(1500);
+  const defaultValues = {
+    speed: 20,
+    windSpeed: 0,
+    bikeWeight: 28,
+    riderWeight: 65,
+    startTime: "",
+    distances: [],
+    directions: [],
+    elevations: [],
+    windDirection: 0,
+    batteryCapacity: 25,
+    pedalingTime: 0,
+    trailerWeight: 10,
+    dogWeight: 15,
+    maxMotorPower: 1500,
+  };
+
+  const [speed, setSpeed] = useState(defaultValues.speed);
+  const [windSpeed, setWindSpeed] = useState(defaultValues.windSpeed);
+  const [bikeWeight, setBikeWeight] = useState(defaultValues.bikeWeight);
+  const [riderWeight, setRiderWeight] = useState(defaultValues.riderWeight);
+  const [startTime, setStartTime] = useState(defaultValues.startTime);
+  const [distances, setDistances] = useState(defaultValues.distances);
+  const [directions, setDirections] = useState(defaultValues.directions);
+  const [elevations, setElevations] = useState(defaultValues.elevations);
+  const [windDirection, setWindDirection] = useState(defaultValues.windDirection);
+  const [batteryCapacity, setBatteryCapacity] = useState(defaultValues.batteryCapacity);
+  const [pedalingTime, setPedalingTime] = useState(defaultValues.pedalingTime);
+  const [trailerWeight, setTrailerWeight] = useState(defaultValues.trailerWeight);
+  const [dogWeight, setDogWeight] = useState(defaultValues.dogWeight);
+  const [maxMotorPower, setMaxMotorPower] = useState(defaultValues.maxMotorPower);
+  const [plan, setPlan] = useState(null);
 
   const [trailerDimensions, setTrailerDimensions] = useState({
     length: 0.8,
@@ -81,9 +102,18 @@ export const EBikeRangeCalculator = () => {
         }));
       };
 
+
       reader.readAsText(file);
     }
   };
+
+  useEffect(() => {
+    if(startTime) {
+      setPlan(
+        planRouteWithStops(startTime, RECOMMENDED_REST_MIN, RECOMMENDED_REST_EVERY_MIN, distances, speed)
+      )
+    }
+  }, [startTime, distances, speed]);
 
   const generateWindData = (windSpeed, windDirection) => {
     const windData = [];
@@ -193,6 +223,20 @@ export const EBikeRangeCalculator = () => {
     batteryVoltage: +(chunk.batteryVoltage / chunk.count).toFixed(2),
   }));
 
+  const onBikeDataReceived = (bikeData) => {
+    if (bikeData.ampHours) {
+      setBatteryCapacity(Number(bikeData.ampHours));
+    }
+
+    if (bikeData.watts) {
+      setMaxMotorPower(Number(bikeData.watts));
+    }
+
+    if(bikeData.kilograms) {
+      setBikeWeight(Number(bikeData.kilograms));
+    }
+  }
+
   return (
     <Container>
       <Card>
@@ -211,6 +255,7 @@ export const EBikeRangeCalculator = () => {
         <section>
           <h2>General Settings</h2>
           <div>
+            {/* <PasteBikeLink onBikeDataReceived={onBikeDataReceived} /> */}
             <Label htmlFor="gpx-upload">📂 Upload GPX File:</Label>
             <Input
               type="file"
@@ -224,7 +269,6 @@ export const EBikeRangeCalculator = () => {
             <RiderWeightInput riderWeight={riderWeight} setRiderWeight={setRiderWeight} />
             <PedalingTimeSlider pedalingTime={pedalingTime} setPedalingTime={setPedalingTime} />
             <StartTimeInput startTime={startTime} setStartTime={setStartTime} />
-            <MaxMotorPowerSlider setMaxMotorPower={setMaxMotorPower} maxMotorPower={maxMotorPower} />
             <BatteryCapacityInput batteryCapacity={batteryCapacity} setBatteryCapacity={setBatteryCapacity} />
 
             <ToggleButton
@@ -237,6 +281,7 @@ export const EBikeRangeCalculator = () => {
           {showAdvancedSettings && (
             <AdvancedSettingsContainer>
               <h3>Advanced Settings</h3>
+              <MaxMotorPowerSlider setMaxMotorPower={setMaxMotorPower} maxMotorPower={maxMotorPower} />
               <WindSpeedSlider windSpeed={windSpeed} setWindSpeed={setWindSpeed} />
               <WindDirectionSlider windDirection={windDirection} setWindDirection={setWindDirection} />
               <TrailerWeightInput trailerWeight={trailerWeight} setTrailerWeight={setTrailerWeight} />
@@ -251,6 +296,7 @@ export const EBikeRangeCalculator = () => {
           rangeData={rangeData}
           kmAndWhChartData={kmAndWhChartData}
         />}
+        {plan && <Timeline data={plan} segmentsConsumption={rangeData.segmentsConsumption} />}
       </Card>
     </Container>
   );

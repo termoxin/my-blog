@@ -197,3 +197,32 @@ export const EstimatedRangeBreakdown = styled.div`
     display: flex;
     align-items: flex-end;
 `
+
+export const InputContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+`;
+
+export const SubmitButton = styled.button`
+    background-color: #3182ce;
+    color: #fff;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-left: 1rem;
+    align-self: flex-start;
+
+    &:hover {
+        background-color: #2b6cb0;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+    }
+`;
