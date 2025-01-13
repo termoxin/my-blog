@@ -10,7 +10,7 @@ import PropTypes from "prop-types"
 import Helmet from "react-helmet"
 import { useStaticQuery, graphql } from "gatsby"
 
-function SEO({ lang, description, meta, title, preview }) {
+function SEO({ lang, description, meta, title, preview, cannonical }) {
   const { site } = useStaticQuery(
     graphql`
       query SiteMetadata {
@@ -78,7 +78,7 @@ function SEO({ lang, description, meta, title, preview }) {
       titleTemplate={`%s | ${site.siteMetadata.title}`}
       meta={metaTags.concat(meta)}
     >
-       <link rel="canonical" href="https://www.futornyi.com" />
+       {cannonical && <link rel="canonical" href={cannonical} />}
     </Helmet>
   )
 }

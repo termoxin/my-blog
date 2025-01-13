@@ -10,12 +10,13 @@ const PostTemplate = ({ data, pageContext }) => {
   const { mdx, avatar } = data
   const { frontmatter, body, slug } = mdx
   const { next, prev } = pageContext
-
+  
   return (
     <>
       <SEO
         title={frontmatter.title}
         description={frontmatter.description}
+        cannonical={frontmatter.cannonical}
         preview={avatar.publicURL}
       />
       <article className="article-content">
@@ -77,6 +78,7 @@ export const pageQuery = graphql`
       frontmatter {
         description
         title
+        cannonical
       }
       body
       slug
