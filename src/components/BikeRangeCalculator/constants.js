@@ -14,5 +14,6 @@ export const MAX_SPEED_LIMIT_DURING_RECUPERATION = 40;
 export const RIDER_POWER = 75 // Watts
 export const MIN_BATTERY_VOLTAGE = 42.0;
 export const MAX_BATTERY_VOLTAGE = 54.6;
+
 export const RECOMMENDED_REST_EVERY_MIN = 120;
 export const RECOMMENDED_REST_MIN = 30;

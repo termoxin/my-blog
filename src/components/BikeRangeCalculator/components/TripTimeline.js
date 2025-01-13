@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { MIN_BATTERY_VOLTAGE } from "../constants";
+import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "../constants";
 
 const TimelineContainer = styled.div`
   display: flex;
@@ -55,23 +55,39 @@ const Header = styled.h1`
   margin-bottom: 20px;
 `;
 
-export const Timeline = ({ data, segmentsConsumption }) => {
+const TotalRange = styled.div`
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 30px;
+  padding: 15px 20px;
+  background-color: #e0f7fa;
+  border: 2px solid #00acc1;
+  border-radius: 10px;
+  color: #006064;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+`;
 
-  const getSegmentVoltage = (distance) => {
-    const closestSegment = segmentsConsumption.find((segment) => Math.abs(segment.km - distance) <= 1);
-    if (closestSegment) {
-      return closestSegment;
-    }
-    return segmentsConsumption.find((segment) => Math.abs(segment.km - distance) <= 2);
+export const Timeline = ({ data, estimatedRange, averageConsumption }) => {
+
+  const calculateAdditionalRange = (possibleRecharging, averageConsumption) => {
+    if (averageConsumption <= 0) return 0;
+    return (possibleRecharging / averageConsumption).toFixed(2);
   };
+
+  const totalRechargingWh = data.reduce((total, item) => total + (+item.possibleRecharging), 0);
+  const totalRechargingKm = calculateAdditionalRange(totalRechargingWh, averageConsumption);
+
+  const totalRangeWithRechargingDuringTrip = (+estimatedRange) + (+totalRechargingKm);
 
   return (
     <TimelineContainer>
       {data.length && <Header>Trip Planner</Header>}
+      <TimelineText>
+        Recommended rest every {RECOMMENDED_REST_EVERY_MIN} minutes for {RECOMMENDED_REST_MIN} minutes.
+      </TimelineText>
       {data.map((item, index) => {
         const isStop = index % 2 === 1; // Burger stop every 2nd item
-
-        const segmentVoltage = getSegmentVoltage(item.distance).batteryVoltage
 
         return (
           <TimelineItem key={index} isStop={isStop}>
@@ -81,19 +97,21 @@ export const Timeline = ({ data, segmentsConsumption }) => {
                 Time: {item.time} - Distance: {item.distance} km
               </TimelineHeader>
               <TimelineText>
-                Possible Recharging: {item.possibleRecharging} Wh
+                ⚡ Possible Recharging: {item.possibleRecharging} Wh + {' '} additional {' '}
+                {calculateAdditionalRange(item.possibleRecharging, averageConsumption)} km of range 
               </TimelineText>
-              {MIN_BATTERY_VOLTAGE <= segmentVoltage && <TimelineText>Battery Voltage: {segmentVoltage} V</TimelineText>}
               {isStop && (
                 <>
                   <TimelineText>🍔 Burger Stop!</TimelineText>
-                 
                 </>
               )}
             </TimelineContent>
           </TimelineItem>
         );
       })}
+      <TotalRange>
+        Total Range with Recharging: {totalRangeWithRechargingDuringTrip} km
+      </TotalRange>
     </TimelineContainer>
   );
 };

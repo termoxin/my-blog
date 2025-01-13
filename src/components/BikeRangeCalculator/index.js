@@ -296,7 +296,7 @@ export const EBikeRangeCalculator = () => {
           rangeData={rangeData}
           kmAndWhChartData={kmAndWhChartData}
         />}
-        {plan && <Timeline data={plan} segmentsConsumption={rangeData.segmentsConsumption} />}
+        {plan && <Timeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />}
       </Card>
     </Container>
   );
