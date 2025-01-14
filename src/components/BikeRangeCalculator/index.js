@@ -7,7 +7,7 @@ import {
   Notice,
 } from "./styles";
 import { parseGPX } from "./utils/parseGpx";
-import { calculateBikeRange, planRouteWithStops } from "./utils/calculateRange";
+import { calculateBikeRange } from "./utils/calculateRange";
 import { mapAngleToWindDirection } from "./utils/mapWindDirectionToAngle";
 import { SpeedSlider } from "./components/fields/SpeedSlider";
 import { BikeWeightInput } from "./components/fields/BikeWeightInput";
@@ -22,10 +22,11 @@ import { TrailerDimensionsInput } from "./components/fields/TrailerDimensionsInp
 import { RangeInformation } from "./components/ChargingWarning";
 import { PedalingTimeSlider } from "./components/fields/PedalingTimeSlider";
 import { MaxMotorPowerSlider } from "./components/fields/MaxMotorPowerSlider";
-import { Timeline } from "./components/TripTimeline";
+import { TripTimeline } from "./components/TripTimeline";
 import { Tab, TabContent, TabContainer} from "../Tabs/styles";
 import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
 import RouteVisualizer from "./components/RouteVisualizer";
+import { planRouteWithStops } from "./utils/planRouteWithStops";
 
 export const EBikeRangeCalculator = () => {
   const defaultValues = {
@@ -108,10 +109,16 @@ export const EBikeRangeCalculator = () => {
   useEffect(() => {
     if(startTime) {
       setPlan(
-        planRouteWithStops(startTime, RECOMMENDED_REST_MIN, RECOMMENDED_REST_EVERY_MIN, distances, speed)
+        planRouteWithStops(
+          startTime, 
+          RECOMMENDED_REST_MIN, 
+          RECOMMENDED_REST_EVERY_MIN, 
+          distances, 
+          speed
+        )
       )
     }
-  }, [startTime, distances, speed]);
+  }, [startTime, distances, speed])
 
   const generateWindData = (windSpeed, windDirection) => {
     const windData = [];
@@ -233,15 +240,6 @@ export const EBikeRangeCalculator = () => {
     }
   }
 
-
-  useEffect(() => {
-    if (startTime) {
-      setPlan(
-        planRouteWithStops(startTime, 15, 120, distances, speed)
-      );
-    }
-  }, [startTime, distances, speed]);
-
   return (
     <Container>
       <Card>
@@ -317,13 +315,13 @@ export const EBikeRangeCalculator = () => {
 
         <TabContent hidden={activeTab !== "Timeline"}>
           {plan && (
-            <Timeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />
+            <TripTimeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />
           )}
         </TabContent>
 
         <TabContent hidden={activeTab !== "RouteVisualizer"}>
           {activeTab === 'RouteVisualizer' && gpxString && typeof global.window !== 'undefined' && (
-            <RouteVisualizer gpxString={gpxString}/>
+            <RouteVisualizer plan={plan} gpxString={gpxString}/>
           )}
         </TabContent>
       </Card>

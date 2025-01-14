@@ -8,12 +8,15 @@ const Polyline = lazy(() => import('react-leaflet').then(module => ({ default: m
 const Marker = lazy(() => import('react-leaflet').then(module => ({ default: module.Marker })));
 const Popup = lazy(() => import('react-leaflet').then(module => ({ default: module.Popup })));
 
-const RouteVisualizer = ({ gpxString }) => {
+const RouteVisualizer = ({ gpxString, plan }) => {
     const [route, setRoute] = useState([]);
     const [bounds, setBounds] = useState(null);
     const [currentLocation, setCurrentLocation] = useState(null);
     const [bikeIcon, setBikeIcon] = useState(null);
+    const [planMarkers, setPlanMarkers] = useState([]);
     const mapRef = useRef(null);
+
+    console.log('plan:', plan);
 
     useEffect(() => {
         const parseGPX = async () => {
@@ -77,6 +80,46 @@ const RouteVisualizer = ({ gpxString }) => {
         loadBikeIcon();
     }, []);
 
+    useEffect(async () => {
+        if (route?.length > 0 && plan?.length > 0) {
+            const L = await import('leaflet');
+
+            const stopIcon = L.divIcon({
+                html: '🍔',
+                className: 'stop-icon',
+                iconSize: [30, 30]
+            });
+
+            const markers = plan.map((item, index) => {
+                const distance = parseFloat(item.distance);
+                let accumulatedDistance = 0;
+                let markerPosition = null;
+
+                for (let i = 1; i < route.length; i++) {
+                    const segmentDistance = L.latLng(route[i - 1]).distanceTo(L.latLng(route[i]));
+                    accumulatedDistance += segmentDistance;
+
+                    if (accumulatedDistance >= distance * 1000) {
+                        markerPosition = route[i];
+                        break;
+                    }
+                }
+
+                return markerPosition ? (
+                    <Marker key={index} icon={stopIcon} position={markerPosition}>
+                        <Popup>
+                            Distance: {item.distance} km<br />
+                            Time: {item.time}<br />
+                            Possible Recharging: {item.possibleRecharging}Wh
+                        </Popup>
+                    </Marker>
+                ) : null;
+            }).filter(marker => marker !== null);
+
+            setPlanMarkers(markers);
+        }
+    }, [route, plan]);
+
     const centerRoute = () => {
         if (bounds && mapRef.current) {
             mapRef.current.fitBounds(bounds);
@@ -120,12 +163,13 @@ const RouteVisualizer = ({ gpxString }) => {
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
-                            <Polyline positions={route} color="blue" />
+                            <Polyline positions={route} color="orange" />
                             {currentLocation && bikeIcon && (
                                 <Marker position={currentLocation} icon={bikeIcon}>
                                     <Popup>You are here</Popup>
                                 </Marker>
                             )}
+                            {planMarkers}
                             <MapEvents />
                         </MapContainer>
                     </Suspense>

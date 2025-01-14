@@ -68,8 +68,7 @@ const TotalRange = styled.div`
   text-align: center;
 `;
 
-export const Timeline = ({ data, estimatedRange, averageConsumption }) => {
-
+export const TripTimeline = ({ data, estimatedRange, averageConsumption }) => {
   const calculateAdditionalRange = (possibleRecharging, averageConsumption) => {
     if (averageConsumption <= 0) return 0;
     return (possibleRecharging / averageConsumption).toFixed(2);
@@ -78,13 +77,14 @@ export const Timeline = ({ data, estimatedRange, averageConsumption }) => {
   const totalRechargingWh = data.reduce((total, item) => total + (+item.possibleRecharging), 0);
   const totalRechargingKm = calculateAdditionalRange(totalRechargingWh, averageConsumption);
 
-  const totalRangeWithRechargingDuringTrip = (+estimatedRange) + (+totalRechargingKm);
+  const totalRangeWithRechargingDuringTrip = ((+estimatedRange) + (+totalRechargingKm)).toFixed(2);
 
   return (
     <TimelineContainer>
-      {data.length && <Header>Trip Planner</Header>}
+      {!!data.length && <Header>Trip Planner</Header>}
+      {!data.length && <TimelineText>No trip data available. Please import longer route to see the timeline.</TimelineText>}
       <TimelineText>
-        Recommended rest every {RECOMMENDED_REST_EVERY_MIN} minutes for {RECOMMENDED_REST_MIN} minutes.
+        Recommended rest every <b>{RECOMMENDED_REST_EVERY_MIN}</b> minutes for <b>{RECOMMENDED_REST_MIN}</b> minutes.
       </TimelineText>
       {data.map((item, index) => {
         const isStop = index % 2 === 1; // Burger stop every 2nd item
