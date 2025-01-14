@@ -25,6 +25,7 @@ import { MaxMotorPowerSlider } from "./components/fields/MaxMotorPowerSlider";
 import { Timeline } from "./components/TripTimeline";
 import { Tab, TabContent, TabContainer} from "../Tabs/styles";
 import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
+import GpxRouteMap from "./components/RouteVisualizer";
 
 export const EBikeRangeCalculator = () => {
   const defaultValues = {
@@ -73,11 +74,13 @@ export const EBikeRangeCalculator = () => {
     chargeWarning: null,
   });
   const [activeTab, setActiveTab] = useState("Basic");
+  const [gpxString, setGpxString] = useState(null);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
+
       reader.onload = (e) => {
         const {
           newDistances,
@@ -86,6 +89,8 @@ export const EBikeRangeCalculator = () => {
           elevationGain,
           directions,
         } = parseGPX(e.target.result);
+
+        setGpxString(e.target.result)
 
         setDirections(directions);
         setDistances(newDistances);
@@ -268,6 +273,11 @@ export const EBikeRangeCalculator = () => {
               Trip Timeline
             </Tab>
           )}
+          {distances.length > 0 && 
+            <Tab active={activeTab === "RouteVisualizer"} onClick={() => setActiveTab("RouteVisualizer")}>
+              Route Visualizer
+            </Tab>
+          }
         </TabContainer>
 
         <TabContent hidden={activeTab !== "Basic"}>
@@ -308,6 +318,12 @@ export const EBikeRangeCalculator = () => {
         <TabContent hidden={activeTab !== "Timeline"}>
           {plan && (
             <Timeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />
+          )}
+        </TabContent>
+
+        <TabContent hidden={activeTab !== "RouteVisualizer"}>
+          {gpxString && (
+            <GpxRouteMap  gpxString={gpxString}/>
           )}
         </TabContent>
       </Card>
