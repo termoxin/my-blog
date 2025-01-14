@@ -25,7 +25,7 @@ import { MaxMotorPowerSlider } from "./components/fields/MaxMotorPowerSlider";
 import { Timeline } from "./components/TripTimeline";
 import { Tab, TabContent, TabContainer} from "../Tabs/styles";
 import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
-import GpxRouteMap from "./components/RouteVisualizer";
+import RouteVisualizer from "./components/RouteVisualizer";
 
 export const EBikeRangeCalculator = () => {
   const defaultValues = {
@@ -322,8 +322,8 @@ export const EBikeRangeCalculator = () => {
         </TabContent>
 
         <TabContent hidden={activeTab !== "RouteVisualizer"}>
-          {gpxString && (
-            <GpxRouteMap  gpxString={gpxString}/>
+          {activeTab === 'RouteVisualizer' && gpxString && typeof global.window !== 'undefined' && (
+            <RouteVisualizer gpxString={gpxString}/>
           )}
         </TabContent>
       </Card>

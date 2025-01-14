@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Polyline, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const RouteVisualizer = ({ gpxString }) => {
     const [route, setRoute] = useState([]);
-    const [center, setCenter] = useState([0, 0]);
-    const [zoom, setZoom] = useState(13);
-    const mapRef = useRef();
+    const [bounds, setBounds] = useState(null);
+    const mapRef = useRef(null);
 
     useEffect(() => {
         const parseGPX = () => {
@@ -21,29 +20,64 @@ const RouteVisualizer = ({ gpxString }) => {
                 setRoute(trackPoints);
 
                 if (trackPoints.length > 0) {
-                    const bounds = trackPoints.reduce((bounds, point) => {
+                    const routeBounds = trackPoints.reduce((bounds, point) => {
                         return bounds.extend(point);
                     }, L.latLngBounds(trackPoints[0], trackPoints[0]));
-                    setCenter(bounds.getCenter());
-                    setZoom(13); // You can adjust the zoom level as needed
+                    setBounds(routeBounds);
                 }
             } catch (error) {
                 console.error('Error parsing GPX:', error);
             }
         };
 
-        parseGPX();
+        if (gpxString) {
+            parseGPX();
+        }
     }, [gpxString]);
 
+    const centerRoute = () => {
+        if (bounds && mapRef.current) {
+            mapRef.current.fitBounds(bounds);
+        }
+    };
+
+    const MapEvents = () => {
+        const map = useMapEvents({
+            move: () => {
+                map.invalidateSize();
+            }
+        });
+        return null;
+    };
+
+    useEffect(() => {
+        if (mapRef.current) {
+            mapRef.current.invalidateSize();
+        }
+    }, [route, bounds]);
+
     return (
-        <div className="map-container" style={{ height: '500px', width: '100%' }}>
-            <MapContainer center={center} zoom={zoom} ref={mapRef} style={{ height: '100%', width: '100%' }}>
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                {route.length > 0 && <Polyline positions={route} color="blue" />}
-            </MapContainer>
+        <div>
+            <div className="map-container" style={{ height: '500px', width: '100%' }}>
+                {route.length > 0 && bounds && (
+                    <MapContainer
+                        bounds={bounds}
+                        zoom={13}
+                        style={{ height: '100%', width: '100%' }}
+                        whenCreated={(mapInstance) => {
+                            mapRef.current = mapInstance;
+                        }}
+                        whenReady={centerRoute}
+                    >
+                        <TileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                        <Polyline positions={route} color="blue" />
+                        <MapEvents />
+                    </MapContainer>
+                )}
+            </div>
         </div>
     );
 };
