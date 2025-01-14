@@ -16,7 +16,7 @@ const TEXT = {
     maxSpeed: "🚴‍♂️ Max Speed: "
 };
 
-export const ChargingWarning = ({ results, rangeData, kmAndWhChartData }) => {
+export const RangeInformation = ({ results, rangeData, kmAndWhChartData }) => {
     const estimatedRangeElement = (
         <EstimatedRangeBreakdown>
             <EstimatedRange>

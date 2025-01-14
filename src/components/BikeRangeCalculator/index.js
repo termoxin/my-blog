@@ -3,10 +3,8 @@ import {
   Card,
   Container,
   Input,
-  AdvancedSettingsContainer,
   Label,
   Notice,
-  ToggleButton,
 } from "./styles";
 import { parseGPX } from "./utils/parseGpx";
 import { calculateBikeRange, planRouteWithStops } from "./utils/calculateRange";
@@ -21,12 +19,12 @@ import { WindDirectionSlider } from "./components/fields/WindDirectionSlider";
 import { TrailerWeightInput } from "./components/fields/TrailerWeightInput";
 import { DogWeightInput } from "./components/fields/DogWeightInput";
 import { TrailerDimensionsInput } from "./components/fields/TrailerDimensionsInput";
-import { ChargingWarning } from "./components/ChargingWarning";
+import { RangeInformation } from "./components/ChargingWarning";
 import { PedalingTimeSlider } from "./components/fields/PedalingTimeSlider";
 import { MaxMotorPowerSlider } from "./components/fields/MaxMotorPowerSlider";
-import { PasteBikeLink } from "./components/fields/PasteBikeLinkInput";
-import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
 import { Timeline } from "./components/TripTimeline";
+import { Tab, TabContent, TabContainer} from "../Tabs/styles";
+import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
 
 export const EBikeRangeCalculator = () => {
   const defaultValues = {
@@ -61,14 +59,11 @@ export const EBikeRangeCalculator = () => {
   const [dogWeight, setDogWeight] = useState(defaultValues.dogWeight);
   const [maxMotorPower, setMaxMotorPower] = useState(defaultValues.maxMotorPower);
   const [plan, setPlan] = useState(null);
-
   const [trailerDimensions, setTrailerDimensions] = useState({
     length: 0.8,
     width: 0.5,
     height: 0.5,
   });
-
-  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [results, setResults] = useState({
     totalDistance: "-",
     elevationGain: "-",
@@ -77,10 +72,10 @@ export const EBikeRangeCalculator = () => {
     finishTime: "-",
     chargeWarning: null,
   });
+  const [activeTab, setActiveTab] = useState("Basic");
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -101,8 +96,6 @@ export const EBikeRangeCalculator = () => {
           elevationGain: elevationGain.toFixed(2),
         }));
       };
-
-
       reader.readAsText(file);
     }
   };
@@ -128,42 +121,16 @@ export const EBikeRangeCalculator = () => {
     return windData;
   };
 
-  const memoizedGenerateWindData = useCallback(
+  const memoizedWindData = useMemo(
     () => generateWindData(windSpeed, windDirection),
     [windSpeed, windDirection]
   );
 
-  const windData = memoizedGenerateWindData();
+  const windData = memoizedWindData;
 
-  const memoizedRangeData = useMemo(
-    () =>
-      calculateBikeRange(
-        batteryCapacity,
-        distances,
-        elevations,
-        speed,
-        bikeWeight,
-        riderWeight,
-        startTime,
-        windData,
-        directions,
-        pedalingTime,
-        maxMotorPower,
-        {
-          weight: trailerWeight,
-          dogWeight,
-          length: trailerDimensions.length,
-          width: trailerDimensions.width,
-          height: trailerDimensions.height,
-        }
-      ),
-    [
-      maxMotorPower,
-      pedalingTime,
+  const memoizedRangeData = useMemo(() => {
+    return calculateBikeRange(
       batteryCapacity,
-      trailerWeight,
-      dogWeight,
-      trailerDimensions,
       distances,
       elevations,
       speed,
@@ -172,11 +139,35 @@ export const EBikeRangeCalculator = () => {
       startTime,
       windData,
       directions,
-      trailerWeight,
-      dogWeight,
-      trailerDimensions,
-    ]
-  );
+      pedalingTime,
+      maxMotorPower,
+      {
+        weight: trailerWeight,
+        dogWeight,
+        length: trailerDimensions.length,
+        width: trailerDimensions.width,
+        height: trailerDimensions.height,
+      }
+    );
+  }, [
+    maxMotorPower,
+    pedalingTime,
+    batteryCapacity,
+    trailerWeight,
+    dogWeight,
+    trailerDimensions,
+    distances,
+    elevations,
+    speed,
+    bikeWeight,
+    riderWeight,
+    startTime,
+    windData,
+    directions,
+    trailerWeight,
+    dogWeight,
+    trailerDimensions,
+  ]);
 
   const rangeData = memoizedRangeData;
 
@@ -190,7 +181,7 @@ export const EBikeRangeCalculator = () => {
     pedalingTime,
     speed,
     maxMotorPower,  
-    memoizedGenerateWindData,
+    windData,
     trailerWeight,
     dogWeight,
     trailerDimensions,
@@ -200,7 +191,7 @@ export const EBikeRangeCalculator = () => {
     distances,
     elevations,
     startTime,
-    batteryCapacity,
+    batteryCapacity
   ]);
 
   const kmAndWhChartData = rangeData?.segmentsConsumption.reduce((acc, segment, index) => {
@@ -237,66 +228,88 @@ export const EBikeRangeCalculator = () => {
     }
   }
 
+
+  useEffect(() => {
+    if (startTime) {
+      setPlan(
+        planRouteWithStops(startTime, 15, 120, distances, speed)
+      );
+    }
+  }, [startTime, distances, speed]);
+
   return (
     <Container>
       <Card>
         <Notice>
-          You can create a GPX file for your route{" "}
+          Create a GPX file for your route{" "}
           <a
             href="https://www.justgoride.co.uk/routes/create"
             target="_blank"
             rel="noopener noreferrer"
           >
             here
-          </a>{" "}
-          📄.
+          </a>.
         </Notice>
 
-        <section>
-          <h2>General Settings</h2>
-          <div>
-            {/* <PasteBikeLink onBikeDataReceived={onBikeDataReceived} /> */}
-            <Label htmlFor="gpx-upload">📂 Upload GPX File:</Label>
-            <Input
-              type="file"
-              id="gpx-upload"
-              accept=".gpx"
-              onChange={handleFileUpload}
-            />
-
-            <SpeedSlider speed={speed} setSpeed={setSpeed} />
-            <BikeWeightInput bikeWeight={bikeWeight} setBikeWeight={setBikeWeight} />
-            <RiderWeightInput riderWeight={riderWeight} setRiderWeight={setRiderWeight} />
-            <PedalingTimeSlider pedalingTime={pedalingTime} setPedalingTime={setPedalingTime} />
-            <StartTimeInput startTime={startTime} setStartTime={setStartTime} />
-            <BatteryCapacityInput batteryCapacity={batteryCapacity} setBatteryCapacity={setBatteryCapacity} />
-
-            <ToggleButton
-              onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-            >
-              🚧 Advanced settings
-            </ToggleButton>
-          </div>
-
-          {showAdvancedSettings && (
-            <AdvancedSettingsContainer>
-              <h3>Advanced Settings</h3>
-              <MaxMotorPowerSlider setMaxMotorPower={setMaxMotorPower} maxMotorPower={maxMotorPower} />
-              <WindSpeedSlider windSpeed={windSpeed} setWindSpeed={setWindSpeed} />
-              <WindDirectionSlider windDirection={windDirection} setWindDirection={setWindDirection} />
-              <TrailerWeightInput trailerWeight={trailerWeight} setTrailerWeight={setTrailerWeight} />
-              <DogWeightInput dogWeight={dogWeight} setDogWeight={setDogWeight} />
-              <TrailerDimensionsInput trailerDimensions={trailerDimensions} setTrailerDimensions={setTrailerDimensions} />
-            </AdvancedSettingsContainer>
+        <TabContainer>
+          <Tab active={activeTab === "Basic"} onClick={() => setActiveTab("Basic")}>
+            Basic Settings
+          </Tab>
+          <Tab active={activeTab === "Advanced"} onClick={() => setActiveTab("Advanced")}>
+            Advanced Settings
+          </Tab>
+          {distances.length > 0 && (
+            <Tab active={activeTab === "RangeInformation"} onClick={() => setActiveTab("RangeInformation")}>
+              Range Information
+            </Tab>
           )}
-        </section>
+          {plan && (
+            <Tab active={activeTab === "Timeline"} onClick={() => setActiveTab("Timeline")}>
+              Trip Timeline
+            </Tab>
+          )}
+        </TabContainer>
 
-        {results.totalDistance !== '-' && <ChargingWarning
-          results={results}
-          rangeData={rangeData}
-          kmAndWhChartData={kmAndWhChartData}
-        />}
-        {plan && <Timeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />}
+        <TabContent hidden={activeTab !== "Basic"}>
+          <Label htmlFor="gpx-upload">📂 Upload GPX File:</Label>
+          <Input
+            type="file"
+            id="gpx-upload"
+            accept=".gpx"
+            onChange={handleFileUpload}
+          />
+          <SpeedSlider speed={speed} setSpeed={setSpeed} />
+          <BikeWeightInput bikeWeight={bikeWeight} setBikeWeight={setBikeWeight} />
+          <RiderWeightInput riderWeight={riderWeight} setRiderWeight={setRiderWeight} />
+          <PedalingTimeSlider pedalingTime={pedalingTime} setPedalingTime={setPedalingTime} />
+          <StartTimeInput startTime={startTime} setStartTime={setStartTime} />
+          <BatteryCapacityInput batteryCapacity={batteryCapacity} setBatteryCapacity={setBatteryCapacity} />
+        </TabContent>
+
+        <TabContent hidden={activeTab !== "Advanced"}>
+          <MaxMotorPowerSlider setMaxMotorPower={setMaxMotorPower} maxMotorPower={maxMotorPower} />
+          <WindSpeedSlider windSpeed={windSpeed} setWindSpeed={setWindSpeed} />
+          <WindDirectionSlider windDirection={windDirection} setWindDirection={setWindDirection} />
+          <TrailerWeightInput trailerWeight={trailerWeight} setTrailerWeight={setTrailerWeight} />
+          <DogWeightInput dogWeight={dogWeight} setDogWeight={setDogWeight} />
+          <TrailerDimensionsInput trailerDimensions={trailerDimensions} setTrailerDimensions={setTrailerDimensions} />
+        </TabContent>
+
+        <TabContent hidden={activeTab !== "RangeInformation"}>
+          {results.totalDistance !== "-" && (
+            <RangeInformation 
+              rangeData={rangeData} 
+              kmAndWhChartData={kmAndWhChartData} 
+              results={results} 
+            />
+          )}
+        </TabContent>
+
+        <TabContent hidden={activeTab !== "Timeline"}>
+          {plan && (
+            <Timeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />
+          )}
+        </TabContent>
       </Card>
     </Container>
   );
