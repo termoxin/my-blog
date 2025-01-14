@@ -5,10 +5,14 @@ import { useMapEvents } from 'react-leaflet';
 const MapContainer = lazy(() => import('react-leaflet').then(module => ({ default: module.MapContainer })));
 const TileLayer = lazy(() => import('react-leaflet').then(module => ({ default: module.TileLayer })));
 const Polyline = lazy(() => import('react-leaflet').then(module => ({ default: module.Polyline })));
+const Marker = lazy(() => import('react-leaflet').then(module => ({ default: module.Marker })));
+const Popup = lazy(() => import('react-leaflet').then(module => ({ default: module.Popup })));
 
 const RouteVisualizer = ({ gpxString }) => {
     const [route, setRoute] = useState([]);
     const [bounds, setBounds] = useState(null);
+    const [currentLocation, setCurrentLocation] = useState(null);
+    const [bikeIcon, setBikeIcon] = useState(null);
     const mapRef = useRef(null);
 
     useEffect(() => {
@@ -39,6 +43,40 @@ const RouteVisualizer = ({ gpxString }) => {
         }
     }, [gpxString]);
 
+    useEffect(() => {
+        const getUserLocation = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        setCurrentLocation([latitude, longitude]);
+                    },
+                    (error) => {
+                        console.error('Error getting user location:', error);
+                    }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+            }
+        };
+
+        getUserLocation();
+    }, []);
+
+    useEffect(() => {
+        const loadBikeIcon = async () => {
+            const L = await import('leaflet');
+            const bikeIcon = L.divIcon({
+                html: '🚴',
+                className: 'bike-icon',
+                iconSize: [30, 30]
+            });
+            setBikeIcon(bikeIcon);
+        };
+
+        loadBikeIcon();
+    }, []);
+
     const centerRoute = () => {
         if (bounds && mapRef.current) {
             mapRef.current.fitBounds(bounds);
@@ -49,6 +87,9 @@ const RouteVisualizer = ({ gpxString }) => {
         const map = useMapEvents({
             move: () => {
                 map.invalidateSize();
+            },
+            click: (e) => {
+                setCurrentLocation(e.latlng);
             }
         });
 
@@ -80,6 +121,11 @@ const RouteVisualizer = ({ gpxString }) => {
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
                             <Polyline positions={route} color="blue" />
+                            {currentLocation && bikeIcon && (
+                                <Marker position={currentLocation} icon={bikeIcon}>
+                                    <Popup>You are here</Popup>
+                                </Marker>
+                            )}
                             <MapEvents />
                         </MapContainer>
                     </Suspense>
