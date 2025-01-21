@@ -16,8 +16,6 @@ const RouteVisualizer = ({ gpxString, plan }) => {
     const [planMarkers, setPlanMarkers] = useState([]);
     const mapRef = useRef(null);
 
-    console.log('plan:', plan);
-
     useEffect(() => {
         const parseGPX = async () => {
             try {

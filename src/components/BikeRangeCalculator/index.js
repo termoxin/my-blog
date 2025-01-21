@@ -206,8 +206,10 @@ export const EBikeRangeCalculator = () => {
     batteryCapacity
   ]);
 
-  const kmAndWhChartData = rangeData?.segmentsConsumption.reduce((acc, segment, index) => {
-    const chunkIndex = Math.floor(index / 10);
+  const kmAndWhChartData = rangeData?.segmentsConsumption.reduce((acc, segment, index, array) => {
+    const totalSegments = array.length;
+    const chunkSize = Math.ceil(totalSegments / 50);
+    const chunkIndex = Math.floor(index / chunkSize);
 
     if (!acc[chunkIndex]) {
       acc[chunkIndex] = { x: 0, y: 0, z: 0, batteryVoltage: 0, count: 0 };
@@ -246,7 +248,7 @@ export const EBikeRangeCalculator = () => {
         <Notice>
           Create a GPX file for your route{" "}
           <a
-            href="https://www.justgoride.co.uk/routes/create"
+            href="https://gpx.studio"
             target="_blank"
             rel="noopener noreferrer"
           >
