@@ -1,5 +1,5 @@
 import React from "react";
-import { KmAndWhChart as ChartContainer, EstimatedRange, EstimatedRangeBreakdown, RecuperationRange, Results, TotalPedalingGeneratedRange, Warning } from "../styles";
+import { KmAndWhChart as ChartContainer, Divider, EstimatedRange, EstimatedRangeBreakdown, RecuperationRange, Results, TotalPedalingGeneratedRange, Warning } from "../styles";
 import { KmAndWhChart } from "./KmAndWhChart";
 
 const TEXT = {
@@ -20,12 +20,19 @@ export const RangeInformation = ({ results, rangeData, kmAndWhChartData }) => {
     const estimatedRangeElement = (
         <EstimatedRangeBreakdown>
             <EstimatedRange>
-                {TEXT.estimatedRange}
-                <b>{results.estimatedRange} km</b><RecuperationRange>including <b>{results.totalRecuperationGeneratedRange} km </b> of recovery from downhills 🏔</RecuperationRange>
+                <div>
+                    {TEXT.estimatedRange}
+                    <b>{results.estimatedRange} km</b>
+                </div>
+                <RecuperationRange>
+                    + <b>{results.totalRecuperationGeneratedRange} km </b> from recuperation 🏔
+                </RecuperationRange>
+                {!!Number(rangeData.totalPedalingGeneratedRange) && (
+                    <TotalPedalingGeneratedRange>
+                        + using pedaling: <b>{rangeData.totalPedalingGeneratedRange} km </b>💪
+                    </TotalPedalingGeneratedRange>
+                )}
             </EstimatedRange>
-            {!!Number(rangeData.totalPedalingGeneratedRange) && <TotalPedalingGeneratedRange>
-                Including saved by pedaling: {rangeData.totalPedalingGeneratedRange} km 💪
-            </TotalPedalingGeneratedRange>}
         </EstimatedRangeBreakdown>
     );
 
