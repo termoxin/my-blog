@@ -119,18 +119,18 @@ export const calculateBikeRange = (
 
     return {
         segmentsConsumption,
-        averageConsumption: averageConsumption.toFixed(2),
-        totalRecuperationGeneratedRange: totalRecuperationGeneratedRange.toFixed(2),
-        totalRecuperationGeneratedPower: recuperationEffect.toFixed(2),
-        totalPedalingGeneratedRange: totalPedalingGeneratedRange.toFixed(2),
-        estimatedRange: estimatedRange.toFixed(2),
+        averageConsumption: averageConsumption.toFixed(1),
+        totalRecuperationGeneratedRange: totalRecuperationGeneratedRange.toFixed(1),
+        totalRecuperationGeneratedPower: recuperationEffect.toFixed(1),
+        totalPedalingGeneratedRange: totalPedalingGeneratedRange.toFixed(1),
+        estimatedRange: estimatedRange.toFixed(1),
         finishTime,
-        maxSpeed: windAdjustedMaxSpeed.toFixed(2),
-        totalTripTimeInSeconds: totalTripTimeInSeconds.toFixed(2),
+        maxSpeed: windAdjustedMaxSpeed.toFixed(1),
+        totalTripTimeInSeconds: totalTripTimeInSeconds.toFixed(1),
         chargeWarning: chargeWarning
             ? {
-                  chargeKm: chargePoint ? chargePoint.toFixed(2) : null,
-                  chargeTime: Math.min(chargeTimeRequired, MAX_CHARGE_TIME).toFixed(2),
+                  chargeKm: chargePoint ? chargePoint.toFixed(1) : null,
+                  chargeTime: Math.min(chargeTimeRequired, MAX_CHARGE_TIME).toFixed(1),
               }
             : null,
     };

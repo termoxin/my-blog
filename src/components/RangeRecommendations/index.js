@@ -59,32 +59,40 @@ const Chevron = styled.span`
 
 const recommendations = [
     {
-        title: "🚲 What factors impact the range of an e-bike?",
-        content: "The range of an e-bike is influenced by several factors: 🏔️ Terrain (steep inclines consume more battery), 💨 Wind resistance (strong headwinds reduce range), 🧳 Rider weight and load (heavier riders or extra luggage decrease efficiency), ⚡ Pedal assist level (higher assist uses more power), and 🚦 Riding style (smooth, consistent riding optimizes battery use). For example, a 250W motor on flat terrain might give you 50-70 km, but only 30-40 km on hilly terrain."
+        title: "🚲 Key factors affecting e-bike range",
+        content: "Your e-bike's range depends on factors like terrain (flat vs hilly), rider weight, speed, and battery size. For instance, riding on flat roads with a 15Ah battery can give you 50-70 km, while steep hills might reduce it to 30-40 km."
     },
     {
-        title: "⚖️ How do weight and tire pressure impact e-bike performance?",
-        content: "The total weight (bike, rider, and cargo) directly affects range and efficiency. 🏋️‍♂️ Lighter loads increase range, while heavier loads reduce it. Proper tire pressure is equally important: 🔧 Under-inflated tires increase rolling resistance and drain the battery faster. Always check and maintain the recommended tire pressure for optimal performance. ✅ For instance, maintaining proper tire pressure can improve range by 10-15%."
+        title: "⚖️ How weight impacts your ride",
+        content: "The heavier the load (rider + luggage), the lower the range. For example, adding a 10kg backpack might reduce your range by 10-15%. Keeping your e-bike and luggage as light as possible helps save battery life."
     },
     {
-        title: "⚙️ What motor power should I choose for my e-bike?",
-        content: "Your ideal motor power depends on your typical riding conditions: 🏙️ 250W is best for city commuting or flat terrains, ⛰️ 500W or 750W is ideal for hilly regions or hauling cargo, and 🛞 1000W is essential for off-road trails or heavy-duty tasks. Choose a motor that matches your riding needs without overloading your battery. 🔋 For example, a 500W motor might provide 40-60 km on mixed terrain."
+        title: "⚙️ Best motor power for your needs",
+        content: "Choose motor power based on your route. For city rides, a 250W motor works great. For hills or off-road trails, opt for 500W or higher. A 500W motor on mixed terrain typically offers a range of 40-60 km."
     },
     {
-        title: "🔋 What battery capacity (Ah) should I choose for my e-bike?",
-        content: "Choose a battery capacity based on your planned distances: 🚶‍♂️ 10Ah (360Wh) covers 15–30 km for short city commutes, 🚴 15Ah (540Wh) is perfect for moderate trips of 30–60 km, and 🚵‍♀️ 20Ah or higher (720Wh+) provides 60+ km, ideal for long-distance adventures. Note that higher-capacity batteries are heavier ⚖️ and may affect handling. 🏁 For instance, a 20Ah battery might give you up to 100 km on flat terrain."
+        title: "🔋 Picking the right battery capacity",
+        content: "Match battery capacity to your distance needs: 10Ah (15-30 km), 15Ah (30-60 km), or 20Ah+ (60+ km). For example, a 15Ah battery is perfect for a moderate 50 km ride on flat terrain."
     },
     {
-        title: "🌡️ How does temperature affect e-bike performance?",
-        content: "Battery performance decreases in extreme temperatures. ❄️ Cold weather reduces battery capacity, while 🔥 very hot conditions may damage the battery. Store your e-bike indoors 🏠 and avoid exposing the battery to extreme temperatures for extended periods to preserve its lifespan. For example, battery range can drop by 20-30% in cold weather."
+        title: "🌡️ How weather affects range",
+        content: "Cold weather can reduce range by up to 30%. To minimize this, store your battery indoors and plan shorter trips in the winter. For example, a 15Ah battery might drop from 50 km to 35 km in freezing conditions."
     },
     {
-        title: "🛠️ How can I extend the lifespan of my e-bike battery?",
-        content: "To extend battery life, avoid letting it drain completely 🚫🔋 and recharge it after each ride. 🔌 Store the battery in a cool, dry place 🌬️ and follow the manufacturer's recommended charging practices. Regular maintenance 🧽, such as cleaning terminals and checking for damage, also helps. For instance, keeping the battery charged between 20-80% can extend its lifespan by 50%."
+        title: "🛠️ Tips to extend battery life",
+        content: "Avoid draining your battery completely and recharge it after every ride. Store it in a cool, dry place. For example, keeping the battery charged between 20-80% can extend its lifespan by 50%."
     },
     {
-        title: "🏎️ How does speed affect the range of an e-bike?",
-        content: "Higher speeds drain the battery faster due to increased wind resistance 💨 and motor power usage. Riding at a moderate, steady speed is more energy-efficient and maximizes the range. For optimal results, use pedal assist wisely ⚡ and avoid excessive throttle use. For example, riding at 20 km/h instead of 25 km/h can increase your range by 10-20%."
+        title: "🏎️ Why speed matters",
+        content: "Riding at 20 km/h instead of 25 km/h can increase your range by 10-20%. Maintaining a steady pace and using pedal assist sparingly helps conserve battery life."
+    },
+    {
+        title: "💨 Wind resistance and its impact",
+        content: "Headwinds can significantly drain the battery. For example, strong winds might reduce your range by 15-20%. Plan routes with sheltered paths or ride during calmer weather for better efficiency."
+    },
+    {
+        title: "⛰️ Elevation's role in battery usage",
+        content: "Climbing hills requires more power, reducing range. For example, a 500W motor might cover 50 km on flat terrain but only 30 km in a hilly area. Use lower assist levels to conserve battery on climbs."
     }
 ];
 
@@ -104,7 +112,7 @@ export const RangeRecommendations = () => {
                         <Chevron isOpen={openIndex === index}>{openIndex === index ? "▶" : "▼"}</Chevron>
                     </AccordionTitle>
                     <AccordionContent isOpen={openIndex === index} aria-hidden={openIndex !== index}>
-                        <div dangerouslySetInnerHTML={{ __html: rec.content }} />
+                        <div>{rec.content}</div>
                     </AccordionContent>
                 </AccordionItem>
             ))}
