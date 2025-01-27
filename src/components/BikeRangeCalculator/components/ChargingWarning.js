@@ -22,7 +22,7 @@ export const RangeInformation = ({ results, rangeData, kmAndWhChartData }) => {
             <EstimatedRange>
                 <div>
                     {TEXT.estimatedRange}
-                    <b>{results.estimatedRange} km</b>
+                    <b>{(results.estimatedRange * 0.9).toFixed(1)} - {(results.estimatedRange * 1.1).toFixed(1)} km</b> (± 10%)
                 </div>
                 <RecuperationRange>
                     + <b>{results.totalRecuperationGeneratedRange} km </b> from recuperation 🏔
