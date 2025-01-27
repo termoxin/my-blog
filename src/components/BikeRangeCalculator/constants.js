@@ -7,13 +7,14 @@ export const DRAG_COEFFICIENT = 0.9;
 export const FRONTAL_AREA = 0.6; // m^2
 export const CHARGER_AMPS = 5; // Charger amperage
 export const CHARGER_RATE = CHARGER_AMPS * BATTERY_VOLTAGE; // Charging rate in Watts
-export const RECUPERATION_EFFICIENCY = 0.8;
+export const RECUPERATION_EFFICIENCY = 0.15;
 export const SPEED_CONVERSION_FACTOR = 1 / 3.6;
 export const SLOPE_FACTOR = 50;
 export const MAX_SPEED_LIMIT_DURING_RECUPERATION = 40;
-export const RIDER_POWER = 100 // Watts
+export const RIDER_POWER = 75 // Watts
 export const MIN_EFFECTIVE_BATTERY_VOLTAGE = 44;
 export const MAX_BATTERY_VOLTAGE = 54.6;
+export const MAX_USABLE_BATTERY_WITHOUT_ITS_DAMANGE = 0.7;
 
 export const RECOMMENDED_REST_EVERY_MIN = 120;
 export const RECOMMENDED_REST_MIN = 30;

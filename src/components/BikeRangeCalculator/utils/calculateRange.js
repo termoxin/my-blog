@@ -1,4 +1,5 @@
-import { AIR_DENSITY, BATTERY_VOLTAGE, BIKE_ROLLING_RESISTANCE, CHARGER_AMPS, CHARGER_RATE, DRAG_COEFFICIENT, FRONTAL_AREA, G, MAX_BATTERY_VOLTAGE, MIN_BATTERY_VOLTAGE, RIDER_POWER, TRAILER_ROLLING_RESISTANCE } from "../constants";
+import { featureFlags } from "../config";
+import { AIR_DENSITY, BATTERY_VOLTAGE, BIKE_ROLLING_RESISTANCE, MAX_USABLE_BATTERY_WITHOUT_ITS_DAMANGE, CHARGER_AMPS, CHARGER_RATE, DRAG_COEFFICIENT, FRONTAL_AREA, G, MAX_BATTERY_VOLTAGE, MIN_EFFECTIVE_BATTERY_VOLTAGE, RIDER_POWER, TRAILER_ROLLING_RESISTANCE } from "../constants";
 import { calculateRecuperationDynamicMaxSpeed } from "./calculateRecuperationCharge";
 import { mapWindDirectionToAngle } from "./mapWindDirectionToAngle";
 
@@ -16,7 +17,8 @@ export const calculateBikeRange = (
     maxMotorPower,
     trailerData = {},
 ) => {
-    const batteryCapacityWh = batteryCapacity * BATTERY_VOLTAGE; // Convert Ah to Wh
+    const batteryCapacityWh = (batteryCapacity * MAX_USABLE_BATTERY_WITHOUT_ITS_DAMANGE) * BATTERY_VOLTAGE; 
+    
     if (!distances.length || !elevations.length) return;
 
     const {
@@ -73,7 +75,7 @@ export const calculateBikeRange = (
         const segmentConsumption = (segmentPower * (distanceSegment / speedMetersPerSec)) / 3600; // Convert to Wh
 
         const batteryPercentage = 1 - totalConsumption / batteryCapacityWh;
-        const currentBatteryVoltage = MIN_BATTERY_VOLTAGE+ (MAX_BATTERY_VOLTAGE - MIN_BATTERY_VOLTAGE) * batteryPercentage;
+        const currentBatteryVoltage = MIN_EFFECTIVE_BATTERY_VOLTAGE + (MAX_BATTERY_VOLTAGE - MIN_EFFECTIVE_BATTERY_VOLTAGE) * batteryPercentage;
 
         segmentsConsumption.push({
             km: distance.toFixed(2),
@@ -92,7 +94,11 @@ export const calculateBikeRange = (
     const averageConsumption = totalConsumption / distances[distances.length - 1]; // Wh/km
     const pedalingEffect = (RIDER_POWER * ((distances[distances.length - 1] / speed) * 3600 / 3600)) * (pedalingTime / 100); // Wh
 
-    const estimatedRange = (batteryCapacityWh + recuperationEffect + pedalingEffect) / averageConsumption
+    const estimatedRange = featureFlags.INCLUDE_RECUPERATION_IN_CALCULATIONS
+        ? (batteryCapacityWh + recuperationEffect + pedalingEffect) / averageConsumption
+        : (batteryCapacityWh + pedalingEffect) / averageConsumption;
+
+
 
     const totalRecuperationGeneratedRange = recuperationEffect / averageConsumption;
     const totalPedalingGeneratedRange = pedalingEffect / averageConsumption;
@@ -104,7 +110,11 @@ export const calculateBikeRange = (
     let chargeTimeRequired = 0;
 
     if (chargeWarning) {
-        remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + recuperationEffect + pedalingEffect), 0);
+        if (featureFlags.INCLUDE_RECUPERATION_IN_CALCULATIONS) {
+            remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + recuperationEffect + pedalingEffect), 0);
+        } else {
+            remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + pedalingEffect), 0);
+        }
         chargeTimeRequired = remainingEnergy / CHARGER_RATE;
     }
 
