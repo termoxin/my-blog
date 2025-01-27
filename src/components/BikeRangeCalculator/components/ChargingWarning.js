@@ -25,11 +25,11 @@ export const RangeInformation = ({ results, rangeData, kmAndWhChartData }) => {
                     <b>{(results.estimatedRange * 0.9).toFixed(1)} - {(results.estimatedRange * 1.1).toFixed(1)} km</b> (± 10%)
                 </div>
                 <RecuperationRange>
-                    + <b>{results.totalRecuperationGeneratedRange} km </b> from recuperation 🏔
+                    + <b>{results.totalRecuperationGeneratedRange} km </b> RBS 🏔
                 </RecuperationRange>
                 {!!Number(rangeData.totalPedalingGeneratedRange) && (
                     <TotalPedalingGeneratedRange>
-                        + using pedaling: <b>{rangeData.totalPedalingGeneratedRange} km </b>💪
+                        + pedaling: <b>{rangeData.totalPedalingGeneratedRange} km </b>💪
                     </TotalPedalingGeneratedRange>
                 )}
             </EstimatedRange>
