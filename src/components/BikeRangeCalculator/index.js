@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Card,
   Container,
+  FindEBikeKitButton,
   Input,
   Label,
   Notice,
@@ -27,6 +28,9 @@ import { Tab, TabContent, TabContainer} from "../Tabs/styles";
 import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
 import RouteVisualizer from "./components/RouteVisualizer";
 import { planRouteWithStops } from "./utils/planRouteWithStops";
+import  EbikeKits  from ".././EbikeKits"
+import { products } from "./products";
+import { extractBatteryCapacity } from "../EbikeKits/utils";
 
 export const EBikeRangeCalculator = () => {
   const defaultValues = {
@@ -76,6 +80,7 @@ export const EBikeRangeCalculator = () => {
   });
   const [activeTab, setActiveTab] = useState("Basic");
   const [gpxString, setGpxString] = useState(null);
+  const [calculateRanges, setCalculateRanges] = useState(false);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -228,21 +233,13 @@ export const EBikeRangeCalculator = () => {
     batteryVoltage: +(chunk.batteryVoltage / chunk.count).toFixed(2),
   }));
 
-  const onBikeDataReceived = (bikeData) => {
-    if (bikeData.ampHours) {
-      setBatteryCapacity(Number(bikeData.ampHours));
-    }
 
-    if (bikeData.watts) {
-      setMaxMotorPower(Number(bikeData.watts));
-    }
-
-    if(bikeData.kilograms) {
-      setBikeWeight(Number(bikeData.kilograms));
-    }
+  const onCalculateRanges = () => {
+    setCalculateRanges(true)
   }
 
   return (
+    <>
     <Container>
       <Card>
         <Notice>
@@ -326,7 +323,102 @@ export const EBikeRangeCalculator = () => {
             <RouteVisualizer plan={plan} gpxString={gpxString}/>
           )}
         </TabContent>
+        <FindEBikeKitButton onClick={onCalculateRanges}>
+      Find E-Bike Kits
+    </FindEBikeKitButton>
       </Card>
+     
     </Container>
+    {gpxString && calculateRanges && <EbikeKitsWithPagination
+      distances={distances}
+      elevations={elevations}
+      speed={speed}
+      bikeWeight={bikeWeight}
+      riderWeight={riderWeight}
+      startTime={startTime}
+      windData={windData}
+      directions={directions}
+      pedalingTime={pedalingTime}
+      maxMotorPower={maxMotorPower}
+      trailerWeight={trailerWeight}
+      dogWeight={dogWeight}
+      trailerDimensions={trailerDimensions}
+      products={products} />}
+    </>
   );
 };
+
+
+export const EbikeKitsWithPagination = ({
+  distances,
+  elevations,
+  speed,
+  bikeWeight,
+  riderWeight,
+  startTime,
+  windData,
+  directions,
+  pedalingTime,
+  maxMotorPower,
+  trailerWeight,
+  dogWeight,
+  trailerDimensions,
+  products,
+  calculateRanges
+}) => {
+  const ranges = useMemo(() => {
+    return products.map(product => ({
+      id: product.id,
+      ranges: extractBatteryCapacity(product.title, product.skuOptions)
+        .split('/')
+        .map(batteryCapacity => {
+          const batteryCapacityParsed = parseFloat(batteryCapacity);
+    
+          const estimatedRange = calculateBikeRange(
+                batteryCapacityParsed,
+                distances,
+                elevations,
+                speed,
+                bikeWeight,
+                riderWeight,
+                startTime,
+                windData,
+                directions,
+                pedalingTime,
+                maxMotorPower,
+                {
+                  weight: trailerWeight,
+                  dogWeight,
+                  length: trailerDimensions.length,
+                  width: trailerDimensions.width,
+                  height: trailerDimensions.height,
+                }
+            )?.estimatedRange
+    
+            return {
+              estimatedRange,
+              batteryCapacity
+            }
+        })
+        .filter(Boolean)
+    }))
+  }, [
+    products,
+    distances,
+    elevations,
+    speed,
+    bikeWeight,
+    riderWeight,
+    startTime,
+    windData,
+    directions,
+    pedalingTime,
+    maxMotorPower,
+    trailerWeight,
+    dogWeight,
+    trailerDimensions,
+    calculateRanges
+  ]);
+  
+  return <EbikeKits ranges={ranges} products={products} />
+}

@@ -232,3 +232,25 @@ export const Divider = styled.hr`
     background: #e2e8f0;
     margin: 2rem 0;
 `;
+
+
+export const FindEBikeKitButton = styled.button`
+    background-color: #48bb78;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1.5rem;
+
+    &:hover {
+        background-color: #38a169;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.6);
+    }
+`;
