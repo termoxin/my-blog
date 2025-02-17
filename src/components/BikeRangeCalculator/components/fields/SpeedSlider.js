@@ -1,10 +1,12 @@
 import React from "react";
 import { Label, Slider } from "../../styles";
+import { FIELD_TYPES, FieldTooltip } from "../FieldTooltip";
 
 export const SpeedSlider = ({ speed, setSpeed }) => (
   <div>
     <Label htmlFor="speed-slider">
-      🚴‍♂️ Speed: <span>{speed}</span> km/h
+      🚴‍♂️ Speed: <span>{speed} km/h</span>
+       <FieldTooltip type={FIELD_TYPES.SPEED} />
     </Label>
     <Slider
       id="speed-slider"

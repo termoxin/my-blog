@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Card,
   Container,
@@ -28,9 +28,9 @@ import { Tab, TabContent, TabContainer} from "../Tabs/styles";
 import { RECOMMENDED_REST_EVERY_MIN, RECOMMENDED_REST_MIN } from "./constants";
 import RouteVisualizer from "./components/RouteVisualizer";
 import { planRouteWithStops } from "./utils/planRouteWithStops";
-import  EbikeKits  from ".././EbikeKits"
 import { products } from "./products";
-import { extractBatteryCapacity } from "../EbikeKits/utils";
+import { FIELD_TYPES, FieldTooltip } from "./components/FieldTooltip";
+import { EbikeKitsWithPagination } from "./components/EbikeKitsWithPagination";
 
 export const EBikeRangeCalculator = () => {
   const defaultValues = {
@@ -278,7 +278,7 @@ export const EBikeRangeCalculator = () => {
         </TabContainer>
 
         <TabContent hidden={activeTab !== "Basic"}>
-          <Label htmlFor="gpx-upload">📂 Upload GPX File:</Label>
+          <Label htmlFor="gpx-upload">📂 Upload GPX File: <FieldTooltip type={FIELD_TYPES.UPLOAD_GPX} /></Label>
           <Input
             type="file"
             id="gpx-upload"
@@ -323,9 +323,9 @@ export const EBikeRangeCalculator = () => {
             <RouteVisualizer plan={plan} gpxString={gpxString}/>
           )}
         </TabContent>
-        <FindEBikeKitButton onClick={onCalculateRanges}>
+        {gpxString && <FindEBikeKitButton onClick={onCalculateRanges}>
       Find E-Bike Kits
-    </FindEBikeKitButton>
+    </FindEBikeKitButton>}
       </Card>
      
     </Container>
@@ -347,78 +347,3 @@ export const EBikeRangeCalculator = () => {
     </>
   );
 };
-
-
-export const EbikeKitsWithPagination = ({
-  distances,
-  elevations,
-  speed,
-  bikeWeight,
-  riderWeight,
-  startTime,
-  windData,
-  directions,
-  pedalingTime,
-  maxMotorPower,
-  trailerWeight,
-  dogWeight,
-  trailerDimensions,
-  products,
-  calculateRanges
-}) => {
-  const ranges = useMemo(() => {
-    return products.map(product => ({
-      id: product.id,
-      ranges: extractBatteryCapacity(product.title, product.skuOptions)
-        .split('/')
-        .map(batteryCapacity => {
-          const batteryCapacityParsed = parseFloat(batteryCapacity);
-    
-          const estimatedRange = calculateBikeRange(
-                batteryCapacityParsed,
-                distances,
-                elevations,
-                speed,
-                bikeWeight,
-                riderWeight,
-                startTime,
-                windData,
-                directions,
-                pedalingTime,
-                maxMotorPower,
-                {
-                  weight: trailerWeight,
-                  dogWeight,
-                  length: trailerDimensions.length,
-                  width: trailerDimensions.width,
-                  height: trailerDimensions.height,
-                }
-            )?.estimatedRange
-    
-            return {
-              estimatedRange,
-              batteryCapacity
-            }
-        })
-        .filter(Boolean)
-    }))
-  }, [
-    products,
-    distances,
-    elevations,
-    speed,
-    bikeWeight,
-    riderWeight,
-    startTime,
-    windData,
-    directions,
-    pedalingTime,
-    maxMotorPower,
-    trailerWeight,
-    dogWeight,
-    trailerDimensions,
-    calculateRanges
-  ]);
-  
-  return <EbikeKits ranges={ranges} products={products} />
-}

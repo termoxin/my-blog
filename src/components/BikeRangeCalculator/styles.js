@@ -18,7 +18,9 @@ export const Card = styled.div`
 `;
 
 export const Label = styled.label`
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: 1rem;
     font-weight: 600;
     color: #2d3748;

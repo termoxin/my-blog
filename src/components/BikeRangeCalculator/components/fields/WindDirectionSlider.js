@@ -1,12 +1,14 @@
 import React from "react";
 import { Label, Slider } from "../../styles";
 import { mapAngleToWindDirection } from "../../utils/mapWindDirectionToAngle";
+import { FIELD_TYPES, FieldTooltip } from "../FieldTooltip";
 
 export const WindDirectionSlider = ({ windDirection, setWindDirection }) => (
   <div>
     <Label htmlFor="wind-direction-slider">
       🌍 Wind Direction:{" "}
-      <span>{mapAngleToWindDirection(windDirection)}</span>°
+      <span>{mapAngleToWindDirection(windDirection)}</span>
+      <FieldTooltip type={FIELD_TYPES.WIND_DIRECTION} />
     </Label>
     <Slider
       id="wind-direction-slider"

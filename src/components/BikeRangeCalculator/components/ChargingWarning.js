@@ -1,5 +1,5 @@
 import React from "react";
-import { KmAndWhChart as ChartContainer, Divider, EstimatedRange, EstimatedRangeBreakdown, RecuperationRange, Results, TotalPedalingGeneratedRange, Warning } from "../styles";
+import { KmAndWhChart as ChartContainer, EstimatedRange, EstimatedRangeBreakdown, RecuperationRange, Results, TotalPedalingGeneratedRange, Warning } from "../styles";
 import { KmAndWhChart } from "./KmAndWhChart";
 
 const TEXT = {
@@ -22,7 +22,7 @@ export const RangeInformation = ({ results, rangeData, kmAndWhChartData }) => {
             <EstimatedRange>
                 <div>
                     {TEXT.estimatedRange}
-                    <b>{(results.estimatedRange * 0.9).toFixed(1)} - {(results.estimatedRange * 1.1).toFixed(1)} km</b> (± 10%)
+                    <b>{(results.estimatedRange * 0.95).toFixed(1)} - {(results.estimatedRange * 1.05).toFixed(1)} km</b> (± 5%)
                 </div>
                 <RecuperationRange>
                     + <b>{results.totalRecuperationGeneratedRange} km </b> RBS 🏔

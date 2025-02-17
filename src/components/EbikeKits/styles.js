@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ProductGridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   padding: 20px;
 `;
@@ -32,7 +32,7 @@ export const ProductTitle = styled.h3`
 `;
 
 export const ProductPrice = styled.p`
-  font-size: 14px;
+  font-size: 20px;
   color: #333;
   margin: 0 0 10px;
   font-weight: bold;
@@ -140,5 +140,31 @@ export const ProductLink = styled.a`
 
   &:hover {
     background-color: #0056b3;
+    cursor: pointer;
+    color: white;
   }
 `;
+
+export const CardPropertyTitle = styled.h2`
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 4px;
+`;
+
+export const PropertyValue = styled.p`
+  font-size: 1rem;
+  font-weight: 700;
+  color: ${props => {
+    if (props.type === "speed") return "#3b82f6";
+    if (props.type === "battery") return "#10b981";
+    return "#ef4444";
+  }};
+`;
+
+export const MaxSpeedContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+`

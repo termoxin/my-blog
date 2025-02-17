@@ -21,9 +21,13 @@ import {
   ProductSpecItem,
   ProductOptions,
   ProductOption,
+  CardPropertyTitle,
+  PropertyValue,
+  MaxSpeedContainer,
 } from "./styles";
+import { calculateMaxSpeed } from "../BikeRangeCalculator/utils/calculateRange";
 
-const ProductGrid = ({ ranges, products }) => {
+const ProductGrid = ({ ranges, products, riderWeight }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const handleProductClick = (product) => {
@@ -50,19 +54,28 @@ const ProductGrid = ({ ranges, products }) => {
     for (const spec of specs) {
       const value = Object.values(spec)[0];
       if (typeof value === "string" && value.toLowerCase().includes("w")) {
-        motorPowers.add(value.toLowerCase());
+        const matches = value.match(/\d+w/gi);
+        if (matches) {
+          matches.forEach((match) => motorPowers.add(match.toLowerCase()));
+        }
       }
     }
 
     for (const option of options) {
       for (const value of option.values) {
-        const motorPowerMatch = value.displayName.match(/\d+w/i);
-        if (motorPowerMatch) motorPowers.add(motorPowerMatch[0].toLowerCase());
+        const motorPowerMatches = value.displayName.match(/\d+w/gi);
+        if (motorPowerMatches) {
+          motorPowerMatches.forEach((match) =>
+            motorPowers.add(match.toLowerCase()),
+          );
+        }
       }
     }
 
-    const motorPowerMatch = title.match(/\d+w/i);
-    if (motorPowerMatch) motorPowers.add(motorPowerMatch[0].toLowerCase());
+    const motorPowerMatches = title.match(/\d+w/gi);
+    if (motorPowerMatches) {
+      motorPowerMatches.forEach((match) => motorPowers.add(match.toLowerCase()));
+    }
 
     // Ensure unique and properly formatted motor powers
     const uniqueMotorPowers = Array.from(motorPowers).map((power) =>
@@ -93,6 +106,7 @@ const ProductGrid = ({ ranges, products }) => {
             product.title,
             product.skuOptions,
           );
+
           const weight = getSpecValue(product.specs, "Weight");
 
           if (motorPower === "N/A" || batteryCapacity === "N/A") {
@@ -102,9 +116,12 @@ const ProductGrid = ({ ranges, products }) => {
           const bikeRange =
             ranges.find((range) => range.id === product.id).ranges || "N/A";
 
-          const formattedRanges = bikeRange.reduce((acc, range) => {
-            return `${acc}${acc ? ", " : ""}${range.estimatedRange}km (${range.batteryCapacity})`;
-          }, "");
+          const maxSpeed = motorPower.split('/').map((power) => {
+            return {
+              maxSpeed: calculateMaxSpeed(parseInt(power), 25 + riderWeight, 25, riderWeight, 0).toFixed(0),
+              power
+            }
+          });
 
           return (
             <ProductCard
@@ -127,23 +144,54 @@ const ProductGrid = ({ ranges, products }) => {
                     : product.title}
                 </ProductTitle>
                 <ProductPrice>{product.prices[0].discountPrice}</ProductPrice>
-                <ProductReviews>
+                {/* <ProductReviews>
                   {product.store.positiveNum} reviews
-                </ProductReviews>
+                </ProductReviews> */}
                 <ProductDetails>
-                  <div>
+                  {/* <div>
                     <DetailLabel>Motor Power:</DetailLabel> {motorPower}
-                  </div>
-                  <div>
+                  </div> */}
+                  {/* <div>
                     <DetailLabel>Battery Capacity:</DetailLabel>{" "}
                     {batteryCapacity}
-                  </div>
-                  <div>
+                  </div> */}
+                  {/* <div>
                     <DetailLabel>Weight:</DetailLabel> {weight || "N/A"}{" "}
                     (usually ~<b>20-25kg</b>)
+                  </div> */}
+                  <div>
+                    {bikeRange.map(({ batteryCapacity, estimatedRange }) =>
+                       <MaxSpeedContainer>
+                      <CardPropertyTitle>
+                        Battery
+                      </CardPropertyTitle>
+                      <PropertyValue>
+                        {batteryCapacity}
+                      </PropertyValue>
+                      <CardPropertyTitle>
+                        Estimated Range
+                      </CardPropertyTitle>
+                      <PropertyValue type="battery">
+                        ~{estimatedRange}km
+                      </PropertyValue>
+                    </MaxSpeedContainer>)}
                   </div>
                   <div>
-                    <DetailLabel>Range:</DetailLabel> {formattedRanges || "N/A"}
+                     {maxSpeed.map(({ power, maxSpeed }) =>
+                       <MaxSpeedContainer>
+                      <CardPropertyTitle>
+                        Power
+                      </CardPropertyTitle>
+                      <PropertyValue>
+                        {power}
+                      </PropertyValue>
+                      <CardPropertyTitle>
+                        Max speed
+                      </CardPropertyTitle>
+                      <PropertyValue type="speed">
+                        {maxSpeed}km/h
+                      </PropertyValue>
+                    </MaxSpeedContainer>)}
                   </div>
                 </ProductDetails>
               </ProductInfo>

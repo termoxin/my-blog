@@ -1,16 +1,12 @@
 import React from "react"
 import { Input, Label } from "../../styles";
-import { Tooltip } from "react-tooltip";
+import { FIELD_TYPES, FieldTooltip } from "../FieldTooltip";
 
 export const TrailerDimensionsInput = ({ trailerDimensions, setTrailerDimensions }) => (
   <div>
     <Label htmlFor="trailer-dimensions">
-      <a data-tooltip-id="my-tooltip" data-tooltip-content="Enter the trailer's length, width, and height in meters.">
         📐 Trailer Dimensions (m):
-      </a>
-      <Tooltip id="my-tooltip">
-        📐 Trailer Dimensions (m):
-      </Tooltip>
+      <FieldTooltip type={FIELD_TYPES.TRAILER_DIMENSIONS} />
     </Label>
     <div style={{ display: "flex", gap: "10px" }}>
       <Input

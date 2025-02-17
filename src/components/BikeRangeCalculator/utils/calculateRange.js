@@ -3,6 +3,22 @@ import { AIR_DENSITY, BATTERY_VOLTAGE, BIKE_ROLLING_RESISTANCE, MAX_USABLE_BATTE
 import { calculateRecuperationDynamicMaxSpeed } from "./calculateRecuperationCharge";
 import { mapWindDirectionToAngle } from "./mapWindDirectionToAngle";
 
+export const calculateMaxSpeed = (
+    maxMotorPower,
+    totalWeight,
+    bikeWeight,
+    riderWeight,
+    trailerFrontalArea
+) => {
+    return (
+        Math.sqrt(
+            (2 * maxMotorPower) /
+                (AIR_DENSITY * DRAG_COEFFICIENT * (FRONTAL_AREA + trailerFrontalArea))
+        ) *
+        (totalWeight / (bikeWeight + riderWeight))
+    );
+};
+
 export const calculateBikeRange = (
     batteryCapacity,
     distances,
@@ -124,7 +140,9 @@ export const calculateBikeRange = (
 
     const totalTripTimeInSeconds = (distances[distances.length - 1] / speed) * 3600 + chargeTimeRequired * 3600;
 
-    const maxSpeed = Math.sqrt((2 * maxMotorPower) / (AIR_DENSITY * DRAG_COEFFICIENT * (FRONTAL_AREA + trailerFrontalArea))) * (totalWeight / (bikeWeight + riderWeight));
+    const maxSpeed = calculateMaxSpeed(maxMotorPower, totalWeight, bikeWeight, riderWeight, trailerFrontalArea);
+    const maxSpeed3PercentSlope = Math.sqrt((2 * maxMotorPower) / (AIR_DENSITY * DRAG_COEFFICIENT * (FRONTAL_AREA + trailerFrontalArea))) * (totalWeight / (bikeWeight + riderWeight)) * Math.cos(Math.atan(0.03));
+
     const windAdjustedMaxSpeed = maxSpeed - (calculateEffectiveWindSpeed(windData[0].speed, windData[0].direction, 0) / 3.6); // Adjust max speed for wind speed
 
     return {
@@ -136,6 +154,7 @@ export const calculateBikeRange = (
         estimatedRange: estimatedRange.toFixed(1),
         finishTime,
         maxSpeed: windAdjustedMaxSpeed.toFixed(1),
+        maxSpeed3PercentSlope: maxSpeed3PercentSlope.toFixed(1),
         totalTripTimeInSeconds: totalTripTimeInSeconds.toFixed(1),
         chargeWarning: chargeWarning
             ? {
