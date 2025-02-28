@@ -127,11 +127,50 @@ const AnimatedCard = ({ imageSrc, title, description, date, url, status }) => {
   )
 }
 
-const IndexPage = ({ data, pageContext }) => {
-  // all posts without dates are assumed to be drafts or pages
-  // not to be added to postsList
+const CalculatorGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+  margin: 40px 0;
+`
 
+const CalculatorCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  height: 100px;
+  width: 150px;
+`
+
+const CalculatorEmoji = styled.div`
+  font-size: 2rem;
+  margin-bottom: 10px;
+`
+
+const CalculatorTitle = styled.h3`
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+`
+
+const extractEmojiAndTitle = (title)=> {
+  return {
+      emoji: title.split(' ')[0],
+      title: title.substring(title.indexOf(' ') + 1)
+  };
+}
+
+const IndexPage = ({ data, pageContext }) => {
   const posts = data.allMdx.edges
+
+  const calculatorPosts = posts.filter(post => post.node.frontmatter.isCalculator)
+  const regularPosts = posts.filter(post => !post.node.frontmatter.isCalculator)
 
   const postsList = posts =>
     posts.map(post => (
@@ -146,7 +185,7 @@ const IndexPage = ({ data, pageContext }) => {
       />
     ))
 
-  const postsListContainer = groupBy(posts, getDateYear)
+  const postsListContainer = groupBy(regularPosts, getDateYear)
     .map(({ year, posts }, i) => (
       <div style={{ gap: 30, display: 'flex', flexDirection: 'column' }} key={i}>
         <h2 className="code" style={{ margin: "40px 0" }}>
@@ -157,12 +196,29 @@ const IndexPage = ({ data, pageContext }) => {
     ))
     .reverse()
 
+  const calculatorList = calculatorPosts.map(post => {
+    const { emoji, title } = extractEmojiAndTitle(post.node.frontmatter.title);
+    
+    return <Link to={`/${post.node.slug}`} key={post.node.id}>
+      <CalculatorCard>
+        <CalculatorEmoji>
+          {emoji}
+        </CalculatorEmoji>
+        <CalculatorTitle>{title}</CalculatorTitle>
+      </CalculatorCard>
+    </Link>
+  })
+
   const { previousPagePath, nextPagePath } = pageContext
 
   return (
     <>
       <SEO title="Home" />
       <section>
+        {!!calculatorList.length && <div>
+          <h2>Save Money Calculators</h2>
+          <CalculatorGrid>{calculatorList}</CalculatorGrid>
+        </div>}
         <ul>{postsListContainer}</ul>
       </section>
       <Pagination
@@ -192,6 +248,7 @@ export const pageQuery = graphql`
             description
             cover
             status
+            isCalculator
             date(formatString: "MMMM DD, YY")
           }
         }
