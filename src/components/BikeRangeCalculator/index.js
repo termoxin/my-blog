@@ -320,7 +320,14 @@ export const EBikeRangeCalculator = () => {
 
         <TabContent hidden={activeTab !== "RouteVisualizer"}>
           {activeTab === 'RouteVisualizer' && gpxString && typeof global.window !== 'undefined' && (
-            <RouteVisualizer plan={plan} gpxString={gpxString}/>
+            <RouteVisualizer 
+              plan={plan} 
+              gpxString={gpxString}
+              bikeWeight={bikeWeight}
+              riderWeight={riderWeight}
+              maxMotorPower={maxMotorPower}
+              batteryCapacity={batteryCapacity}
+            />
           )}
         </TabContent>
         {gpxString && <FindEBikeKitButton onClick={onCalculateRanges}>

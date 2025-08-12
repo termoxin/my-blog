@@ -335,10 +335,17 @@ const RouteVisualizer = ({
 
     // Calculate estimated range based on current consumption and travel patterns
     const calculateEstimatedRange = (currentPowerW, batteryPercent, currentSpeedKmh, avgSpeedKmh, distanceTraveled, tripTime) => {
-        if (currentPowerW <= 0 || batteryPercent <= 0) return 0;
+        if (batteryPercent <= 0) return 0;
         
         const remainingCapacityWh = (batteryCapacity * batteryPercent / 100) * BATTERY_VOLTAGE * MAX_USABLE_BATTERY_WITHOUT_ITS_DAMANGE;
-        const hoursRemaining = remainingCapacityWh / currentPowerW;
+        
+        // If no power consumption (stationary), calculate theoretical range at 20 km/h
+        let powerToUse = currentPowerW;
+        if (powerToUse <= 0) {
+            powerToUse = calculatePowerConsumption(20); // Use theoretical consumption at 20 km/h
+        }
+        
+        const hoursRemaining = remainingCapacityWh / powerToUse;
         
         // Use different speed strategies based on available data
         let effectiveSpeed = currentSpeedKmh;
@@ -352,6 +359,9 @@ const RouteVisualizer = ({
             if (tripAverageSpeed > 0) {
                 effectiveSpeed = tripAverageSpeed;
             }
+        } else if (currentSpeedKmh <= 0) {
+            // If stationary, use theoretical speed of 20 km/h for range estimation
+            effectiveSpeed = 20;
         }
         
         // Weight between current speed and average for more stability
@@ -394,46 +404,47 @@ const RouteVisualizer = ({
 
     // Debounced 30-second range calculation - captures all current data
     useEffect(() => {
-        if (isTracking) {
-            // Store current data snapshot for calculations
-            const getCurrentData = () => ({
-                currentSpeed: speed,
-                currentPowerConsumption: calculatePowerConsumption(speed),
-                currentBatteryPercentage: batteryPercentage,
-                currentAverageSpeed: averageSpeed,
-                currentDistanceTraveled: totalDistanceTraveled,
-                currentTripTime: tripStartTime ? (Date.now() - tripStartTime) / 1000 : 0
+        // Store current data snapshot for calculations
+        const getCurrentData = () => ({
+            currentSpeed: speed,
+            currentPowerConsumption: calculatePowerConsumption(speed),
+            currentBatteryPercentage: batteryPercentage,
+            currentAverageSpeed: averageSpeed,
+            currentDistanceTraveled: totalDistanceTraveled,
+            currentTripTime: tripStartTime ? (Date.now() - tripStartTime) / 1000 : 0
+        });
+
+        // Range calculation function using current data snapshot
+        const calculateAndUpdateRange = () => {
+            const data = getCurrentData();
+            
+            const updatedRange = calculateEstimatedRange(
+                data.currentPowerConsumption,
+                data.currentBatteryPercentage,
+                data.currentSpeed,
+                data.currentAverageSpeed,
+                data.currentDistanceTraveled,
+                data.currentTripTime
+            );
+            
+            setEstimatedRange(updatedRange);
+            setLastRangeUpdate(Date.now());
+            setNextRangeUpdateIn(30); // Reset countdown to 30 seconds
+            
+            // Enhanced logging with all current data
+            console.log(`🔄 Range Update (30s interval):`, {
+                range: `${updatedRange.toFixed(1)}km`,
+                currentSpeed: `${data.currentSpeed.toFixed(1)}km/h`,
+                avgSpeed: `${data.currentAverageSpeed.toFixed(1)}km/h`,
+                distance: `${data.currentDistanceTraveled.toFixed(2)}km`,
+                battery: `${data.currentBatteryPercentage.toFixed(1)}%`,
+                power: `${Math.round(data.currentPowerConsumption)}W`,
+                tripTime: `${Math.floor(data.currentTripTime / 60)}m ${Math.floor(data.currentTripTime % 60)}s`,
+                tracking: isTracking ? 'Active' : 'Inactive'
             });
+        };
 
-            // Range calculation function using current data snapshot
-            const calculateAndUpdateRange = () => {
-                const data = getCurrentData();
-                
-                const updatedRange = calculateEstimatedRange(
-                    data.currentPowerConsumption,
-                    data.currentBatteryPercentage,
-                    data.currentSpeed,
-                    data.currentAverageSpeed,
-                    data.currentDistanceTraveled,
-                    data.currentTripTime
-                );
-                
-                setEstimatedRange(updatedRange);
-                setLastRangeUpdate(Date.now());
-                setNextRangeUpdateIn(30); // Reset countdown to 30 seconds
-                
-                // Enhanced logging with all current data
-                console.log(`🔄 Range Update (30s interval):`, {
-                    range: `${updatedRange.toFixed(1)}km`,
-                    currentSpeed: `${data.currentSpeed.toFixed(1)}km/h`,
-                    avgSpeed: `${data.currentAverageSpeed.toFixed(1)}km/h`,
-                    distance: `${data.currentDistanceTraveled.toFixed(2)}km`,
-                    battery: `${data.currentBatteryPercentage.toFixed(1)}%`,
-                    power: `${Math.round(data.currentPowerConsumption)}W`,
-                    tripTime: `${Math.floor(data.currentTripTime / 60)}m ${Math.floor(data.currentTripTime % 60)}s`
-                });
-            };
-
+        if (isTracking) {
             // Initial calculation when tracking starts (after 2 seconds to allow GPS to stabilize)
             const initialTimeout = setTimeout(calculateAndUpdateRange, 2000);
 
@@ -447,22 +458,31 @@ const RouteVisualizer = ({
                 clearInterval(interval);
             };
         } else {
-            // Reset range when tracking stops
-            setEstimatedRange(0);
-            setLastRangeUpdate(null);
+            // Calculate initial theoretical range even when not tracking
+            const initialCalculation = setTimeout(calculateAndUpdateRange, 1000);
+            
+            // Update every 30 seconds even when not tracking (for battery state changes)
+            const interval = setInterval(() => {
+                calculateAndUpdateRange();
+            }, 30000);
+
+            return () => {
+                clearTimeout(initialCalculation);
+                clearInterval(interval);
+            };
         }
-    }, [isTracking]); // Only depend on isTracking to prevent unnecessary re-renders
+    }, [isTracking, batteryCapacity, bikeWeight, riderWeight, maxMotorPower]); // Added dependencies for props changes
 
     // Countdown timer for next range update
     useEffect(() => {
-        if (isTracking && nextRangeUpdateIn > 0) {
+        if (nextRangeUpdateIn > 0) {
             const countdownTimer = setInterval(() => {
                 setNextRangeUpdateIn(prev => Math.max(0, prev - 1));
             }, 1000);
 
             return () => clearInterval(countdownTimer);
         }
-    }, [isTracking, nextRangeUpdateIn]);
+    }, [nextRangeUpdateIn]);
 
     // Reset battery and trip data when starting tracking
     const resetBattery = () => {
@@ -789,7 +809,7 @@ const RouteVisualizer = ({
             )}
 
             {/* Compact Mobile Dashboard - always visible */}
-            {(isMobileMode || (!isMobileMode && isTracking)) && (
+            {true && (
                 <div style={{
                     position: isMobileMode ? 'fixed' : 'relative',
                     bottom: isMobileMode ? '10px' : 'auto',
@@ -839,8 +859,8 @@ const RouteVisualizer = ({
                                 </div>
                             </div>
                             
-                            {/* Bottom row: Battery, Distance, Range (only when tracking) */}
-                            {isTracking && (
+                            {/* Bottom row: Battery, Distance, Range */}
+                            {true && (
                                 <div style={{
                                     display: 'grid',
                                     gridTemplateColumns: '1fr 1fr 1fr',
@@ -891,7 +911,7 @@ const RouteVisualizer = ({
                                             {estimatedRange.toFixed(1)}
                                         </div>
                                         <div style={{ fontSize: '7px', opacity: 0.6 }}>
-                                            km left
+                                            km {isTracking ? 'left' : 'est.'}
                                             {nextRangeUpdateIn > 0 && (
                                                 <div style={{ fontSize: '6px', opacity: 0.4, marginTop: '1px' }}>
                                                     ↻{nextRangeUpdateIn}s
@@ -939,7 +959,7 @@ const RouteVisualizer = ({
                                 <div style={{ fontSize: '10px', opacity: 0.8 }}>watts</div>
                             </div>
 
-                            {isTracking && (
+                            {true && (
                                 <>
                                     {/* Battery, Distance, Range in compact format */}
                                     <div style={{ 
@@ -992,24 +1012,29 @@ const RouteVisualizer = ({
                                             }}>
                                                 {estimatedRange.toFixed(1)}
                                             </div>
-                                            <div style={{ fontSize: '7px', opacity: 0.6 }}>km left</div>
+                                            <div style={{ fontSize: '7px', opacity: 0.6 }}>
+                                                km {isTracking ? 'left' : 'est.'}
+                                                {nextRangeUpdateIn > 0 && (
+                                                    <div style={{ fontSize: '6px', opacity: 0.4, marginTop: '1px' }}>
+                                                        ↻{nextRangeUpdateIn}s
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </>
                             )}
 
-                            {isTracking && (
-                                <div style={{ 
-                                    fontSize: '10px', 
-                                    marginTop: '8px',
-                                    color: '#4CAF50',
-                                    borderTop: '1px solid rgba(255,255,255,0.2)',
-                                    paddingTop: '6px',
-                                    textAlign: 'center'
-                                }}>
-                                    🟢 GPS Active
-                                </div>
-                            )}
+                            <div style={{ 
+                                fontSize: '10px', 
+                                marginTop: '8px',
+                                color: isTracking ? '#4CAF50' : '#FFA726',
+                                borderTop: '1px solid rgba(255,255,255,0.2)',
+                                paddingTop: '6px',
+                                textAlign: 'center'
+                            }}>
+                                {isTracking ? '🟢 GPS Active' : '📍 Theoretical Range'}
+                            </div>
                         </>
                     )}
                 </div>
@@ -1037,30 +1062,23 @@ const RouteVisualizer = ({
                                     <Popup>
                                         You are here<br/>
                                         Speed: {speed.toFixed(1)} km/h<br/>
-                                        Power: {Math.round(powerConsumption)} watts
-                                        {isTracking && (
+                                        Power: {Math.round(powerConsumption)} watts<br/>
+                                        Battery: {currentVoltage.toFixed(1)}V ({batteryPercentage.toFixed(0)}%)<br/>
+                                        Range: {estimatedRange.toFixed(1)} km {isTracking ? 'left' : 'estimated'}
+                                        {isTracking && averageSpeed > 0 && (
                                             <>
                                                 <br/>
-                                                Battery: {currentVoltage.toFixed(1)}V ({batteryPercentage.toFixed(0)}%)<br/>
-                                                Range: {estimatedRange.toFixed(1)} km left
-                                                {averageSpeed > 0 && (
-                                                    <>
-                                                        <br/>
-                                                        Avg Speed: {averageSpeed.toFixed(1)} km/h
-                                                    </>
-                                                )}
-                                                {totalDistanceTraveled > 0.1 && (
-                                                    <>
-                                                        <br/>
-                                                        Distance: {totalDistanceTraveled.toFixed(2)} km
-                                                    </>
-                                                )}
-                                                <br/>
-                                                🟢 GPS Tracking Active
+                                                Avg Speed: {averageSpeed.toFixed(1)} km/h
                                             </>
                                         )}
-                                        {!isTracking && <br/>}
-                                        {!isTracking && 'Click "Start GPS" to track battery'}
+                                        {isTracking && totalDistanceTraveled > 0.1 && (
+                                            <>
+                                                <br/>
+                                                Distance: {totalDistanceTraveled.toFixed(2)} km
+                                            </>
+                                        )}
+                                        <br/>
+                                        {isTracking ? '🟢 GPS Tracking Active' : '📍 Theoretical calculation (20 km/h avg)'}
                                     </Popup>
                                 </Marker>
                             )}
