@@ -48,8 +48,109 @@ const RouteVisualizer = ({
     const [tripStartTime, setTripStartTime] = useState(null);
     const [lastRangeUpdate, setLastRangeUpdate] = useState(null);
     const [nextRangeUpdateIn, setNextRangeUpdateIn] = useState(0);
+    const [locationPermission, setLocationPermission] = useState('unknown'); // 'granted', 'denied', 'prompt', 'unknown'
+    const [locationError, setLocationError] = useState(null);
+    const [showLocationPrompt, setShowLocationPrompt] = useState(false);
     const mapRef = useRef(null);
     const watchIdRef = useRef(null);
+
+    // Check location permission status
+    const checkLocationPermission = async () => {
+        if (!navigator.geolocation) {
+            setLocationPermission('denied');
+            setLocationError('Geolocation is not supported by this browser');
+            return false;
+        }
+
+        // Check if Permissions API is available
+        if ('permissions' in navigator) {
+            try {
+                const permission = await navigator.permissions.query({ name: 'geolocation' });
+                setLocationPermission(permission.state);
+                
+                // Listen for permission changes
+                permission.onchange = () => {
+                    setLocationPermission(permission.state);
+                };
+                
+                return permission.state === 'granted';
+            } catch (error) {
+                console.warn('Permissions API not available, falling back to direct access');
+            }
+        }
+
+        // Fallback for browsers without Permissions API
+        return new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+                () => {
+                    setLocationPermission('granted');
+                    resolve(true);
+                },
+                (error) => {
+                    if (error.code === error.PERMISSION_DENIED) {
+                        setLocationPermission('denied');
+                        setLocationError('Location access denied by user');
+                    } else {
+                        setLocationPermission('prompt');
+                        setLocationError('Location access failed: ' + error.message);
+                    }
+                    resolve(false);
+                },
+                { timeout: 5000 }
+            );
+        });
+    };
+
+    // Request location permission explicitly
+    const requestLocationPermission = async () => {
+        setLocationError(null);
+        setShowLocationPrompt(false);
+
+        if (!navigator.geolocation) {
+            setLocationError('Geolocation is not supported by this browser');
+            return false;
+        }
+
+        return new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setLocationPermission('granted');
+                    setLocationError(null);
+                    const { latitude, longitude } = position.coords;
+                    setCurrentLocation([latitude, longitude]);
+                    resolve(true);
+                },
+                (error) => {
+                    setLocationPermission('denied');
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            setLocationError('Location access denied. Please enable location access in your browser settings.');
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            setLocationError('Location information is unavailable.');
+                            break;
+                        case error.TIMEOUT:
+                            setLocationError('Location request timed out.');
+                            break;
+                        default:
+                            setLocationError('An unknown location error occurred.');
+                            break;
+                    }
+                    resolve(false);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        });
+    };
+
+    // Check permission on component mount
+    useEffect(() => {
+        checkLocationPermission();
+    }, []);
 
     useEffect(() => {
         const parseGPX = async () => {
@@ -81,8 +182,17 @@ const RouteVisualizer = ({
 
     // GPS tracking functionality
     useEffect(() => {
-        const startGPSTracking = () => {
+        const startGPSTracking = async () => {
             if (navigator.geolocation && isTracking) {
+                // Check permission before starting tracking
+                if (locationPermission !== 'granted') {
+                    const hasPermission = await requestLocationPermission();
+                    if (!hasPermission) {
+                        setIsTracking(false);
+                        setShowLocationPrompt(true);
+                        return;
+                    }
+                }
                 const options = {
                     enableHighAccuracy: true,
                     timeout: 5000,
@@ -157,12 +267,12 @@ const RouteVisualizer = ({
         }
 
         return () => stopGPSTracking();
-    }, [isTracking, lastPosition, lastTimestamp]);
+    }, [isTracking, lastPosition, lastTimestamp, locationPermission]);
 
-    // Initial location fetch
+    // Initial location fetch - only if permission is granted
     useEffect(() => {
-        const getUserLocation = () => {
-            if (navigator.geolocation) {
+        const getUserLocation = async () => {
+            if (locationPermission === 'granted' && navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const { latitude, longitude } = position.coords;
@@ -170,15 +280,16 @@ const RouteVisualizer = ({
                     },
                     (error) => {
                         console.error('Error getting user location:', error);
+                        setLocationError('Failed to get initial location: ' + error.message);
                     }
                 );
-            } else {
-                console.error('Geolocation is not supported by this browser.');
             }
         };
 
-        getUserLocation();
-    }, []);
+        if (locationPermission !== 'unknown') {
+            getUserLocation();
+        }
+    }, [locationPermission]);
 
     // Calculate distance between two coordinates
     const calculateDistance = (pos1, pos2) => {
@@ -443,10 +554,17 @@ const RouteVisualizer = ({
         }
     };
 
-    const toggleTracking = () => {
-        setIsTracking(!isTracking);
+    const toggleTracking = async () => {
         if (!isTracking) {
-            // Starting tracking - reset everything
+            // Starting tracking - check permission first
+            if (locationPermission !== 'granted') {
+                const hasPermission = await requestLocationPermission();
+                if (!hasPermission) {
+                    setShowLocationPrompt(true);
+                    return;
+                }
+            }
+            // Reset everything for new tracking session
             setSpeed(0);
             setLastPosition(null);
             setLastTimestamp(null);
@@ -455,6 +573,7 @@ const RouteVisualizer = ({
             // Stopping tracking - keep current values
             setSpeed(0);
         }
+        setIsTracking(!isTracking);
     };
 
     const MapEvents = () => {
@@ -549,14 +668,22 @@ const RouteVisualizer = ({
                     onClick={toggleTracking}
                     style={{
                         padding: '8px 16px',
-                        backgroundColor: isTracking ? '#ff6b6b' : '#2196F3',
+                        backgroundColor: isTracking ? '#ff6b6b' : 
+                                       locationPermission === 'granted' ? '#2196F3' : 
+                                       locationPermission === 'denied' ? '#9E9E9E' : '#FFA726',
                         color: 'white',
                         border: 'none',
                         borderRadius: '4px',
-                        cursor: 'pointer'
+                        cursor: locationPermission === 'denied' ? 'not-allowed' : 'pointer',
+                        opacity: locationPermission === 'denied' ? 0.6 : 1
                     }}
+                    disabled={locationPermission === 'denied'}
+                    title={locationPermission === 'denied' ? 'Location access denied - please enable in browser settings' : 
+                           locationPermission === 'granted' ? 'GPS ready' : 'Click to enable location access'}
                 >
-                    {isTracking ? '⏹️ Stop GPS' : '📍 Start GPS'}
+                    {isTracking ? '⏹️ Stop GPS' : 
+                     locationPermission === 'granted' ? '📍 Start GPS' :
+                     locationPermission === 'denied' ? '🚫 GPS Blocked' : '📍 Enable GPS'}
                 </button>
 
                 {!isMobileMode && (
@@ -575,6 +702,91 @@ const RouteVisualizer = ({
                     </button>
                 )}
             </div>
+
+            {/* Location Permission Status & Request */}
+            {(locationPermission !== 'granted' || showLocationPrompt || locationError) && (
+                <div style={{
+                    position: isMobileMode ? 'fixed' : 'relative',
+                    top: isMobileMode ? '80px' : '10px',
+                    left: isMobileMode ? '10px' : '0',
+                    right: isMobileMode ? '10px' : 'auto',
+                    zIndex: 1003,
+                    background: locationPermission === 'denied' ? 'rgba(255, 99, 99, 0.95)' : 'rgba(255, 193, 7, 0.95)',
+                    color: locationPermission === 'denied' ? 'white' : '#000',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    marginBottom: isMobileMode ? '0' : '10px'
+                }}>
+                    <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        marginBottom: locationError || showLocationPrompt ? '8px' : '0'
+                    }}>
+                        <span style={{ fontSize: '18px' }}>
+                            {locationPermission === 'denied' ? '🚫' : '📍'}
+                        </span>
+                        <div>
+                            <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                                {locationPermission === 'denied' 
+                                    ? 'Location Access Denied' 
+                                    : locationPermission === 'prompt' 
+                                        ? 'Location Access Required'
+                                        : 'Location Permission Needed'
+                                }
+                            </div>
+                            {locationError && (
+                                <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                                    {locationError}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {(showLocationPrompt || locationPermission !== 'granted') && (
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            {locationPermission !== 'denied' && (
+                                <button 
+                                    onClick={requestLocationPermission}
+                                    style={{
+                                        padding: '8px 16px',
+                                        backgroundColor: '#4CAF50',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px'
+                                    }}
+                                >
+                                    📍 Enable Location
+                                </button>
+                            )}
+                            {locationPermission === 'denied' && (
+                                <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                                    Please enable location access in your browser settings, then refresh the page.
+                                </div>
+                            )}
+                            {showLocationPrompt && (
+                                <button 
+                                    onClick={() => setShowLocationPrompt(false)}
+                                    style={{
+                                        padding: '8px 16px',
+                                        backgroundColor: 'transparent',
+                                        color: locationPermission === 'denied' ? 'white' : '#000',
+                                        border: '1px solid',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px'
+                                    }}
+                                >
+                                    Dismiss
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Compact Mobile Dashboard - always visible */}
             {(isMobileMode || (!isMobileMode && isTracking)) && (
