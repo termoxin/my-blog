@@ -63,8 +63,6 @@ export const onRouteUpdate = ({ location }) => {
     const isPropertiesPage = 
       location.pathname === '/properties-app/' || 
       location.pathname === '/properties-app' ||
-      location.pathname === '/properties-index/' || 
-      location.pathname === '/properties-index' ||
       window.location.hostname === "properties.futornyi.com"
     
     if (isPropertiesPage) {
@@ -85,12 +83,10 @@ export const wrapPageElement = ({ element, props }) => {
     return React.createElement(PropertiesApp)
   }
 
-  // Проверяем, если это страница properties-app/properties-index, не оборачиваем в DefaultLayout
+  // Проверяем, если это страница properties-app, не оборачиваем в DefaultLayout
   const isPropertiesPage = props.location && 
     (props.location.pathname === '/properties-app/' || 
-     props.location.pathname === '/properties-app' ||
-     props.location.pathname === '/properties-index/' || 
-     props.location.pathname === '/properties-index')
+     props.location.pathname === '/properties-app')
 
   if (isPropertiesPage) {
     return element
