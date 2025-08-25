@@ -1,10 +1,20 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
 import { MDXRenderer } from "gatsby-plugin-mdx"
+import { MDXProvider } from "@mdx-js/react"
 
 import SEO from "../components/Seo"
 import { pagesExcludeFromPagination } from "../constants"
 import Comment from "../components/Comment"
+import Divider from "../components/Divider"
+import Spacer from "../components/Spacer"
+import { Carousel } from "../components/Carousel"
+
+const components = {
+  Divider,
+  Spacer,
+  Carousel,
+}
 
 const PostTemplate = ({ data, pageContext }) => {
   const { mdx, avatar } = data
@@ -27,7 +37,9 @@ const PostTemplate = ({ data, pageContext }) => {
           </span>
         </div>
         <div className="divider" />
-        <MDXRenderer>{body}</MDXRenderer>
+        <MDXProvider components={components}>
+          <MDXRenderer>{body}</MDXRenderer>
+        </MDXProvider>
       </article>
       <div className="page-navigation code">
         {prev && (
