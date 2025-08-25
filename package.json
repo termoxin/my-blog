@@ -5,6 +5,7 @@
   "version": "0.2.0",
   "author": "Kinyanjui Wangonya <kwangonya@gmail.com>",
   "dependencies": {
+    "@formspree/react": "^3.0.0",
     "@mdx-js/mdx": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
     "babel-plugin-styled-components": "^1.12.0",
@@ -26,7 +27,6 @@
     "gatsby-transformer-remark": "^3.1.0",
     "gatsby-transformer-sharp": "^3.1.0",
     "leaflet": "^1.9.4",
-    "sass": "^1.57.0",
     "prism-react-renderer": "^1.2.0",
     "prop-types": "^15.8.1",
     "react": "^17.0.1",
@@ -37,6 +37,8 @@
     "react-resizable": "^3.0.5",
     "react-responsive-carousel": "^3.2.23",
     "react-tooltip": "^5.28.0",
+    "sass": "^1.57.0",
+    "sharp": "^0.34.3",
     "styled-components": "^5.3.0",
     "xml2js": "^0.6.2"
   },
