@@ -8,6 +8,11 @@ module.exports = {
     youtubeUrl: "https://www.youtube.com/channel/UCVhISeB9p9XQ-mKM5AWt_ww",
     takeCarUrl: "https://takecar.co",
     author: `Rostyslav Futornyi`,
+    // Мульти-доменная конфигурация
+    domains: {
+      main: "https://futornyi.com",
+      properties: "https://properties.futornyi.com"
+    }
   },
   plugins: [
     {

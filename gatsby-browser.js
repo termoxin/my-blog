@@ -53,11 +53,48 @@ const components = {
   h2: Heading2,
 }
 
-export const wrapPageElement = ({ element }) => (
-  <MDXProvider components={components}>
-    <DefaultLayout>
-      <article>{element}</article>
-      <GlobalStyles />
-    </DefaultLayout>
-  </MDXProvider>
-)
+export const onClientEntry = () => {
+  // Редирект для поддомена properties
+  if (typeof window !== "undefined" && window.location.hostname === "properties.futornyi.com") {
+    if (window.location.pathname === "/") {
+      window.location.replace("/properties-app");
+    }
+  }
+}
+
+export const onRouteUpdate = ({ location }) => {
+  // Добавляем/убираем класс blog-layout в зависимости от страницы
+  if (typeof window !== "undefined") {
+    const isPropertiesPage = 
+      location.pathname === '/properties-app/' || 
+      location.pathname === '/properties-app' ||
+      window.location.hostname === "properties.futornyi.com"
+    
+    if (isPropertiesPage) {
+      document.body.classList.remove('blog-layout')
+    } else {
+      document.body.classList.add('blog-layout')
+    }
+  }
+}
+
+export const wrapPageElement = ({ element, props }) => {
+  // Проверяем, если это страница properties-app или поддомен properties, не оборачиваем в DefaultLayout
+  const isPropertiesPage = props.location && 
+    (props.location.pathname === '/properties-app/' || 
+     props.location.pathname === '/properties-app' ||
+     (typeof window !== "undefined" && window.location.hostname === "properties.futornyi.com"))
+
+  if (isPropertiesPage) {
+    return element
+  }
+
+  return (
+    <MDXProvider components={components}>
+      <DefaultLayout>
+        <article>{element}</article>
+        <GlobalStyles />
+      </DefaultLayout>
+    </MDXProvider>
+  )
+}
