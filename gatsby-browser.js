@@ -60,10 +60,13 @@ export const onClientEntry = () => {
 export const onRouteUpdate = ({ location }) => {
   // Добавляем/убираем класс blog-layout в зависимости от страницы
   if (typeof window !== "undefined") {
+    const isPropertiesDomain = window.location.hostname === "properties.futornyi.com" ||
+      process.env.GATSBY_PROPERTIES_BUILD === "true"
+    
     const isPropertiesPage = 
       location.pathname === '/properties-app/' || 
       location.pathname === '/properties-app' ||
-      window.location.hostname === "properties.futornyi.com"
+      (isPropertiesDomain && location.pathname === "/")
     
     if (isPropertiesPage) {
       document.body.classList.remove('blog-layout')
@@ -74,10 +77,12 @@ export const onRouteUpdate = ({ location }) => {
 }
 
 export const wrapPageElement = ({ element, props }) => {
-  // Если мы на поддомене properties и на главной странице, показываем Properties App
-  if (typeof window !== "undefined" && 
-      window.location.hostname === "properties.futornyi.com" && 
-      props.location && props.location.pathname === "/") {
+  // Check if we're on properties domain (both SSR and client-side)
+  const isPropertiesDomain = (typeof window !== "undefined" && 
+    window.location.hostname === "properties.futornyi.com")
+  
+  // If we're on properties domain and main page, show Properties App
+  if (isPropertiesDomain && props.location && props.location.pathname === "/") {
     // Динамически импортируем и возвращаем Properties App
     const PropertiesApp = require("./src/pages/properties-app").default
     return React.createElement(PropertiesApp)
