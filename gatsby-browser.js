@@ -54,12 +54,7 @@ const components = {
 }
 
 export const onClientEntry = () => {
-  // Редирект для поддомена properties
-  if (typeof window !== "undefined" && window.location.hostname === "properties.futornyi.com") {
-    if (window.location.pathname === "/") {
-      window.location.replace("/properties-app");
-    }
-  }
+  // Больше никаких редиректов - просто управляем отображением
 }
 
 export const onRouteUpdate = ({ location }) => {
@@ -68,6 +63,8 @@ export const onRouteUpdate = ({ location }) => {
     const isPropertiesPage = 
       location.pathname === '/properties-app/' || 
       location.pathname === '/properties-app' ||
+      location.pathname === '/properties-index/' || 
+      location.pathname === '/properties-index' ||
       window.location.hostname === "properties.futornyi.com"
     
     if (isPropertiesPage) {
@@ -79,11 +76,21 @@ export const onRouteUpdate = ({ location }) => {
 }
 
 export const wrapPageElement = ({ element, props }) => {
-  // Проверяем, если это страница properties-app или поддомен properties, не оборачиваем в DefaultLayout
+  // Если мы на поддомене properties и на главной странице, показываем Properties App
+  if (typeof window !== "undefined" && 
+      window.location.hostname === "properties.futornyi.com" && 
+      props.location && props.location.pathname === "/") {
+    // Динамически импортируем и возвращаем Properties App
+    const PropertiesApp = require("./src/pages/properties-app").default
+    return React.createElement(PropertiesApp)
+  }
+
+  // Проверяем, если это страница properties-app/properties-index, не оборачиваем в DefaultLayout
   const isPropertiesPage = props.location && 
     (props.location.pathname === '/properties-app/' || 
      props.location.pathname === '/properties-app' ||
-     (typeof window !== "undefined" && window.location.hostname === "properties.futornyi.com"))
+     props.location.pathname === '/properties-index/' || 
+     props.location.pathname === '/properties-index')
 
   if (isPropertiesPage) {
     return element

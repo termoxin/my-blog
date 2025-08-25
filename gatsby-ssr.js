@@ -10,7 +10,9 @@ export { wrapPageElement, onRouteUpdate } from "./gatsby-browser"
 export const onRenderBody = ({ setBodyAttributes, pathname }) => {
   const isPropertiesPage = 
     pathname === '/properties-app/' || 
-    pathname === '/properties-app'
+    pathname === '/properties-app' ||
+    pathname === '/properties-index/' || 
+    pathname === '/properties-index'
   
   if (!isPropertiesPage) {
     setBodyAttributes({
