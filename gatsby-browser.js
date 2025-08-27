@@ -66,6 +66,8 @@ export const onRouteUpdate = ({ location }) => {
     const isPropertiesPage = 
       location.pathname === '/properties-app/' || 
       location.pathname === '/properties-app' ||
+      location.pathname === '/ebike-calculator' ||
+      location.pathname === '/ebike-calculator/' ||
       (isPropertiesDomain && location.pathname === "/")
     
     if (isPropertiesPage) {
@@ -91,7 +93,9 @@ export const wrapPageElement = ({ element, props }) => {
   // Проверяем, если это страница properties-app, не оборачиваем в DefaultLayout
   const isPropertiesPage = props.location && 
     (props.location.pathname === '/properties-app/' || 
-     props.location.pathname === '/properties-app')
+     props.location.pathname === '/properties-app' ||
+     props.location.pathname === '/ebike-calculator' ||
+     props.location.pathname === '/ebike-calculator/')
 
   if (isPropertiesPage) {
     return element

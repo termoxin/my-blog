@@ -53,6 +53,8 @@ export const onRenderBody = ({ setBodyAttributes, pathname }) => {
   const isPropertiesPage = 
     pathname === '/properties-app/' || 
     pathname === '/properties-app' ||
+    pathname === '/ebike-calculator' ||
+    pathname === '/ebike-calculator/' ||
     (isPropertiesBuild && pathname === "/")
   
   if (!isPropertiesPage) {
