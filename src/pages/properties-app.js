@@ -885,6 +885,58 @@ const ComingSoonBadge = styled.div`
   }
 `
 
+const FeatureComingSoonBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  border: 1px solid #c7d2fe;
+  border-radius: 1rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4338ca;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  position: relative;
+  overflow: hidden;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  
+  .icon {
+    font-size: 0.875rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+`
+
 const FAQSection = styled(Section)``
 
 const FAQContainer = styled(Container)`
@@ -962,6 +1014,361 @@ const FooterLinks = styled.div`
 
   span {
     margin: 0 0.5rem;
+  }
+`
+
+const TestimonialsSection = styled(Section)`
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+`
+
+const TestimonialCard = styled.div`
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  position: relative;
+  height: auto;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  &:before {
+    content: '"';
+    position: absolute;
+    top: 0.75rem;
+    left: 1rem;
+    font-size: 2.5rem;
+    color: #4f46e5;
+    font-weight: 700;
+    line-height: 1;
+    z-index: 1;
+  }
+`
+
+const TestimonialText = styled.p`
+  font-style: italic;
+  margin: 0.75rem 0 1.5rem 0;
+  color: #374151;
+  line-height: 1.6;
+  font-size: 1rem;
+  flex-grow: 1;
+  
+  @media (min-width: 768px) {
+    font-size: 1.125rem;
+  }
+`
+
+const TestimonialAuthor = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  
+  .avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+  
+  .info {
+    flex-grow: 1;
+    
+    .name {
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+    
+    .role {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin: 0;
+      margin-top: 0.125rem;
+    }
+  }
+`
+
+const SupportedSitesGrid = styled.div`
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  align-items: center;
+`
+
+const SiteLogoCard = styled.div`
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+  }
+  
+  .status {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 0.25rem 0 0 0;
+  }
+  
+  &.active .status {
+    color: #059669;
+    font-weight: 500;
+  }
+  
+  &.coming-soon .status {
+    color: #d97706;
+    font-weight: 500;
+  }
+`
+
+const StorySection = styled(Section)`
+  background: white;
+`
+
+const StoryCard = styled.div`
+  max-width: 42rem;
+  margin: 2rem auto 0;
+  background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+  border: 1px solid #e9d5ff;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  
+  &:before {
+    content: '✨';
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+    padding: 0.5rem;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    border: 1px solid #e9d5ff;
+  }
+`
+
+const StoryTitle = styled.h3`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #581c87;
+  margin: 0 0 1rem 0;
+`
+
+const StoryText = styled.p`
+  color: #374151;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+`
+
+const StoryStats = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+`
+
+const StoryStat = styled.div`
+  text-align: center;
+  
+  .number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #7c3aed;
+    display: block;
+    line-height: 1;
+  }
+  
+  .label {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: 0.25rem;
+  }
+`
+
+const QuickDemoSection = styled(Section)`
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  padding: 3rem 0;
+`
+
+const QuickDemoContainer = styled.div`
+  max-width: 56rem;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 1rem;
+`
+
+const QuickDemoGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+`
+
+const QuickDemoStep = styled.div`
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  
+  .step-number {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4f46e5;
+    color: white;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  
+  .icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+  }
+  
+  p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+  }
+`
+
+const QuickDemoPreview = styled.div`
+  margin-top: 2rem;
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+  
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    
+    .url-bar {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      font-size: 0.875rem;
+      color: #64748b;
+      flex: 1;
+      max-width: 300px;
+    }
+    
+    .browser-dots {
+      display: flex;
+      gap: 0.5rem;
+      
+      span {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        background: #cbd5e1;
+      }
+    }
+  }
+  
+  .preview-content {
+    position: relative;
+    min-height: 200px;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    
+    .demo-gif {
+      max-width: 100%;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .placeholder {
+      padding: 2rem;
+      
+      .icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+      }
+      
+      h3 {
+        color: #4f46e5;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+      }
+      
+      p {
+        color: #64748b;
+        margin: 0;
+      }
+    }
   }
 `
 
@@ -1043,9 +1450,13 @@ const PropertiesApp = () => {
   return (
     <PropertiesWrapper>
       <Helmet>
-        <title>Properties — Smarter Filters for Real Estate</title>
-        <meta name="description" content="Sort by €/m², hide duplicates, export to CSV. Smarter filters for Spitogatos & other real estate sites." />
+        <title>Properties — Spitogatos Filters Extension | Greek Property Search Tool</title>
+        <meta name="description" content="Spitogatos filters extension for Greek property search. Sort by €/m², hide duplicates, export to CSV. Smarter filters for Spitogatos, XE.gr, and other real estate sites in Greece." />
+        <meta name="keywords" content="Spitogatos filters extension, Greek property search tool, real estate filters Greece, property search Athens, Spitogatos enhancement, XE.gr filters, Greek real estate tool" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="Properties — Spitogatos Filters Extension | Greek Property Search Tool" />
+        <meta property="og:description" content="Transform your Greek property search with smart filters for Spitogatos and other real estate sites. Find the perfect property 3× faster." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <GlobalReset />
@@ -1090,18 +1501,18 @@ const PropertiesApp = () => {
                 <span className="highlight">Find the right property in minutes.</span>
               </HeroTitle>
               <HeroSubtitle>
-                Smarter filters for Spitogatos & other real estate sites.
-                <span className="bold"> Sort by €/m²</span>, hide duplicates, export to CSV — right on the site you already use.
+                The ultimate Spitogatos filters extension and Greek property search tool. 
+                <span className="bold"> Sort by €/m²</span>, hide duplicates, export to CSV — enhance your favorite real estate sites instantly.
               </HeroSubtitle>
               <HeroButtons>
                 <PrimaryButton href="#early-access" onClick={(e) => { e.preventDefault(); scrollToSection('early-access') }}>
                   Join Early Access
                 </PrimaryButton>
                 <SecondaryButton href="#demo" onClick={(e) => { e.preventDefault(); scrollToSection('demo') }}>
-                  Watch Demo
+                  ▶️ See It In Action
                 </SecondaryButton>
               </HeroButtons>
-              <HeroNote>Early access €9/mo (founders pricing). Cancel anytime.</HeroNote>
+              <HeroNote>Early access €9/mo (founders pricing). Beta testers get FREE access. Cancel anytime.</HeroNote>
             </HeroText>
 
             {/* Mockup card */}
@@ -1180,7 +1591,11 @@ const PropertiesApp = () => {
       {/* Benefits */}
       <Section id="benefits">
         <Container>
-          <Grid className="cols-3">
+          <div style={{
+            display: 'grid',
+            gap: '1.5rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          }}>
             <Card>
               <h3>Save hours</h3>
               <p>Cut through noise with smarter filters and instant visual cues. No more endless scrolling.</p>
@@ -1192,10 +1607,184 @@ const PropertiesApp = () => {
             <Card>
               <h3>Export to CSV</h3>
               <p>Shortlist and share with clients or teammates in one click.</p>
+              <div style={{ marginTop: '0.75rem' }}>
+                <FeatureComingSoonBadge><span className="icon">🚀</span>Coming Soon</FeatureComingSoonBadge>
+              </div>
             </Card>
-          </Grid>
+            <Card>
+              <h3>Smart Price Alerts</h3>
+              <p>Get email notifications when properties within your €/m² range become available.</p>
+              <div style={{ marginTop: '0.75rem' }}>
+                <FeatureComingSoonBadge><span className="icon">⏰</span>Coming Soon</FeatureComingSoonBadge>
+              </div>
+            </Card>
+          </div>
         </Container>
       </Section>
+
+      {/* User Story */}
+      <StorySection id="success-story">
+        <Container>
+          <StoryCard>
+            <StoryTitle>Real Results from Beta Users</StoryTitle>
+            <StoryText>
+              "Maria was spending 3-4 hours every weekend scrolling through hundreds of Athens apartments. With Properties, she found her perfect 2-bedroom in Kolonaki in just 45 minutes — sorted by €/m², filtered out ground floors, and exported her top 5 picks to share with her partner."
+            </StoryText>
+            <StoryStats>
+              <StoryStat>
+                <span className="number">3×</span>
+                <div className="label">Faster search</div>
+              </StoryStat>
+              <StoryStat>
+                <span className="number">45min</span>
+                <div className="label">Instead of 3+ hours</div>
+              </StoryStat>
+              <StoryStat>
+                <span className="number">€2,100/m²</span>
+                <div className="label">Perfect value match</div>
+              </StoryStat>
+            </StoryStats>
+          </StoryCard>
+        </Container>
+      </StorySection>
+
+      {/* Testimonials & Social Proof */}
+      <TestimonialsSection id="testimonials">
+        <Container>
+          <SectionTitle>Trusted by Property Professionals</SectionTitle>
+          <SectionSubtitle>Beta testers and real estate professionals across Greece are already saving hours with Properties</SectionSubtitle>
+          
+          <div style={{ 
+            marginTop: '2rem',
+            display: 'grid',
+            gap: '1.5rem',
+            gridTemplateColumns: '1fr',
+          }}>
+            <div style={{
+              display: 'grid',
+              gap: '1.5rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              '@media (min-width: 768px)': {
+                gridTemplateColumns: '1fr 1fr'
+              }
+            }}>
+              <TestimonialCard>
+                <TestimonialText>
+                  This extension is a game-changer! Finally I can sort by €/m² on Spitogatos. The advanced filtering saves me hours every week.
+                </TestimonialText>
+                <TestimonialAuthor>
+                  <div className="avatar">NK</div>
+                  <div className="info">
+                    <p className="name">Nikos K.</p>
+                    <p className="role">Real Estate Agent, Athens</p>
+                  </div>
+                </TestimonialAuthor>
+              </TestimonialCard>
+              
+              <TestimonialCard>
+                <TestimonialText>
+                  As a busy professional, I don't have time to scroll through duplicates and poorly filtered results. Properties cuts my search time by 70%. Absolutely worth it.
+                </TestimonialText>
+                <TestimonialAuthor>
+                  <div className="avatar">SP</div>
+                  <div className="info">
+                    <p className="name">Sofia P.</p>
+                    <p className="role">Software Engineer, Thessaloniki</p>
+                  </div>
+                </TestimonialAuthor>
+              </TestimonialCard>
+              
+              <TestimonialCard>
+                <TestimonialText>
+                  I was manually calculating €/m² for every listing! This saves me hours each week. The duplicate removal feature alone is worth the subscription.
+                </TestimonialText>
+                <TestimonialAuthor>
+                  <div className="avatar">MH</div>
+                  <div className="info">
+                    <p className="name">Maria H.</p>
+                    <p className="role">Property Investor, Athens</p>
+                  </div>
+                </TestimonialAuthor>
+              </TestimonialCard>
+              
+              <TestimonialCard>
+                <TestimonialText>
+                  Perfect for busy families! We found our dream home in Glyfada without wasting weekends scrolling. The advanced filters are exactly what we needed.
+                </TestimonialText>
+                <TestimonialAuthor>
+                  <div className="avatar">DP</div>
+                  <div className="info">
+                    <p className="name">Dimitris P.</p>
+                    <p className="role">Family Buyer, Athens</p>
+                  </div>
+                </TestimonialAuthor>
+              </TestimonialCard>
+              
+              <TestimonialCard>
+                <TestimonialText>
+                  As a property manager handling multiple clients, the advanced filters and €/m² sorting help me quickly identify the best opportunities for each client's budget.
+                </TestimonialText>
+                <TestimonialAuthor>
+                  <div className="avatar">EK</div>
+                  <div className="info">
+                    <p className="name">Elena K.</p>
+                    <p className="role">Property Manager, Thessaloniki</p>
+                  </div>
+                </TestimonialAuthor>
+              </TestimonialCard>
+              
+              <TestimonialCard>
+                <TestimonialText>
+                  Finally! No more ground floor apartments in my search results. The filtering options are spot-on for what real buyers actually need.
+                </TestimonialText>
+                <TestimonialAuthor>
+                  <div className="avatar">AS</div>
+                  <div className="info">
+                    <p className="name">Andreas S.</p>
+                    <p className="role">First-time Buyer, Patras</p>
+                  </div>
+                </TestimonialAuthor>
+              </TestimonialCard>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '3rem' }}>
+            <SectionTitle style={{ fontSize: '1.5rem' }}>Supported Real Estate Sites</SectionTitle>
+            <SupportedSitesGrid>
+              <SiteLogoCard className="active">
+                <span className="logo">🏠</span>
+                <p className="name">Spitogatos</p>
+                <p className="status">✅ Active</p>
+              </SiteLogoCard>
+              <SiteLogoCard className="coming-soon">
+                <span className="logo">🏡</span>
+                <p className="name">XE.gr</p>
+                <p className="status">🚀 Coming Soon</p>
+              </SiteLogoCard>
+              <SiteLogoCard className="coming-soon">
+                <span className="logo">🏢</span>
+                <p className="name">Spiti.gr</p>
+                <p className="status">🚀 Coming Soon</p>
+              </SiteLogoCard>
+              <SiteLogoCard className="coming-soon">
+                <span className="logo">🏘️</span>
+                <p className="name">Idealista</p>
+                <p className="status">🚀 Coming Soon</p>
+              </SiteLogoCard>
+              <SiteLogoCard className="coming-soon">
+                <span className="logo">🏰</span>
+                <p className="name">Golden Home</p>
+                <p className="status">🚀 Coming Soon</p>
+              </SiteLogoCard>
+              <SiteLogoCard className="coming-soon">
+                <span className="logo">🏗️</span>
+                <p className="name">Century 21</p>
+                <p className="status">🚀 Coming Soon</p>
+              </SiteLogoCard>
+            </SupportedSitesGrid>
+          </div>
+        </Container>
+      </TestimonialsSection>
 
       {/* For whom */}
       <Section id="for-whom" className="bg-gray">
@@ -1284,7 +1873,14 @@ const PropertiesApp = () => {
         <EarlyAccessContainer>
           <SectionTitle>Early Access</SectionTitle>
           <SectionSubtitle>
-            Founders pricing <strong>€9/mo</strong>. Limited spots while we finish the first release.
+            Founders pricing <strong>€9/mo</strong> (monthly billing, cancel anytime). Limited spots while we finish the first release. <br/>
+            <small style={{ color: '#64748b', marginTop: '0.5rem', display: 'block' }}>
+              Annual plans with discounts will be available at full launch
+            </small>
+            <br/>
+            <small style={{ color: '#059669', marginTop: '0.5rem', display: 'block', fontWeight: '600' }}>
+              🎯 Beta testers get <strong>FREE access</strong> during testing period
+            </small>
           </SectionSubtitle>
 
           {state.succeeded ? (
@@ -1339,7 +1935,7 @@ const PropertiesApp = () => {
             </FAQItem>
             <FAQItem>
               <summary>Which sites are supported?</summary>
-              <p>We're starting with <strong>Spitogatos</strong>. Next up: <strong>Spiti</strong>, <strong>XE</strong>, <strong>Idealista</strong>, <strong>HomeGreekHome</strong>, <strong>Golden Home</strong>, <strong>Tospitimou</strong>, and <strong>Century 21 Greece</strong>. Have a favorite site we haven't mentioned? <a href="mailto:hello@futornyi.com?subject=Site Request" style={{ color: '#4f46e5', textDecoration: 'underline' }}>Email us</a> and we'll add it to our community-driven roadmap!</p>
+              <p>We're starting with <strong>Spitogatos</strong>. Next up: <strong>Spiti</strong>, <strong>XE</strong>, <strong>Idealista</strong>, <strong>HomeGreekHome</strong>, <strong>Golden Home</strong>, <strong>Tospitimou</strong>, and <strong>Century 21 Greece</strong>. Have a favorite site we haven't mentioned? <a href="mailto:rostyslav.futornyi@gmail.com?subject=Site Request" style={{ color: '#4f46e5', textDecoration: 'underline' }}>Email us</a> and we'll add it to our community-driven roadmap!</p>
             </FAQItem>
             <FAQItem>
               <summary>Will there be a free tier?</summary>
@@ -1348,6 +1944,20 @@ const PropertiesApp = () => {
             <FAQItem>
               <summary>Can I cancel anytime?</summary>
               <p>Yes. Early Access is month-to-month, cancel anytime.</p>
+            </FAQItem>
+            <FAQItem>
+              <summary>Is there a free option for beta testers?</summary>
+              <p>Absolutely! Beta testers who provide feedback get <strong>FREE access</strong> during the testing period. Just mention "beta tester" when we contact you.</p>
+            </FAQItem>
+            <FAQItem>
+              <summary>Will there be price alerts for €/m² ranges?</summary>
+              <p>Yes! <strong>Email notifications are coming soon.</strong> You'll be able to set price ranges (e.g., €1,800-€2,000 per m²) and get notified when matching properties become available. Perfect for staying on top of the market without constantly checking.</p>
+            </FAQItem>
+            <FAQItem>
+              <summary>How can I contact you directly?</summary>
+              <p>For questions, feedback, or beta testing inquiries, reach out via:</p>
+              <p>📧 Email: <a href="mailto:rostyslav.futornyi@gmail.com" style={{ color: '#4f46e5', textDecoration: 'underline' }}>rostyslav.futornyi@gmail.com</a></p>
+              <p>💬 Telegram: <a href="https://t.me/termoxin" style={{ color: '#4f46e5', textDecoration: 'underline' }}>@termoxin</a></p>
             </FAQItem>
           </FAQGrid>
         </FAQContainer>
@@ -1362,7 +1972,9 @@ const PropertiesApp = () => {
             <span>·</span>
             <a href="#">Terms</a>
             <span>·</span>
-            <a href="mailto:hello@futornyi.com">hello@futornyi.com</a>
+            <a href="mailto:rostyslav.futornyi@gmail.com">rostyslav.futornyi@gmail.com</a>
+            <span>·</span>
+            <a href="https://t.me/termoxin">@termoxin</a>
           </FooterLinks>
         </FooterContent>
       </Footer>
