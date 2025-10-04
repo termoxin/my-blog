@@ -31,6 +31,8 @@ import { planRouteWithStops } from "./utils/planRouteWithStops";
 import { products } from "./products";
 import { FIELD_TYPES, FieldTooltip } from "./components/FieldTooltip";
 import { EbikeKitsWithPagination } from "./components/EbikeKitsWithPagination";
+import { SolarPowerSlider } from "./components/fields/SolarPowerSlider";
+import { CloudCoverageSlider } from "./components/fields/CloudCoverageSlider";
 
 export const EBikeRangeCalculator = () => {
   const defaultValues = {
@@ -48,6 +50,8 @@ export const EBikeRangeCalculator = () => {
     trailerWeight: 10,
     dogWeight: 15,
     maxMotorPower: 1500,
+    solarPower: 0,
+    cloudCoverage: 0,
   };
 
   const [speed, setSpeed] = useState(defaultValues.speed);
@@ -64,6 +68,8 @@ export const EBikeRangeCalculator = () => {
   const [trailerWeight, setTrailerWeight] = useState(defaultValues.trailerWeight);
   const [dogWeight, setDogWeight] = useState(defaultValues.dogWeight);
   const [maxMotorPower, setMaxMotorPower] = useState(defaultValues.maxMotorPower);
+  const [solarPower, setSolarPower] = useState(defaultValues.solarPower);
+  const [cloudCoverage, setCloudCoverage] = useState(defaultValues.cloudCoverage);
   const [plan, setPlan] = useState(null);
   const [trailerDimensions, setTrailerDimensions] = useState({
     length: 0.8,
@@ -78,7 +84,7 @@ export const EBikeRangeCalculator = () => {
     finishTime: "-",
     chargeWarning: null,
   });
-  const [activeTab, setActiveTab] = useState("Basic");
+  const [activeTab, setActiveTab] = useState("Settings");
   const [gpxString, setGpxString] = useState(null);
   const [calculateRanges, setCalculateRanges] = useState(false);
 
@@ -164,6 +170,10 @@ export const EBikeRangeCalculator = () => {
         length: trailerDimensions.length,
         width: trailerDimensions.width,
         height: trailerDimensions.height,
+      },
+      {
+        solarPower,
+        cloudCoverage,
       }
     );
   }, [
@@ -181,9 +191,8 @@ export const EBikeRangeCalculator = () => {
     startTime,
     windData,
     directions,
-    trailerWeight,
-    dogWeight,
-    trailerDimensions,
+    solarPower,
+    cloudCoverage,
   ]);
 
   const rangeData = memoizedRangeData;
@@ -208,7 +217,9 @@ export const EBikeRangeCalculator = () => {
     distances,
     elevations,
     startTime,
-    batteryCapacity
+    batteryCapacity,
+    solarPower,
+    cloudCoverage
   ]);
 
   const kmAndWhChartData = rangeData?.segmentsConsumption.reduce((acc, segment, index, array) => {
@@ -254,52 +265,63 @@ export const EBikeRangeCalculator = () => {
         </Notice>
 
         <TabContainer>
-          <Tab active={activeTab === "Basic"} onClick={() => setActiveTab("Basic")}>
-            Basic Settings
-          </Tab>
-          <Tab active={activeTab === "Advanced"} onClick={() => setActiveTab("Advanced")}>
-            Advanced Settings
+          <Tab active={activeTab === "Settings"} onClick={() => setActiveTab("Settings")}>
+            ⚙️ Settings
           </Tab>
           {distances.length > 0 && (
             <Tab active={activeTab === "RangeInformation"} onClick={() => setActiveTab("RangeInformation")}>
-              Range Information
+              📊 Range Information
             </Tab>
           )}
-          {plan && (
-            <Tab active={activeTab === "Timeline"} onClick={() => setActiveTab("Timeline")}>
-              Trip Timeline
-            </Tab>
-          )}
-          {distances.length > 0 && 
+          {distances.length > 0 && (
             <Tab active={activeTab === "RouteVisualizer"} onClick={() => setActiveTab("RouteVisualizer")}>
-              Route Visualizer
+              🗺️ Route Visualizer
             </Tab>
-          }
+          )}
         </TabContainer>
 
-        <TabContent hidden={activeTab !== "Basic"}>
-          <Label htmlFor="gpx-upload">📂 Upload GPX File: <FieldTooltip type={FIELD_TYPES.UPLOAD_GPX} /></Label>
-          <Input
-            type="file"
-            id="gpx-upload"
-            accept=".gpx"
-            onChange={handleFileUpload}
-          />
-          <SpeedSlider speed={speed} setSpeed={setSpeed} />
-          <BikeWeightInput bikeWeight={bikeWeight} setBikeWeight={setBikeWeight} />
-          <RiderWeightInput riderWeight={riderWeight} setRiderWeight={setRiderWeight} />
-          <PedalingTimeSlider pedalingTime={pedalingTime} setPedalingTime={setPedalingTime} />
-          <StartTimeInput startTime={startTime} setStartTime={setStartTime} />
-          <BatteryCapacityInput batteryCapacity={batteryCapacity} setBatteryCapacity={setBatteryCapacity} />
-        </TabContent>
+        <TabContent hidden={activeTab !== "Settings"}>
+          {/* Basic Settings Section */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ color: '#2d3748', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '2px solid #e2e8f0' }}>
+              📝 Basic Settings
+            </h3>
+            <Label htmlFor="gpx-upload">📂 Upload GPX File: <FieldTooltip type={FIELD_TYPES.UPLOAD_GPX} /></Label>
+            <Input
+              type="file"
+              id="gpx-upload"
+              accept=".gpx"
+              onChange={handleFileUpload}
+            />
+            <SpeedSlider speed={speed} setSpeed={setSpeed} />
+            <BikeWeightInput bikeWeight={bikeWeight} setBikeWeight={setBikeWeight} />
+            <RiderWeightInput riderWeight={riderWeight} setRiderWeight={setRiderWeight} />
+            <PedalingTimeSlider pedalingTime={pedalingTime} setPedalingTime={setPedalingTime} />
+            <StartTimeInput startTime={startTime} setStartTime={setStartTime} />
+            <BatteryCapacityInput batteryCapacity={batteryCapacity} setBatteryCapacity={setBatteryCapacity} />
+          </div>
 
-        <TabContent hidden={activeTab !== "Advanced"}>
-          <MaxMotorPowerSlider setMaxMotorPower={setMaxMotorPower} maxMotorPower={maxMotorPower} />
-          <WindSpeedSlider windSpeed={windSpeed} setWindSpeed={setWindSpeed} />
-          <WindDirectionSlider windDirection={windDirection} setWindDirection={setWindDirection} />
-          <TrailerWeightInput trailerWeight={trailerWeight} setTrailerWeight={setTrailerWeight} />
-          <DogWeightInput dogWeight={dogWeight} setDogWeight={setDogWeight} />
-          <TrailerDimensionsInput trailerDimensions={trailerDimensions} setTrailerDimensions={setTrailerDimensions} />
+          {/* Advanced Settings Section */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ color: '#2d3748', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '2px solid #e2e8f0' }}>
+              🔧 Advanced Settings
+            </h3>
+            <MaxMotorPowerSlider setMaxMotorPower={setMaxMotorPower} maxMotorPower={maxMotorPower} />
+            <WindSpeedSlider windSpeed={windSpeed} setWindSpeed={setWindSpeed} />
+            <WindDirectionSlider windDirection={windDirection} setWindDirection={setWindDirection} />
+            <TrailerWeightInput trailerWeight={trailerWeight} setTrailerWeight={setTrailerWeight} />
+            <DogWeightInput dogWeight={dogWeight} setDogWeight={setDogWeight} />
+            <TrailerDimensionsInput trailerDimensions={trailerDimensions} setTrailerDimensions={setTrailerDimensions} />
+          </div>
+
+          {/* Solar Power Section */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ color: '#2d3748', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '2px solid #e2e8f0' }}>
+              ☀️ Solar Power Settings
+            </h3>
+            <SolarPowerSlider solarPower={solarPower} setSolarPower={setSolarPower} />
+            <CloudCoverageSlider cloudCoverage={cloudCoverage} setCloudCoverage={setCloudCoverage} />
+          </div>
         </TabContent>
 
         <TabContent hidden={activeTab !== "RangeInformation"}>
@@ -307,27 +329,39 @@ export const EBikeRangeCalculator = () => {
             <RangeInformation 
               rangeData={rangeData} 
               kmAndWhChartData={kmAndWhChartData} 
-              results={results} 
+              results={results}
+              solarPower={solarPower}
+              cloudCoverage={cloudCoverage}
             />
-          )}
-        </TabContent>
-
-        <TabContent hidden={activeTab !== "Timeline"}>
-          {plan && (
-            <TripTimeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />
           )}
         </TabContent>
 
         <TabContent hidden={activeTab !== "RouteVisualizer"}>
+          {/* Trip Timeline Section */}
+          {plan && (
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ color: '#2d3748', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '2px solid #e2e8f0' }}>
+                ⏱️ Trip Timeline
+              </h3>
+              <TripTimeline data={plan} estimatedRange={results.estimatedRange} averageConsumption={rangeData.averageConsumption} />
+            </div>
+          )}
+
+          {/* Route Map Section */}
           {activeTab === 'RouteVisualizer' && gpxString && typeof global.window !== 'undefined' && (
-            <RouteVisualizer 
-              plan={plan} 
-              gpxString={gpxString}
-              bikeWeight={bikeWeight}
-              riderWeight={riderWeight}
-              maxMotorPower={maxMotorPower}
-              batteryCapacity={batteryCapacity}
-            />
+            <div>
+              <h3 style={{ color: '#2d3748', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '2px solid #e2e8f0' }}>
+                🗺️ Interactive Route Map
+              </h3>
+              <RouteVisualizer 
+                plan={plan} 
+                gpxString={gpxString}
+                bikeWeight={bikeWeight}
+                riderWeight={riderWeight}
+                maxMotorPower={maxMotorPower}
+                batteryCapacity={batteryCapacity}
+              />
+            </div>
           )}
         </TabContent>
         {gpxString && <FindEBikeKitButton onClick={onCalculateRanges}>

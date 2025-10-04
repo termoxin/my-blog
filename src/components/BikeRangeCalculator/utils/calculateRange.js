@@ -32,6 +32,7 @@ export const calculateBikeRange = (
     pedalingTime,
     maxMotorPower,
     trailerData = {},
+    solarData = {},
 ) => {
     const batteryCapacityWh = (batteryCapacity * MAX_USABLE_BATTERY_WITHOUT_ITS_DAMANGE) * BATTERY_VOLTAGE; 
     
@@ -45,11 +46,35 @@ export const calculateBikeRange = (
         height = 0,
     } = trailerData;
 
+    const {
+        solarPower = 0,
+        cloudCoverage = 0,
+    } = solarData;
+
     const totalWeight = bikeWeight + riderWeight + trailerWeight + dogWeight;
     const trailerFrontalArea = length * height; // Simplified calculation for trailer frontal area
     const trailerWheelLoad = (trailerWeight + dogWeight) / 2; // Per wheel load for trailer
 
+    // Solar power efficiency based on cloud coverage
+    const getSolarEfficiency = (cloudCoverage) => {
+        // Clear sky: 100%, Partly cloudy: 75-50%, Overcast: 25-10%
+        if (cloudCoverage === 0) return 1.0;
+        if (cloudCoverage <= 25) return 0.85;
+        if (cloudCoverage <= 50) return 0.65;
+        if (cloudCoverage <= 75) return 0.35;
+        return 0.15; // Heavy overcast
+    };
+
+    // Solar irradiance factor based on time of day (simplified)
+    const getSolarIrradiance = (hour) => {
+        if (hour < 6 || hour > 18) return 0; // No sun
+        if (hour < 8 || hour > 16) return 0.3; // Low sun
+        if (hour < 10 || hour > 14) return 0.7; // Medium sun
+        return 1.0; // Peak sun hours (10-14)
+    };
+
     let totalConsumption = 0;
+    let totalSolarGeneration = 0;
     let segmentsConsumption = [];
 
     distances.forEach((distance, i) => {
@@ -90,6 +115,15 @@ export const calculateBikeRange = (
         const segmentPower = bikeRollingPower + trailerRollingPower + dragPower + elevationPower;
         const segmentConsumption = (segmentPower * (distanceSegment / speedMetersPerSec)) / 3600; // Convert to Wh
 
+        // Calculate solar power generation for this segment
+        const segmentDurationHours = (distanceSegment / speedMetersPerSec) / 3600; // Segment duration in hours
+        const [segmentHour] = segmentTime.split(':').map(Number);
+        const solarEfficiency = getSolarEfficiency(cloudCoverage);
+        const solarIrradiance = getSolarIrradiance(segmentHour);
+        const segmentSolarGeneration = solarPower * solarEfficiency * solarIrradiance * segmentDurationHours; // Wh generated
+
+        totalSolarGeneration += segmentSolarGeneration;
+
         const batteryPercentage = 1 - totalConsumption / batteryCapacityWh;
         const currentBatteryVoltage = MIN_EFFECTIVE_BATTERY_VOLTAGE + (MAX_BATTERY_VOLTAGE - MIN_EFFECTIVE_BATTERY_VOLTAGE) * batteryPercentage;
 
@@ -111,13 +145,14 @@ export const calculateBikeRange = (
     const pedalingEffect = (RIDER_POWER * ((distances[distances.length - 1] / speed) * 3600 / 3600)) * (pedalingTime / 100); // Wh
 
     const estimatedRange = featureFlags.INCLUDE_RECUPERATION_IN_CALCULATIONS
-        ? (batteryCapacityWh + recuperationEffect + pedalingEffect) / averageConsumption
-        : (batteryCapacityWh + pedalingEffect) / averageConsumption;
+        ? (batteryCapacityWh + recuperationEffect + pedalingEffect + totalSolarGeneration) / averageConsumption
+        : (batteryCapacityWh + pedalingEffect + totalSolarGeneration) / averageConsumption;
 
 
 
     const totalRecuperationGeneratedRange = recuperationEffect / averageConsumption;
     const totalPedalingGeneratedRange = pedalingEffect / averageConsumption;
+    const totalSolarGeneratedRange = totalSolarGeneration / averageConsumption;
 
     const chargePoint = distances.find((distance) => distance > estimatedRange) || null;
     const chargeWarning = chargePoint !== null;
@@ -127,9 +162,9 @@ export const calculateBikeRange = (
 
     if (chargeWarning) {
         if (featureFlags.INCLUDE_RECUPERATION_IN_CALCULATIONS) {
-            remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + recuperationEffect + pedalingEffect), 0);
+            remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + recuperationEffect + pedalingEffect + totalSolarGeneration), 0);
         } else {
-            remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + pedalingEffect), 0);
+            remainingEnergy = Math.max(totalConsumption - (batteryCapacityWh + pedalingEffect + totalSolarGeneration), 0);
         }
         chargeTimeRequired = remainingEnergy / CHARGER_RATE;
     }
@@ -151,6 +186,8 @@ export const calculateBikeRange = (
         totalRecuperationGeneratedRange: totalRecuperationGeneratedRange.toFixed(1),
         totalRecuperationGeneratedPower: recuperationEffect.toFixed(1),
         totalPedalingGeneratedRange: totalPedalingGeneratedRange.toFixed(1),
+        totalSolarGeneratedRange: totalSolarGeneratedRange.toFixed(1),
+        totalSolarGeneratedPower: totalSolarGeneration.toFixed(1),
         estimatedRange: estimatedRange.toFixed(1),
         finishTime,
         maxSpeed: windAdjustedMaxSpeed.toFixed(1),

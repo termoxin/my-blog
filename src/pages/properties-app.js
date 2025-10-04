@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Helmet } from "react-helmet"
 import styled, { createGlobalStyle, keyframes } from "styled-components"
 import { useForm, ValidationError } from '@formspree/react'
+import InteractivePropertyDemo from '../components/InteractivePropertyDemo'
 
 const GlobalReset = createGlobalStyle`
   *, *:after, *:before {
@@ -542,188 +543,6 @@ const pulse = keyframes`
   50% { opacity: 0.8; }
 `
 
-const DemoContainer = styled.div`
-  margin-top: 2rem;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  background: white;
-`
-
-const VideoWrapper = styled.div`
-  position: relative;
-  aspect-ratio: 16 / 9;
-  width: 100%;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  background-color: #f1f5f9;
-`
-
-const VideoPlayer = styled.video`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0.75rem;
-`
-
-const LoadingOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  border-radius: 0.75rem;
-  transition: opacity 0.3s ease;
-  opacity: ${props => props.show ? 1 : 0};
-  pointer-events: ${props => props.show ? 'auto' : 'none'};
-`
-
-const Spinner = styled.div`
-  width: 3rem;
-  height: 3rem;
-  border: 3px solid #e2e8f0;
-  border-top: 3px solid #4f46e5;
-  border-radius: 50%;
-  animation: ${spin} 1s linear infinite;
-  margin-bottom: 1rem;
-`
-
-const LoadingText = styled.div`
-  color: #64748b;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-align: center;
-  animation: ${pulse} 2s ease-in-out infinite;
-`
-
-const VideoControls = styled.div`
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  right: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  backdrop-filter: blur(10px);
-  opacity: ${props => props.show ? 1 : 0};
-  transition: opacity 0.3s ease;
-`
-
-const PlayButton = styled.button`
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-  }
-`
-
-const CallToActionOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
-  transition: all 0.3s ease;
-  opacity: ${props => props.show ? 1 : 0};
-  pointer-events: ${props => props.show ? 'auto' : 'none'};
-  cursor: pointer;
-
-  &:hover {
-    backdrop-filter: blur(6px);
-    background: rgba(255, 255, 255, 0.15);
-  }
-`
-
-const PlayButtonLarge = styled.button`
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  border: none;
-  border-radius: 50%;
-  width: 5rem;
-  height: 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
-  transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
-  position: relative;
-
-  &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4);
-  }
-
-  &:active {
-    transform: scale(1.05);
-  }
-
-  &:before {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover:before {
-    opacity: 1;
-  }
-
-  svg {
-    width: 1.8rem;
-    height: 1.8rem;
-    margin-left: 0.2rem; /* Slight offset to center visually */
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-  }
-`
-
-const CTAText = styled.div`
-  text-align: center;
-  color: #1e293b;
-  
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
-  }
-  
-  p {
-    font-size: 1rem;
-    margin: 0;
-    opacity: 0.8;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-  }
-`
 
 const EarlyAccessSection = styled(Section)`
   background: linear-gradient(to bottom, white, #eef2ff);
@@ -1387,10 +1206,6 @@ const PauseIcon = () => (
 
 const PropertiesApp = () => {
   const [currentYear, setCurrentYear] = useState(2024)
-  const [videoLoading, setVideoLoading] = useState(true)
-  const [videoPlaying, setVideoPlaying] = useState(false)
-  const [showControls, setShowControls] = useState(false)
-  const [hasStartedPlaying, setHasStartedPlaying] = useState(false)
   const [isFiltering, setIsFiltering] = useState(false)
   
   // Formspree integration
@@ -1411,31 +1226,6 @@ const PropertiesApp = () => {
   const handleLogoClick = () => {
     setIsFiltering(true)
     setTimeout(() => setIsFiltering(false), 1500)
-  }
-
-  const handleVideoLoad = () => {
-    setVideoLoading(false)
-  }
-
-  const handleVideoPlay = () => {
-    setVideoPlaying(true)
-    setHasStartedPlaying(true)
-  }
-
-  const handleVideoPause = () => {
-    setVideoPlaying(false)
-  }
-
-  const togglePlay = () => {
-    const video = document.getElementById('demo-video')
-    if (video) {
-      if (videoPlaying) {
-        video.pause()
-      } else {
-        video.play()
-        setHasStartedPlaying(true)
-      }
-    }
   }
 
 
@@ -1497,12 +1287,12 @@ const PropertiesApp = () => {
           <HeroGrid>
             <HeroText>
               <HeroTitle>
-                Stop wasting hours scrolling listings.<br />
-                <span className="highlight">Find the right property in minutes.</span>
+                Stop missing great deals.<br />
+                <span className="highlight">Get instant alerts for undervalued properties.</span>
               </HeroTitle>
               <HeroSubtitle>
-                The ultimate Spitogatos filters extension and Greek property search tool. 
-                <span className="bold"> Sort by €/m²</span>, hide duplicates, export to CSV — enhance your favorite real estate sites instantly.
+                Smart property alert system for Greek real estate. 
+                <span className="bold"> Get notified via email, WhatsApp, or Viber</span> when properties matching your criteria appear on Spitogatos, XE.gr, and other sites.
               </HeroSubtitle>
               <HeroButtons>
                 <PrimaryButton href="#early-access" onClick={(e) => { e.preventDefault(); scrollToSection('early-access') }}>
@@ -1597,19 +1387,16 @@ const PropertiesApp = () => {
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
           }}>
             <Card>
-              <h3>Save hours</h3>
-              <p>Cut through noise with smarter filters and instant visual cues. No more endless scrolling.</p>
+              <h3>Never miss a deal</h3>
+              <p>Get instant notifications when undervalued properties matching your criteria appear on the market.</p>
             </Card>
             <Card>
-              <h3>See €/m² instantly</h3>
-              <p>True value at a glance. Sort by €/m² even when the site doesn't support it.</p>
+              <h3>Multi-channel alerts</h3>
+              <p>Receive notifications via email, WhatsApp, or Viber - choose what works best for you.</p>
             </Card>
             <Card>
-              <h3>Export to CSV</h3>
-              <p>Shortlist and share with clients or teammates in one click.</p>
-              <div style={{ marginTop: '0.75rem' }}>
-                <FeatureComingSoonBadge><span className="icon">🚀</span>Coming Soon</FeatureComingSoonBadge>
-              </div>
+              <h3>Smart filtering</h3>
+              <p>Set precise criteria: price range, size, location, year built, and our algorithm finds the best deals.</p>
             </Card>
             <Card>
               <h3>Smart Price Alerts</h3>
@@ -1810,61 +1597,33 @@ const PropertiesApp = () => {
         </Container>
       </Section>
 
-      {/* Demo */}
+      {/* Interactive Demo */}
       <Section id="demo">
         <Container>
-          <SectionTitle>How it looks</SectionTitle>
-          <SectionSubtitle>A lightweight Chrome extension that augments your existing real estate sites with smarter filters and insights.</SectionSubtitle>
-          <DemoContainer>
-            <VideoWrapper
-              onMouseEnter={() => setShowControls(true)}
-              onMouseLeave={() => setShowControls(false)}
-            >
-              <VideoPlayer
-                id="demo-video"
-                src="/spitogatos/demo.webm"
-                onLoadedData={handleVideoLoad}
-                onPlay={handleVideoPlay}
-                onPause={handleVideoPause}
-                controls={false}
-                preload="metadata"
-                muted
-                loop
-              />
-              
-              <LoadingOverlay show={videoLoading}>
-                <Spinner />
-                <LoadingText>
-                  Loading demo video...<br />
-                  <small style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                    This might take a moment
-                  </small>
-                </LoadingText>
-              </LoadingOverlay>
-
-              <CallToActionOverlay 
-                show={!videoLoading && !hasStartedPlaying}
-                onClick={togglePlay}
-              >
-                <PlayButtonLarge onClick={togglePlay}>
-                  <PlayIcon />
-                </PlayButtonLarge>
-                <CTAText>
-                  <h3>See How It Works</h3>
-                  <p>Click here to watch the demo</p>
-                </CTAText>
-              </CallToActionOverlay>
-
-              <VideoControls show={showControls && !videoLoading && hasStartedPlaying}>
-                <PlayButton onClick={togglePlay}>
-                  {videoPlaying ? <PauseIcon /> : <PlayIcon />}
-                </PlayButton>
-                <div style={{ color: 'white', fontSize: '0.75rem' }}>
-                  Click to {videoPlaying ? 'pause' : 'play'}
-                </div>
-              </VideoControls>
-            </VideoWrapper>
-          </DemoContainer>
+          <SectionTitle>See How It Works</SectionTitle>
+          <SectionSubtitle>
+            Interactive demo showing how our property alert system finds and notifies you about undervalued properties.
+            Set your criteria and see what alerts you would receive!
+          </SectionSubtitle>
+          <InteractivePropertyDemo />
+          <div style={{
+            textAlign: 'center',
+            marginTop: '1.5rem',
+            padding: '1rem',
+            background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+            borderRadius: '0.75rem',
+            border: '1px solid #0ea5e9'
+          }}>
+            <p style={{
+              margin: 0,
+              color: '#0369a1',
+              fontSize: '0.875rem',
+              fontWeight: '500'
+            }}>
+              💡 This simulation uses real property data from Nea Smyrni.
+              Our system monitors Spitogatos, XE.gr, and other Greek real estate sites 24/7 and sends you alerts via email, WhatsApp, or Viber.
+            </p>
+          </div>
         </Container>
       </Section>
 

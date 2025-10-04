@@ -199,6 +199,116 @@ export const EstimatedRangeBreakdown = styled.div`
     align-items: flex-end;
 `;
 
+export const RangeInfoSection = styled.div`
+    margin-bottom: 2rem;
+    
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+`;
+
+export const RangeInfoGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+`;
+
+export const RangeInfoCard = styled.div`
+    background: ${props => {
+        if (props.primary) return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        if (props.warning) return 'linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%)';
+        return '#f8fafc';
+    }};
+    border: 1px solid ${props => {
+        if (props.primary) return 'transparent';
+        if (props.warning) return '#ffeeba';
+        return '#e2e8f0';
+    }};
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    color: ${props => props.primary ? 'white' : '#2d3748'};
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+`;
+
+export const RangeInfoLabel = styled.div`
+    font-size: 0.875rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+`;
+
+export const RangeInfoValue = styled.div`
+    font-size: ${props => props.large ? '1.5rem' : '1.125rem'};
+    font-weight: 700;
+    line-height: 1.2;
+`;
+
+export const RangeBreakdownContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+`;
+
+export const RangeBonus = styled.span`
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    
+    ${props => {
+        switch(props.type) {
+            case 'rbs':
+                return `
+                    background-color: #c6f6d5;
+                    border: 1px solid #b1dfbb;
+                    color: #22543d;
+                `;
+            case 'pedaling':
+                return `
+                    background-color: #fefcbf;
+                    border: 1px solid #faf089;
+                    color: #744210;
+                `;
+            case 'solar':
+                return `
+                    background-color: #fed7aa;
+                    border: 1px solid #fdba74;
+                    color: #9a3412;
+                `;
+            case 'charging':
+                return `
+                    background-color: #bee3f8;
+                    border: 1px solid #90cdf4;
+                    color: #2c5282;
+                `;
+            default:
+                return `
+                    background-color: #e2e8f0;
+                    border: 1px solid #cbd5e0;
+                    color: #4a5568;
+                `;
+        }
+    }}
+`;
+
 export const InputContainer = styled.div`
     display: flex;
     align-items: center;

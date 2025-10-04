@@ -15,7 +15,9 @@ export const FIELD_TYPES = {
     TRAILER_WEIGHT: "trailerWeight",
     DOG_WEIGHT: "dogWeight",
     TRAILER_DIMENSIONS: "trailerDimensions",
-    UPLOAD_GPX_FILE: "uploadGpxFile"
+    UPLOAD_GPX_FILE: "uploadGpxFile",
+    SOLAR_POWER: "solarPower",
+    CLOUD_COVERAGE: "cloudCoverage"
 };
 
 const calculationFields = {
@@ -31,7 +33,9 @@ const calculationFields = {
     [FIELD_TYPES.TRAILER_WEIGHT]: "Additional weight from a trailer increases the load, affecting battery usage.",
     [FIELD_TYPES.DOG_WEIGHT]: "If carrying a dog, its weight adds to the total load, impacting the range.",
     [FIELD_TYPES.TRAILER_DIMENSIONS]: "The size of the trailer can affect aerodynamics and energy consumption.",
-    [FIELD_TYPES.UPLOAD_GPX_FILE]: "Uploading a GPX file allows for route analysis and more accurate range estimation."
+    [FIELD_TYPES.UPLOAD_GPX_FILE]: "Uploading a GPX file allows for route analysis and more accurate range estimation.",
+    [FIELD_TYPES.SOLAR_POWER]: "Solar panel power can charge the battery during the ride, extending the range. Higher wattage panels generate more power.",
+    [FIELD_TYPES.CLOUD_COVERAGE]: "Cloud coverage reduces solar panel efficiency. Clear skies provide maximum power generation, while overcast conditions significantly reduce output."
 };
 
 const TooltipTrigger = styled.a`

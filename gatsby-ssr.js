@@ -31,7 +31,6 @@ export const wrapPageElement = ({ element, props }) => {
     return element
   }
 
-  // Default blog layout
   const DefaultLayout = require("./src/layouts/default").default
   const GlobalStyles = require("./src/styles/styles.scss")
   
