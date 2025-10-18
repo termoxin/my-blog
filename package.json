@@ -1,7 +1,7 @@
 {
   "name": "my-blog",
   "private": true,
-  "description": "A simple minimalist starter for your personal blog",
+  "description": "Personal blog showcasing projects including Properties.futornyi.com - Smart Real Estate Browser Extension (property-analysis-demo): An AI-powered multilingual platform for Greek property market analysis with Golden Visa insights, investment calculations, and email-gated demo properties",
   "version": "0.2.0",
   "author": "Kinyanjui Wangonya <kwangonya@gmail.com>",
   "dependencies": {

@@ -53,10 +53,10 @@ const Header = ({ avatar, christmasHat, socialMediaData }) => {
                 </div>
               </Link>
               {/* {takeCarLink} */}
-              <IdeasButton onClick={onClickIdeasButton}>
+              {/* <IdeasButton onClick={onClickIdeasButton}>
                 {" "}
                 💡 View Current Ideas
-              </IdeasButton>
+              </IdeasButton> */}
               <span className="logo-prompt code">About the Author</span>
             </HeaderContent>
           ) : (
@@ -73,9 +73,9 @@ const Header = ({ avatar, christmasHat, socialMediaData }) => {
               </div>
               </Link>
               {/* {takeCarLink} */}
-              <IdeasButton onClick={onClickIdeasButton}>
+              {/* <IdeasButton onClick={onClickIdeasButton}>
                 💡 View Current Ideas
-              </IdeasButton>
+              </IdeasButton> */}
               <span className="logo-prompt code">Back Home</span>
             </HeaderContent>
           )

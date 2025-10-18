@@ -10,6 +10,28 @@ if (process.env.NODE_ENV === "development") {
   })
 }
 
+// Explicitly define schema for optional fields
+exports.createSchemaCustomization = ({ actions }) => {
+  const { createTypes } = actions
+  
+  const typeDefs = `
+    type MdxFrontmatter {
+      title: String!
+      description: String
+      date: Date @dateformat
+      tags: [String!]
+      location: String
+      status: String
+      cover: String
+      canonical: String
+      cannonical: String
+      hidden: Boolean
+    }
+  `
+  
+  createTypes(typeDefs)
+}
+
 exports.createPages = async ({ actions, graphql }) => {
   const { createPage } = actions
 
@@ -21,7 +43,10 @@ exports.createPages = async ({ actions, graphql }) => {
       query AllMdxFiles($pagesExcludeFromPagination: [String!]) {
         allMdx(
           sort: { order: DESC, fields: [frontmatter___date] }
-          filter: { slug: { nin: $pagesExcludeFromPagination } }
+          filter: { 
+            slug: { nin: $pagesExcludeFromPagination }
+            frontmatter: { hidden: { ne: true } }
+          }
         ) {
           edges {
             node {
