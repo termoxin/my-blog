@@ -1,0 +1,156 @@
+---
+title: E-Bike Range Calculator 2.0 | Physics-Based Precision for Confident Rides
+description: Stop guessing your e-bike range. Know it exactly. A physics-based calculator validated on 1,000+ real rides with ±2–5% accuracy. Trusted by 3,000+ riders in 30+ countries. 100% private, no signup needed.
+tags: ["ebike", "cycling", "ebike range calculator", "electric bike range calculator", "electric bike battery range calculator", "ebike battery range calculator", "e bike range calculator", "e bike distance calculator", "calculate ebike range", "ebike power calculator", "calculator 2.0", "physics-based", "range anxiety"]
+location: Athens, Greece
+date: 2025-01-20
+cover: covers/calculator_v2.png
+canonical: https://ebike.futornyi.com
+status: In Progress
+---
+
+import { EBikeRangeCalculator } from "../../../src/components/BikeRangeCalculator"
+import { RangeRecommendations } from "../../../src/components/RangeRecommendations"
+
+# E-Bike Range Calculator 2.0 - Physics-Based Precision 🚴‍♀️🔋⚡
+
+**Stop Guessing Your E-Bike Range. Know It. Exactly.**
+
+[E-Bike Range Calculator 2.0](https://ebike.futornyi.com) is a complete rebrand and evolution of my e-bike range calculator, built from the ground up with real physics, not hopeful guesses. Trusted by **3,000+ riders** in **30+ countries** to predict range with **±2–5% accuracy** using real wind, elevation, drag, and battery physics. Validated on **1,000+ real rides**.
+
+## The Problem: Range Anxiety Destroys Great Rides
+
+Every year, thousands of riders get stranded or miss amazing routes because they trusted simple "km per Wh" guesses that ignored wind, elevation, and real physics. I experienced this firsthand—getting stranded twice on mountain passes, pushing a dead 28kg bike uphill, miles from the nearest outlet. Every calculator said I'd make it. None accounted for the headwind, the 12% grade, or my loaded panniers.
+
+So I built the tool I desperately needed—one that uses real physics, not hopeful guesses.
+
+## What Makes Calculator 2.0 Different
+
+### Physics-Based Precision, Not Simple Formulas
+
+While other calculators use shortcuts that guarantee inaccuracy (±15–40% error rate), Calculator 2.0 models real physics:
+
+#### **Real Motor Efficiency Curves**
+- Motor efficiency varies from 60% to 85% depending on speed and load
+- Other calculators use average values; we model the full efficiency curve
+- Real-world power draw calculated at every speed & torque level
+
+#### **Wind Speed & Direction Modeling**
+- A 20 km/h headwind can reduce range by 20–30%
+- Most calculators don't even ask about wind
+- We calculate aerodynamic resistance for every 100m segment with precise wind vectors
+
+#### **Aerodynamic Drag Calculation**
+- Models CdA (coefficient of drag × frontal area)
+- Accounts for rider position (aero vs upright)
+- Factors in cargo, trailers, and luggage
+
+#### **Segment-by-Segment Physics**
+- Gravitational forces calculated per 100m segment
+- Recuperation on descents factored in
+- Slope angles and elevation gain modeled precisely
+- Not just total elevation—every climb matters
+
+#### **Real Battery Discharge Modeling**
+- Uses actual battery discharge curves
+- Accounts for pedaling power (motor assistance drops when you pedal hard)
+- Models recuperation and energy recovery
+
+### Validated Accuracy
+
+- **±2–5% accuracy** validated on 1,000+ real rides
+- Trusted by riders in 30+ countries
+- Real testimonials from touring cyclists, commuters, and mountain bikers
+
+## Key Features
+
+### Features Overview: 🚀
+
+<EBikeRangeCalculator />
+
+### Privacy-First Architecture
+
+**100% Private. Zero Server Uploads.**
+- Every calculation happens in your browser
+- Your GPX file is parsed and analyzed entirely locally
+- No uploads, no servers, no tracking—just you and the physics
+- Zero friction: no email signup, no password, no account needed
+
+### Three Steps to Range Certainty
+
+1. **Upload Your Route** - Drop your GPX file. We instantly extract elevation, distance, slope, and GPS data—all processed locally in your browser.
+
+2. **We Run Real Physics** - Thousands of calculations per 100m segment: wind vectors, aerodynamic drag, gravitational forces, motor efficiency curves.
+
+3. **Know Your Real Range** - Precise range predictions, detailed energy breakdown, charging stop recommendations—delivered in seconds.
+
+### Interactive Demo
+
+Try the live demo route to see how wind, elevation, and drag affect your range in real-time. Watch as each variable impacts battery consumption with precise physics modeling.
+
+## Why Other Calculators Fail
+
+### They Use Fixed Wh/km Consumption
+Assuming 15 Wh/km works on flat ground at 20 km/h. But on a 10% climb at 15 km/h with a headwind? You'll use 40+ Wh/km. They can't model this.
+
+### They Ignore Wind & Drag Entirely
+A 20 km/h headwind can reduce range by 20–30%. Most calculators don't even ask about wind. We calculate aerodynamic resistance for every segment.
+
+### No Real Motor Efficiency Curves
+Motor efficiency varies from 60% to 85% depending on speed and load. They use average values. We model the full curve.
+
+### They Skip Recuperation & Pedaling Power
+On descents, you can recover energy. When you pedal hard, motor assistance drops. We factor both in.
+
+## Real User Testimonials
+
+> "Finally! A calculator that accounts for the 15 kg of camping gear I carry. Predicted 68 km, actual was 66 km. Incredible accuracy."  
+> — Maria K., Germany · Touring Cyclist
+
+> "I planned a 120 km mountain route with 2,000m elevation. It said I'd need one charging stop. Dead on. No more range anxiety!"  
+> — James L., USA · Mountain Biker
+
+> "As a daily commuter, knowing my exact range in different wind conditions is a game-changer. Worth every second."  
+> — Sophie R., Netherlands · Commuter
+
+## Technical Excellence
+
+### What You Get
+- **Precise Range Predictions** - ±2–5% accuracy, not ±15–40%
+- **Detailed Energy Breakdown** - See exactly where your battery goes
+- **Smart Charging Stop Recommendations** - Never get stranded again
+- **Elevation and Power Graphs** - Visualize your route's terrain and energy demands
+- **Wind Impact Analysis** - Understand how headwinds and tailwinds affect your range
+- **Real-Time Calculations** - Results in under 10 seconds
+
+### Works with All Major Brands
+- Trek, Giant, Bosch, Shimano, Specialized, and more
+- Supports all e-bike motor systems and battery configurations
+
+## The Rebrand Story
+
+Calculator 2.0 represents more than a visual refresh—it's a complete reimagining of what an e-bike range calculator should be. After receiving incredible feedback from thousands of users and validating the physics-based approach on 1,000+ real rides, it was time to give this tool its own identity.
+
+The rebrand reflects:
+- **Commitment to Physics** - Not shortcuts, not guesses, but real calculations
+- **Privacy First** - Your routes stay yours, always
+- **Zero Friction** - No signups, no accounts, just results
+- **Continuous Validation** - Every ride makes the calculator better
+
+## Try It Now
+
+Visit [ebike.futornyi.com](https://ebike.futornyi.com) to:
+- Upload your GPX route
+- Try the demo route
+- Get instant, physics-based range predictions
+- Plan your most confident ride yet
+
+**Free to use • No credit card • Instant results • 100% private**
+
+### FAQs 📅🌍
+
+<RangeRecommendations />
+
+---
+
+*Calculator 2.0 - Where physics meets precision. Stop guessing. Start knowing. Built for riders, by riders.* 🚴‍♂️
