@@ -1,75 +1,114 @@
 import styled from "styled-components"
+import { Link } from "gatsby"
+import { tokens } from "../../theme/tokens"
+
+/**
+ * Apple-inspired Header Styles
+ * Minimal, clean, with subtle scroll transitions
+ */
+
+export const HeaderWrapper = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: ${props => props.scrolled 
+    ? 'rgba(255, 255, 255, 0.85)' 
+    : 'transparent'
+  };
+  backdrop-filter: ${props => props.scrolled ? 'blur(20px) saturate(180%)' : 'none'};
+  box-shadow: ${props => props.scrolled ? tokens.shadows.sm : 'none'};
+  border-bottom: ${props => props.scrolled 
+    ? `1px solid ${tokens.colors.borderLight}` 
+    : '1px solid transparent'
+  };
+  transition: all ${tokens.transitions.smooth};
+  padding: ${props => props.scrolled ? tokens.spacing.md : tokens.spacing.lg} 0;
+  
+  @media (max-width: ${tokens.breakpoints.md}) {
+    padding: ${tokens.spacing.md} 0;
+  }
+`
+
+export const HeaderInner = styled.div`
+  max-width: ${tokens.maxWidth.wide};
+  margin: 0 auto;
+  padding: 0 ${tokens.spacing.xl};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  @media (max-width: ${tokens.breakpoints.md}) {
+    padding: 0 ${tokens.spacing.lg};
+  }
+`
+
+export const AvatarLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: ${tokens.spacing.md};
+  text-decoration: none;
+  transition: all ${tokens.transitions.base};
+  
+  &:hover {
+    opacity: 0.8;
+  }
+`
 
 export const Avatar = styled.img`
-  border: 5px solid #fff;
-  border-radius: 100%;
-  box-sizing: border-box;
-  color: #000;
-  display: inline-block;
-  font-size: 1.5em;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  width: 120px;
-  height: auto;
+  width: ${props => props.scrolled ? '48px' : '72px'};
+  height: ${props => props.scrolled ? '48px' : '72px'};
+  border-radius: 50%;
+  border: 3px solid ${tokens.colors.bgPrimary};
+  box-shadow: ${tokens.shadows.md};
+  transition: all ${tokens.transitions.smooth};
+  object-fit: cover;
+  
+  @media (max-width: ${tokens.breakpoints.md}) {
+    width: 48px;
+    height: 48px;
+  }
 `
 
 export const ChristmasHat = styled.img`
   position: absolute;
-  left: 40px;
-  bottom: 70px;
-  scale: 1.1;
+  left: ${props => props.scrolled ? '24px' : '36px'};
+  bottom: ${props => props.scrolled ? '32px' : '48px'};
+  width: ${props => props.scrolled ? '32px' : '48px'};
+  height: ${props => props.scrolled ? '32px' : '48px'};
   transform: rotate(-40deg);
-`
-
-export const HeaderContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-
-export const TakeCarLink = styled.a`
-  position: relative;
-  bottom: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`
-
-export const PausedMark = styled.div`
-  background: #ff8773;
-  position: relative;
-  bottom: 44px;
-  left: 69px;
-  color: #ffffff;
-  border-radius: 7px;
-  padding: 0px 3px;
-  font-size: 6px;
-  font-weight: 900;
-`
-
-export const IdeasButton = styled.button`
-  background: linear-gradient(to right, #ff7e5f, #feb47b);
-  color: #fff;
-  font-weight: bold;
-  padding: 12px 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
-  width: 220px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  position: relative;
-
-  &:hover {
-    background: linear-gradient(to right, #feb47b, #ff7e5f);
-    transform: scale(1.1);
+  transition: all ${tokens.transitions.smooth};
+  
+  @media (max-width: ${tokens.breakpoints.md}) {
+    left: 24px;
+    bottom: 32px;
+    width: 32px;
+    height: 32px;
   }
+`
 
-  &:active {
-    top: 2px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+export const HeaderLabel = styled.span`
+  font-family: ${tokens.typography.fontFamily.sans};
+  font-size: ${tokens.typography.fontSize.base};
+  font-weight: ${tokens.typography.fontWeight.medium};
+  color: ${tokens.colors.textPrimary};
+  opacity: ${props => props.scrolled ? 1 : 0};
+  transform: translateX(${props => props.scrolled ? '0' : '-8px'});
+  transition: all ${tokens.transitions.smooth};
+  
+  @media (max-width: ${tokens.breakpoints.md}) {
+    display: none;
+  }
+`
+
+export const SocialWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${tokens.spacing.md};
+  opacity: ${props => props.scrolled ? 0.8 : 1};
+  transition: all ${tokens.transitions.smooth};
+  
+  &:hover {
+    opacity: 1;
   }
 `

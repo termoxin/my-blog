@@ -1,27 +1,34 @@
 import { Link } from "gatsby"
 import PropTypes from "prop-types"
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Location } from "@reach/router"
 
 import SocialMediaLinks from "../SocialMedia"
 import {
+  HeaderWrapper,
+  HeaderInner,
+  AvatarLink,
   Avatar,
-  HeaderContent,
-  IdeasButton,
+  HeaderLabel,
+  SocialWrapper,
   ChristmasHat,
 } from "./styles"
 
 const Header = ({ avatar, christmasHat, socialMediaData }) => {
+  const [isScrolled, setIsScrolled] = useState(false)
+  
   const visibleLinks = socialMediaData.filter(
     socialMedia => !socialMedia.isTakeCarLogo
   )
 
-  const onClickIdeasButton = () => {
-    window.open(
-      "https://excellent-life.notion.site/Ideas-d9db6986f22f4107b427589835bbf729?pvs=4",
-      "_blank"
-    )
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const showChristmasHat = () => {
     const now = new Date();
@@ -31,67 +38,57 @@ const Header = ({ avatar, christmasHat, socialMediaData }) => {
   }
 
   return (
-    <header className="logo">
+    <HeaderWrapper scrolled={isScrolled}>
       <Location>
         {({ location }) => {
-          return location.pathname === "/" ? (
-            <HeaderContent>
-              <Link to="/about/">
+          const isHome = location.pathname === "/"
+          const isAbout = location.pathname === "/about/" || location.pathname === "/about"
+          
+          // Avatar always goes to /about unless we're already on about page
+          const avatarLink = isAbout ? "/" : "/about/"
+          const avatarLabel = isAbout ? "Home" : "About"
+          
+          return (
+            <HeaderInner>
+              <AvatarLink to={avatarLink}>
                 <div style={{ position: "relative" }}>
                   <Avatar
                     src={avatar}
-                    alt="Rostyslav Futornyi smiling"
-                    height={120}
-                    width={120}
+                    alt="Rostyslav Futornyi"
+                    scrolled={isScrolled}
                   />
                   {showChristmasHat() && <ChristmasHat 
                     alt="Christmas hat"
-                    height={48}
-                    width={48}
                     src={christmasHat}
+                    scrolled={isScrolled}
                   />}
                 </div>
-              </Link>
-              {/* {takeCarLink} */}
-              {/* <IdeasButton onClick={onClickIdeasButton}>
-                {" "}
-                💡 View Current Ideas
-              </IdeasButton> */}
-              <span className="logo-prompt code">About the Author</span>
-            </HeaderContent>
-          ) : (
-            <HeaderContent>
-              <Link to="/">
-               <div style={{ position: "relative" }}>
-               <Avatar src={avatar} alt="Rostyslav Futornyi smiling" />
-                {showChristmasHat() && <ChristmasHat 
-                  alt="Christmas hat"
-                  height={48}
-                  width={48}
-                  src={christmasHat}
-                />}
-              </div>
-              </Link>
-              {/* {takeCarLink} */}
-              {/* <IdeasButton onClick={onClickIdeasButton}>
-                💡 View Current Ideas
-              </IdeasButton> */}
-              <span className="logo-prompt code">Back Home</span>
-            </HeaderContent>
+                <HeaderLabel scrolled={isScrolled}>
+                  {avatarLabel}
+                </HeaderLabel>
+              </AvatarLink>
+              
+              <SocialWrapper scrolled={isScrolled}>
+                <SocialMediaLinks socialMediaLinks={visibleLinks} />
+              </SocialWrapper>
+            </HeaderInner>
           )
         }}
       </Location>
-      <SocialMediaLinks socialMediaLinks={visibleLinks} />
-    </header>
+    </HeaderWrapper>
   )
 }
 
 Header.propTypes = {
   avatar: PropTypes.string,
+  christmasHat: PropTypes.string,
+  socialMediaData: PropTypes.array,
 }
 
 Header.defaultProps = {
   avatar: ``,
+  christmasHat: ``,
+  socialMediaData: [],
 }
 
 export default Header

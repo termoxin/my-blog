@@ -1,0 +1,51 @@
+/**
+ * Premium Typography — Font Declarations
+ * Apple-grade typefaces: Neue Montreal, Inter, Editorial New
+ */
+
+/* Neue Montreal - Display font for headlines */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
+
+/* Inter - Body font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* Fallback: Using Space Grotesk as Neue Montreal alternative */
+/* In production, replace with actual Neue Montreal from fonts.adobe.com */
+
+/* Editorial New fallback - using Playfair Display */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* Font feature settings for premium rendering */
+@font-face {
+  font-family: 'Neue Montreal Fallback';
+  src: local('Space Grotesk');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Editorial New Fallback';
+  src: local('Playfair Display');
+  font-display: swap;
+}
+
+/* Premium font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+}
+
+/* Display text optimization */
+h1, h2, h3, .font-display {
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'ss01' 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Serif accent optimization */
+.font-serif {
+  font-feature-settings: 'kern' 1, 'liga' 1, 'dlig' 1, 'swsh' 1;
+}
+
