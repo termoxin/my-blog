@@ -1,6 +1,6 @@
 ---
-title: Electric Bike Range Calculator | Calculate E-Bike Distance (Oct 2025 Updated)
-description: Accurately estimate your e-bike's range with our advanced Electric Bike Range Calculator. Plan your rides confidently by factoring in weight, wind, and terrain!
+title: E-Bike Range Calculator + Playground (April 2026 Update)
+description: Two e-bike tools in one project: a route-aware range calculator for real ride planning and a real-time playground for simulation, tuning, and testing.
 tags: ["ebike", "cycling", "ebike range calculator", "electric bike range calculator", "electric bike battery range calculator", "ebike battery range calculator", "e bike range calculator", "e bike distance calculator", "calculate ebike range", "ebike power calculator"]
 location: Athens, Greece
 date: 2024-12-24
@@ -12,44 +12,54 @@ status: In Progress
 import { EBikeRangeCalculator } from "../../src/components/BikeRangeCalculator"
 import { RangeRecommendations } from "../../src/components/RangeRecommendations"
 
-# Maximize Your E-Bike Journey with My Advanced E-Bike Range Calculator 🚴‍♀️🔋
+# E-Bike Range Calculator Project (April 2026)
 
-Are you planning your next e-bike adventure? Let me help you get the most out of your ride with my very own **E-Bike Range Calculator**! 🌍🔧 I built this app because I know how challenging it can be to plan routes without worrying about running out of battery. Whether you’re commuting, exploring, or just enjoying a leisurely ride, my app provides accurate insights to make your trip smooth and stress-free. 🌟
+This project now has **two connected apps**, each built for a different stage of ride planning and bike setup:
 
-## Why I Created This Tool 💡
-As an avid e-bike user myself, I often found it tricky to estimate how far I could go on a single charge. I wanted something that could account for real-world factors like weight, wind, and elevation, so I decided to build it! 🚴‍♂️⚡ My **E-Bike Range Calculator** is designed with users like you and me in mind, offering precision and simplicity in one package.
+- **Main planner app:** [ebike.futornyi.com](https://ebike.futornyi.com/)
+- **Physics playground:** [ebike.futornyi.com/playground](https://ebike.futornyi.com/playground)
 
-### Features Overview: 🚀
+The goal is simple: make battery decisions obvious before the ride starts, then let you test setup behavior in a live simulator.
 
+## Two apps, one workflow
+
+### 1) Main app — route-aware range planning
+Use the main app when you want to answer practical questions like:
+- Can I finish this route on one charge?
+- How much does wind and climbing change my expected range?
+- Where should I recharge on longer rides?
+
+What it does best:
+- GPX-based route analysis
+- Weather-aware and elevation-aware energy estimates
+- Battery consumption breakdown and charging-stop planning
+- Browser-first workflow with private, local planning
+
+Open it here: [ebike.futornyi.com](https://ebike.futornyi.com/)
+
+### 2) Playground — real-time simulation and tuning
+Use the playground when you want to experiment:
+- How does changing motor/controller/battery setup affect ride behavior?
+- What happens to dynamics under different assist, throttle, slope, and load?
+- How does a specific scenario feel before trying it outside?
+
+What it does best:
+- Real-time simulation engine
+- Component-level setup experimentation
+- Scenario-driven testing and iteration
+- Fast feedback loop for advanced users
+
+Open it here: [ebike.futornyi.com/playground](https://ebike.futornyi.com/playground)
+
+## How they work together
+The main app helps you plan the actual ride outcome.  
+The playground helps you understand and tune the machine behavior behind that outcome.
+
+If you're planning a trip, start with the calculator.  
+If you're comparing setups or exploring performance tradeoffs, move to the playground.
+
+### Main app feature preview
 <EBikeRangeCalculator />
 
-
-### Why You’ll Love My E-Bike Range Calculator ❤️
-
-#### 1. **User-Friendly Interface** 🖥️
-I wanted to make this app super easy to use. Just upload your GPX file or pick a saved route, adjust a few settings, and you’re good to go. The interface is intuitive and designed to save you time. ⏳✨
-
-#### 2. **Customizable General Settings** ⚙️
-To make sure the results are tailored to your unique needs, you can customize several parameters:
-- **Speed:** Set your preferred average speed. 🏎️
-- **Bike Weight:** Input your e-bike’s weight for better accuracy. 🚲⚖️
-- **Rider Weight:** Include your weight for realistic calculations. 🏋️‍♂️
-- **Start Ride Time:** Plan your start time and see how it affects the results. 🕒
-- **Battery Capacity:** Enter your battery’s capacity (in Ah) to see how far it can take you. 🔋
-
-#### 3. **Advanced Settings for Extra Precision** 🎯
-For those of you who like to fine-tune everything, I’ve included advanced settings:
-- **Wind Speed & Direction:** Adjust for wind resistance. 🌬️
-- **Trailer and Luggage Weight:** Add any extra load you’re carrying. 🧳
-- **Dog Weight:** Planning to bring your furry friend? 🐶 Include their weight too.
-- **Trailer Dimensions:** Specify trailer size to refine the calculations. 🚚
-
-### What You Get 🎁
-- **Recharge Alerts:** Plan your stops with precision to avoid running out of battery. ⏳🔋
-- **Elevation and Power Graphs:** Visualize your route's terrain and energy demands. 📊⛰️
-- **Time Management:** Know when you'll finish your trip. 🕓
-- **Realistic Range Estimates:** Take into account all real-world variables. 🌐
-
-### FAQs 📅🌍
-
+### Practical recommendations and FAQ
 <RangeRecommendations />
